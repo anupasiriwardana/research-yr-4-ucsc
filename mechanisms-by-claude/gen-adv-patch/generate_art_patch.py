@@ -1,5 +1,6 @@
 import os
 import cv2
+import json
 import torch
 import numpy as np
 from pathlib import Path
@@ -7,15 +8,20 @@ from ultralytics import YOLO
 from art.estimators.object_detection import PyTorchYolo
 from art.attacks.evasion import AdversarialPatchPyTorch
 
-# 1. Paths & Directory Setup
-DATA_DIR = Path(r"D:\GitHub\experiment_data\bdd100k_images_10k\train")
-OUTPUT_DIR = Path(r"D:\GitHub\yr-4-research\mechanisms-by-claude\gen-adv-patch\bdd100k_patched")
+# 1. Load Configuration
+CONFIG_PATH = Path(__file__).parent / "config.json"
+with open(CONFIG_PATH, "r") as f:
+    config = json.load(f)
+
+DATA_DIR = Path(config["clean_dir"])
+OUTPUT_DIR = Path(config["output_dir"])
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+NEW_PATCH_NAME = "art_patch.npy"
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # 2. Load and Prepare YOLOv8 Model
-yolo_model = YOLO("yolov8n.pt")
+yolo_model = YOLO(config["model_path"])
 yolo_model.model.eval()
 
 # 3. Model Wrapper for ART Compatibility
@@ -63,7 +69,12 @@ detector = PyTorchYolo(
 # 5. Image Preprocessing Helper
 def load_and_preprocess_batch(folder_path, max_images=16, target_size=(640, 640)):
     batch = []
-    files = [f for f in os.listdir(folder_path) if f.lower().endswith(('.png', '.jpg', '.jpeg'))][:max_images]
+    
+    # Priority: Check if a specific clean image is defined in config
+    if config["specific_clean_image"]:
+        files = [config["specific_clean_image"]]
+    else:
+        files = [f for f in os.listdir(folder_path) if f.lower().endswith(('.png', '.jpg', '.jpeg'))][:max_images]
     
     for f in files:
         img_path = str(folder_path / f)
@@ -78,31 +89,31 @@ def load_and_preprocess_batch(folder_path, max_images=16, target_size=(640, 640)
     return np.array(batch, dtype=np.float32), files
 
 print("Loading calibration batch for patch optimization...")
-train_images, filenames = load_and_preprocess_batch(DATA_DIR, max_images=16)
+train_images, filenames = load_and_preprocess_batch(DATA_DIR, max_images=config["patch_settings"]["max_images"])
 
 # 6. Configure and Execute Adversarial Patch Attack (EoT)
 print("Configuring AdversarialPatchPyTorch attack...")
 attack = AdversarialPatchPyTorch(
     estimator=detector,
-    rotation_max=22.5,        # EoT rotation jitter in degrees
-    scale_min=0.2,            # EoT scale jitter minimum
-    scale_max=0.4,            # EoT scale jitter maximum
+    rotation_max=22.5,
+    scale_min=0.2,
+    scale_max=0.4,
     learning_rate=0.01,
-    max_iter=500,             # Optimization iterations
-    batch_size=4,
-    patch_shape=(3, 150, 150),# Patch dimensions in pixels (CHW)
-    targeted=False            # False = general disruption/suppression
+    max_iter=config["patch_settings"]["max_iter"],
+    batch_size=config["patch_settings"]["batch_size"],
+    patch_shape=(3, 150, 150),
+    targeted=False
 )
 
 print("Optimizing adversarial patch over batch (this may take a few minutes)...")
 patch, patch_mask = attack.generate(x=train_images)
 
 # Save raw optimized patch array
-np.save(OUTPUT_DIR / "art_patch.npy", patch)
+np.save(OUTPUT_DIR / NEW_PATCH_NAME, patch)
 
-# 7. Apply Patch to Test Image with scale parameter
+# 7. Apply Patch to Test Image
 test_img_tensor = train_images[0:1]
-patched_batch = attack.apply_patch(x=test_img_tensor, scale=0.3, patch_external=patch)
+patched_batch = attack.apply_patch(x=test_img_tensor, scale=config["patch_settings"]["patch_scale"], patch_external=patch)
 
 # 8. Convert Back to BGR and Save Image
 patched_img_np = np.transpose(patched_batch[0], (1, 2, 0)) * 255.0

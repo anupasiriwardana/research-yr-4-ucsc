@@ -1,0 +1,14 @@
+{
+    "model_path": "yolov8n.pt",
+    "clean_data_dir": "D:\\GitHub\\experiment_data\\bdd100k_images_10k\\train",
+    "profiles_dir": "D:\\GitHub\\yr-4-research\\mechanisms-by-claude\\mech-1\\profiles",
+    "calibration_profile_filename": "cls_head_calibration_p3.pkl",
+    "patched_data_dir": "D:\\GitHub\\yr-4-research\\mechanisms-by-claude\\gen-adv-patch\\bdd100k_patched",
+    "detection_output_dir": "D:\\GitHub\\yr-4-research\\mechanisms-by-claude\\mech-1\\detections",
+    "specific_test_image": "",
+    "detector_settings": {
+        "threshold": 15.0,
+        "stride": 8,
+        "min_calibration_samples": 5
+    }
+}

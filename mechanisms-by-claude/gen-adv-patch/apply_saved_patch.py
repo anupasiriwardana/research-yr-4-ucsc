@@ -1,5 +1,6 @@
 import os
 import cv2
+import json
 import torch
 import numpy as np
 from pathlib import Path
@@ -7,22 +8,23 @@ from ultralytics import YOLO
 from art.estimators.object_detection import PyTorchYolo
 from art.attacks.evasion import AdversarialPatchPyTorch
 
-# 1. Paths & Directory Setup
-DATA_DIR = Path(r"D:\GitHub\experiment_data\bdd100k_images_10k\train")
-OUTPUT_DIR = Path(r"D:\GitHub\yr-4-research\mechanisms-by-claude\gen-adv-patch\bdd100k_patched")
-PATCH_PATH = OUTPUT_DIR / "art_patch.npy"
+# 1. Load Configuration
+CONFIG_PATH = Path(__file__).parent / "config.json"
+with open(CONFIG_PATH, "r") as f:
+    config = json.load(f)
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+DATA_DIR = Path(config["clean_dir"])
+OUTPUT_DIR = Path(config["output_dir"])
+PATCH_PATH = OUTPUT_DIR / config["specific_patch_name"]
 
-# 2. Check if the pre-generated patch exists
 if not PATCH_PATH.exists():
-    raise FileNotFoundError(f"Could not find saved patch at {PATCH_PATH}. Run generate_art_patch.py first.")
+    raise FileNotFoundError(f"Could not find saved patch at {PATCH_PATH}.")
 
 print(f"Loading pre-optimized patch from: {PATCH_PATH}")
 patch = np.load(PATCH_PATH)
 
-# 3. Load YOLOv8 Model & Setup Wrapper
-yolo_model = YOLO("yolov8n.pt")
+# 2. Load YOLOv8 Model & Setup Wrapper
+yolo_model = YOLO(config["model_path"])
 yolo_model.model.eval()
 
 class ART_YOLOv8_Wrapper(torch.nn.Module):
@@ -59,25 +61,27 @@ detector = PyTorchYolo(
     attack_losses=("loss_total",)
 )
 
-# 4. Instantiate Attack Object for Applying Patch
 attack = AdversarialPatchPyTorch(
     estimator=detector,
     rotation_max=22.5,
     scale_min=0.2,
     scale_max=0.4,
     learning_rate=0.01,
-    max_iter=500,
-    batch_size=4,
+    max_iter=config["patch_settings"]["max_iter"],
+    batch_size=config["patch_settings"]["batch_size"],
     patch_shape=(3, 150, 150),
     targeted=False
 )
 
-# 5. Load Target Test Image
-image_files = [f for f in os.listdir(DATA_DIR) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
-if not image_files:
-    raise FileNotFoundError(f"No valid image files found in {DATA_DIR}")
+# 3. Resolve Target Image
+if config["specific_clean_image"]:
+    target_filename = config["specific_clean_image"]
+else:
+    image_files = [f for f in os.listdir(DATA_DIR) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
+    if not image_files:
+        raise FileNotFoundError(f"No valid image files found in {DATA_DIR}")
+    target_filename = image_files[0]
 
-target_filename = image_files[0]
 target_img_path = str(DATA_DIR / target_filename)
 
 print(f"Processing target image: {target_filename}")
@@ -89,10 +93,9 @@ img_tensor = img_resized.astype(np.float32) / 255.0
 img_tensor = np.transpose(img_tensor, (2, 0, 1))
 test_batch = np.array([img_tensor], dtype=np.float32)
 
-# 6. Apply Saved Patch
-patched_batch = attack.apply_patch(x=test_batch, scale=0.3, patch_external=patch)
+# 4. Apply Saved Patch & Save Output
+patched_batch = attack.apply_patch(x=test_batch, scale=config["patch_settings"]["patch_scale"], patch_external=patch)
 
-# 7. Format and Save Output
 patched_img_np = np.transpose(patched_batch[0], (1, 2, 0)) * 255.0
 patched_img_bgr = cv2.cvtColor(patched_img_np.astype(np.uint8), cv2.COLOR_RGB2BGR)
 

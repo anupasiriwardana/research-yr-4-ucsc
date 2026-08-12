@@ -1,21 +1,31 @@
 import torch
 import cv2
+import json
 import pickle
 import numpy as np
 from pathlib import Path
 from ultralytics import YOLO
 from cls_head_adapter import YOLOv8ClsHeadAdapter
 
+# 1. Load Configuration
+CONFIG_PATH = Path(__file__).parent / "config.json"
+with open(CONFIG_PATH, "r") as f:
+    config = json.load(f)
+
 class ClsHeadMahalanobisDetector:
-    def __init__(self, model_version='yolov8n.pt', threshold=15.0):
+    def __init__(self, config_data=config):
+        self.config = config_data
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        self.model = YOLO(model_version).to(self.device)
+        self.model = YOLO(self.config["model_path"]).to(self.device)
         self.adapter = YOLOv8ClsHeadAdapter(self.model.model)
-        self.threshold = threshold
-        self.stride = 8
+        self.threshold = self.config["detector_settings"]["threshold"]
+        self.stride = self.config["detector_settings"]["stride"]
         
         # Load the offline calibration artifact
-        profile_path = Path(r"D:\GitHub\yr-4-research\mechanisms-by-claude\mech-1\profiles\cls_head_calibration_p3.pkl")
+        profile_path = Path(self.config["profiles_dir"]) / self.config["calibration_profile_filename"]
+        if not profile_path.exists():
+            raise FileNotFoundError(f"Calibration profile not found at {profile_path}. Run calibrate_cls_head.py first.")
+
         with open(profile_path, 'rb') as f:
             self.stats = pickle.load(f)
             
@@ -100,11 +110,12 @@ class ClsHeadMahalanobisDetector:
                 cv2.putText(overlay, f"PATCH DETECTED (Score: {score_val:.1f})", 
                             (x1, max(y1 - 10, 20)), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
             
-            out_visualization_path = Path(img_path).parent / f"detected_cls_head_{Path(img_path).name}"
+            output_dir = Path(self.config["detection_output_dir"])
+            output_dir.mkdir(parents=True, exist_ok=True)
+            out_visualization_path = output_dir / f"detected_cls_head_{Path(img_path).name}"
             cv2.imwrite(str(out_visualization_path), overlay)
             print(f"\n[Visualizer] Heatmap saved to: {out_visualization_path}")
 
-        # The contract output remains strictly identical
         return {
             "is_attack": is_attack,
             "score": float(score_val),
@@ -112,18 +123,25 @@ class ClsHeadMahalanobisDetector:
         }
 
 if __name__ == "__main__":
-    detector = ClsHeadMahalanobisDetector()
+    detector = ClsHeadMahalanobisDetector(config)
     
-    # Point to your generated patched image
-    PATCHED_DIR = Path(r"D:\GitHub\yr-4-research\mechanisms-by-claude\gen-adv-patch\bdd100k_patched")
-    patched_files = list(PATCHED_DIR.glob("*.jpg")) + list(PATCHED_DIR.glob("*.png"))
+    PATCHED_DIR = Path(config["patched_data_dir"])
     
-    if patched_files:
-        test_image = str(patched_files[0])
+    # Priority: Check if a specific test image is defined in config
+    if config["specific_test_image"]:
+        test_image = str(PATCHED_DIR / config["specific_test_image"])
+    else:
+        patched_files = list(PATCHED_DIR.glob("*.jpg")) + list(PATCHED_DIR.glob("*.png"))
+        # Exclude visual overlays generated in prior runs
+        patched_files = [f for f in patched_files if "detected_cls_head" not in f.name]
+        test_image = str(patched_files[0]) if patched_files else None
+
+    if test_image and Path(test_image).exists():
+        print(f"Running detection on target image: {test_image}")
         result = detector.detect(test_image, save_visualization=True)
         print("\n--- Decoupled Head Middleware Output ---")
         print(f"Attack Detected: {result['is_attack']}")
         print(f"Anomaly Score:   {result['score']:.2f}")
         print(f"Bounding Box:    {result['bounding_box']}")
     else:
-        print("No patched image found in target directory.")
+        print(f"Target test image not found. Checked: {test_image}")

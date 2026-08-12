@@ -1,0 +1,15 @@
+{
+    "model_path": "yolov8n.pt",
+    "clean_dir": "D:\\GitHub\\experiment_data\\bdd100k_images_10k\\train",
+    "output_dir": "D:\\GitHub\\yr-4-research\\mechanisms-by-claude\\gen-adv-patch\\bdd100k_patched",
+    "patch_detection_dir": "D:\\GitHub\\yr-4-research\\mechanisms-by-claude\\gen-adv-patch\\patch_detections",
+    "specific_clean_image": "",
+    "specific_patched_image": "",
+    "specific_patch_name": "",
+    "patch_settings": {
+        "patch_scale": 0.3,
+        "max_iter": 500,
+        "batch_size": 4,
+        "max_images": 16
+    }
+}

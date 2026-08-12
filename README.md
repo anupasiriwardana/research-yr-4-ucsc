@@ -9,77 +9,117 @@
 
 ---
 
-## 1. The Core Idea & Purpose
-Modern Artificial Intelligence is deeply embedded in safety-critical systems, notably Autonomous Vehicles (AVs). The foundational software layer, the **Perception Pipeline**, relies heavily on object detection models (like YOLO) to identify pedestrians, vehicles, and traffic signs in real-time. 
+## 1. Executive Summary & Research Progress
 
-**The Purpose:** To architect, engineer, and evaluate a formally decoupled **Runtime Security Middleware (Sidecar)** that monitors internal model behaviors to detect physical adversarial patch attacks and recover reliable detections, without modifying the underlying object detection model or blocking the inference pipeline.
+Modern safety-critical systems, such as Autonomous Vehicles (AVs), rely heavily on deep-learning perception pipelines (e.g., YOLO) to identify pedestrians, vehicles, and navigation signs in real time. However, these models are inherently vulnerable to **Physical Adversarial Patch Attacks**, where visual patterns placed on real-world objects cause target detectors to completely ignore critical entities.
 
----
+Existing ML defenses fail from a **Software Engineering (SE)** perspective because they are either:
+1. **Inline / Synchronous:** Blocking the main inference path and introducing unacceptable latency.
+2. **Tightly Coupled:** Hardcoded to specific network layer indices, breaking completely when the target model is updated (e.g., upgrading from YOLOv5 to YOLOv8).
 
-## 2. The Threat Model
-Object detection models are highly vulnerable to **Adversarial Patch Attacks**.
-* **Mechanism:** Specially crafted visual patterns printed as physical stickers or signs and placed in the real-world environment.
-* **Impact:** Unlike digital noise, physical patches are robust to lighting, camera angles, and motion blur. A sticker on a stop sign can cause the vehicle's detector to ignore the sign entirely. The AV makes planning decisions based on corrupted data, leading directly to physical collisions.
+**Our Solution:** A formally decoupled **Runtime Security Middleware (Sidecar Pattern)** that monitors internal model behavioral signals asynchronously without altering the underlying model architecture or blocking the primary perception loop.
 
----
-
-## 3. The Architectural Problem & Research Gap
-While the ML community has proposed various defenses, they critically fail from a **Software Engineering (SE) perspective**:
-
-1. **Input-Level Defenses (Preprocessing):** Model-agnostic, but they are synchronous and inline. They block the inference path, introducing mandatory latency on every frame, which destroys real-time performance.
-2. **Output-Level Verification:** Decoupled, but heavily domain-specific (e.g., relying on vehicle motion physics) and lack a structured recovery mechanism.
-3. **Runtime Monitors (The Core Issue):** Existing runtime monitors are **tightly coupled** to the internal structure of the specific model. They access specific layer names, tensor shapes, and architectures with no abstraction. If the perception model is updated (e.g., YOLOv5 to YOLOv8), the defense breaks entirely.
-
-**The Formal Gap:** There is no independently deployable runtime monitoring component that decouples the adversarial defense from the internal architecture of the object detection model, operates asynchronously without blocking the inference pipeline, and provides a structured detection and recovery response.
+### Project Roadmap & Implementation Status
+| Module / Mechanism | Target Directory | Description | Status |
+| :--- | :--- | :--- | :--- |
+| **Adversarial Patch Generator** | [`mechanisms-by-claude/gen-adv-patch/`](./mechanisms-by-claude/gen-adv-patch/) | White-box physical patch generator using ART and Expectation Over Transformation (EoT) targeting YOLOv8 | **COMPLETED & VERIFIED** |
+| **Mechanism 1: Decoupled-Head Tap** | [`mechanisms-by-claude/mech-1/`](./mechanisms-by-claude/mech-1/) | Anomaly detection targeting the intermediate classification branch (`cv3`) using per-class Mahalanobis distance | **COMPLETED & VERIFIED** |
+| **Mechanism 2: Pre-Fusion Backbone Tap** | [`mechanisms-by-claude/mech-2/`](./mechanisms-by-claude/mech-2/) | Tapping backbone features before PANet multi-scale fusion to isolate clean receptive fields | **PLANNED** |
+| **Mechanism 3: APE Feature Energy** | [`mechanisms-by-claude/mech-3/`](./mechanisms-by-claude/mech-3/) | Self-referential per-image feature energy thresholding operating on early stem layers | **PLANNED** |
 
 ---
 
-## 4. The Proposed Solution: System Architecture
-To resolve this SE gap, the research proposes a **Run-Time Security Middleware (Sidecar Pattern)**.
+## 2. Architectural Overview
 
-### 4.1 Decoupled Abstraction Layer
-Instead of hardcoding the defense to YOLO, the middleware uses an **Adapter Pattern**. Access to internal behavioral signals (feature maps) is mediated through a formal abstraction layer. The monitoring logic evaluates the geometry of the latent space (Manifold Theory) without being directly tied to the model’s internal structure.
+```text
+                      +-----------------------------------+
+                      |      Primary Perception Loop     |
+                      |    Input Frame ---> YOLOv8 Model  |
+                      +-----------------+-----------------+
+                                        | (Asynchronous Forward Hook)
+                                        v
++---------------------------------------------------------------------------------+
+|                        Runtime Security Middleware (Sidecar)                     |
+|                                                                                 |
+|  +----------------------------------+     +----------------------------------+  |
+|  |     Model-Agnostic Adapter       | --> |   Class-Conditioned Strategy     |  |
+|  |  (YOLOv8ClsHeadAdapter: cv3[-2]) |     |  (ClsHeadMahalanobisDetector)    |  |
+|  +----------------------------------+     +-----------------+----------------+  |
+|                                                              |                  |
+|                                                              v                  |
+|                                                  +-----------------------+      |
+|                                                  | AnomalyResult Schema  |      |
+|                                                  | - is_attack: bool     |      |
+|                                                  | - score: float        |      |
+|                                                  | - bounding_box: tuple |      |
+|                                                  +-----------+-----------+      |
++--------------------------------------------------------------|------------------+
+                                                               |
+                                                               v
+                                                +------------------------------+
+                                                |       Recovery Engine        |
+                                                | (Pixel Blackout / Re-infer)  |
+                                                +------------------------------+
+```
 
-### 4.2 The Interface Contract (`AnomalyResult`)
-To ensure a strict separation of concerns between Detection and Recovery, the Anomaly Detector module must output a standardized `AnomalyResult` schema.
-* **Schema Content:** `[is_attack: boolean, score: float, bounding_box: (x1, y1, x2, y2)]`
-* **Architectural Benefit:** The Recovery Engine receives exact coordinates for masking but has zero knowledge of *how* the patch was detected, preserving low coupling.
-
----
-
-## 5. Module 1: Anomaly Detection (Behavioral Profiling)
-The detection module profiles internal behavioral biometrics (aligning with the NIST AI 100-2 E2025 standard). The team will implement contrasting detection algorithms that both satisfy the `AnomalyResult` interface. This module will also generate a heatmap which helps to visualize the localized patch during the building and testing purposes.  
-
----
-
-## 6. Module 2: The Recovery Engine
-The Recovery Engine acts as a "dumb" execution engine. It receives the bounding box from the Detection module and triggers a tiered response:
-
-* **Main Recovery attempt:** We would try to attempt the recovery of the patched image asynchronous to the object detection model. If we cannot make the recovery asynchronous, then we'll fall back to tier 2 recovery or tier 3 recovery. Priority should be asynchronous recovery
-* **Tier 2 Recovery (Masking & Re-inference):** Operates on the input image using standard masking (a pixel blackout operation over the patch coordinates) and then calls the model's standard forward pass.
-* **Tier 3 Recovery (Temporal Substitution):** Operates entirely on buffered historical detection outputs to maintain system stability if re-inference fails.
-
-*(Crucial SE Concept: The recovery engine never attempts to localize the patch itself, preventing redundant detection loops).*
-
----
-
-## 7. Evaluation & Metrics
-The solution will be evaluated not just on security, but on strict **Non-Functional Requirements (NFRs)** necessary for time-critical domains where safety is necessary.
-
-### Security and Reliability Metrics
-* **Attack Success Rate (ASR):** How often attacks successfully fool the detector despite the monitor.
-* **True Positive Rate (TPR) / False Positive Rate (FPR):** Accuracy of the anomaly detection.
-* **Recovery Rate (RR):** Percentage of attacked frames where reliable detections are successfully restored.
-
-### System Performance (Engineering) Metrics
-* **Inference Latency Overhead:** Additional delay introduced on clean frames (Target: <15ms).
-* **Attacked-Frame Latency:** Total system latency during recovery.
-* **Frames Per Second (FPS):** System throughput.
-* **Memory Overhead:** RAM/VRAM consumption.
+### The Interface Contract (`AnomalyResult`)
+To preserve strict separation of concerns, all anomaly detection strategies must return a unified JSON/dictionary schema:
+* `is_attack` *(boolean)*: Flags whether an adversarial anomaly exceeded the calibrated threshold.
+* `score` *(float)*: The maximum statistical anomaly score (e.g., Mahalanobis distance) observed in the frame.
+* `bounding_box` *(tuple)*: `(x1, y1, x2, y2)` pixel coordinates isolating the patch location for downstream recovery.
 
 ---
 
-## 8. Datasets & Tooling
-* **Datasets:** KITTI Vision Benchmark Suite (Baseline urban driving) and BDD100K (Diverse weather/complex environments).
-* **Threat Simulation:** Adversarial Robustness Toolbox (ART) and Expectation Over Transformation (EoT) physical patch simulations.
-* **Target Model:** Ultralytics YOLO architecture (e.g., YOLOv5/v8/v10).
+## 3. Quick Start Guide
+
+### Step 1: Clone Repository
+```bash
+git clone [https://github.com/AnupaSiriwardhana/yr-4-research.git](https://github.com/AnupaSiriwardhana/yr-4-research.git)
+cd yr-4-research
+```
+
+### Step 2: Generate an Adversarial Test Patch
+Follow the guide in the [`gen-adv-patch`](./mechanisms-by-claude/gen-adv-patch/) folder to build white-box test assets.
+```bash
+conda activate patch_gen_yolov8
+python mechanisms-by-claude/gen-adv-patch/generate_art_patch.py
+```
+
+### Step 3: Run the Anomaly Detection Middleware
+Follow the guide in the [`mech-1`](./mechanisms-by-claude/mech-1/) folder to calibrate and execute the Decoupled-Head Middleware.
+```bash
+conda activate yolo_adv
+python mechanisms-by-claude/mech-1/calibrate_cls_head.py
+python mechanisms-by-claude/mech-1/cls_head_detector.py
+```
+
+---
+
+## 4. Repository Structure
+
+```text
+yr-4-research/
+├── LICENSE
+├── README.md                              <-- Main Project Documentation
+└── mechanisms-by-claude/
+    ├── gen-adv-patch/                     <-- Adversarial Patch Generator Tooling
+    │   ├── config.json
+    │   ├── generate_art_patch.py
+    │   ├── apply_saved_patch.py
+    │   ├── verify_patch_efficacy.py
+    │   └── README.md
+    ├── mech-1/                            <-- Mechanism 1: Decoupled Head Anomaly Module
+    │   ├── config.json
+    │   ├── cls_head_adapter.py
+    │   ├── calibrate_cls_head.py
+    │   ├── cls_head_detector.py
+    │   ├── mechanism-1-decoupled-head-cls-branch.md
+    │   └── README.md
+    ├── mech-2/                            <-- Mechanism 2 Specification (Planned)
+    └── mech-3/                            <-- Mechanism 3 Specification (Planned)
+```
+
+---
+
+## 5. License
+Distributed under the MIT License. See `LICENSE` for details.

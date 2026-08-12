@@ -1,22 +1,31 @@
 import torch
 import cv2
 import os
+import json
 import pickle
 from collections import defaultdict
 from pathlib import Path
 from ultralytics import YOLO
 from cls_head_adapter import YOLOv8ClsHeadAdapter
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model = YOLO('yolov8n.pt').to(device)
-adapter = YOLOv8ClsHeadAdapter(model.model)
+# 1. Load Configuration
+CONFIG_PATH = Path(__file__).parent / "config.json"
+with open(CONFIG_PATH, "r") as f:
+    config = json.load(f)
 
-DATA_DIR = Path(r"D:\GitHub\experiment_data\bdd100k_images_10k\train")
-PROFILE_DIR = Path(r"D:\GitHub\yr-4-research\mechanisms-by-claude\mech-1\profiles")
+DATA_DIR = Path(config["clean_data_dir"])
+PROFILE_DIR = Path(config["profiles_dir"])
 PROFILE_DIR.mkdir(parents=True, exist_ok=True)
 
+profile_path = PROFILE_DIR / config["calibration_profile_filename"]
+stride = config["detector_settings"]["stride"]
+min_samples = config["detector_settings"]["min_calibration_samples"]
+
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+model = YOLO(config["model_path"]).to(device)
+adapter = YOLOv8ClsHeadAdapter(model.model)
+
 per_class_features = defaultdict(list)
-stride = 8 
 
 print("Starting offline calibration on clean dataset...")
 for img_file in os.listdir(DATA_DIR):
@@ -25,10 +34,9 @@ for img_file in os.listdir(DATA_DIR):
         
     img_path = str(DATA_DIR / img_file)
     
-    # Run a standard prediction to get clean class locations
+    # Run standard prediction to get clean class locations
     results = model(img_path, verbose=False)[0]
     
-    # Run the adapter to grab the hooked P3 activations
     # Resize image to 640x640 so spatial dimensions are strictly divisible by 32
     resized_img = cv2.resize(results.orig_img, (640, 640))
     img_tensor = torch.from_numpy(resized_img).permute(2, 0, 1).unsqueeze(0).float().to(device) / 255.0
@@ -55,7 +63,7 @@ for img_file in os.listdir(DATA_DIR):
 # Compute Mean and Inverse Covariance per class
 stats = {}
 for cls_id, feats in per_class_features.items():
-    if len(feats) > 5: # Require a minimum sample size
+    if len(feats) > min_samples: # Require minimum sample size
         feats_tensor = torch.stack(feats)
         mean = feats_tensor.mean(dim=0)
         
@@ -66,7 +74,6 @@ for cls_id, feats in per_class_features.items():
         stats[cls_id] = {'mean': mean, 'inv_cov': inv_cov}
 
 # Persist the calibration artifact
-profile_path = PROFILE_DIR / "cls_head_calibration_p3.pkl"
 with open(profile_path, 'wb') as f:
     pickle.dump(stats, f)
 
