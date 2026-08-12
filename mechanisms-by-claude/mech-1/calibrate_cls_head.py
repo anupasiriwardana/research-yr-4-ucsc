@@ -12,7 +12,7 @@ model = YOLO('yolov8n.pt').to(device)
 adapter = YOLOv8ClsHeadAdapter(model.model)
 
 DATA_DIR = Path(r"D:\GitHub\experiment_data\bdd100k_images_10k\train")
-PROFILE_DIR = Path(r"D:\GitHub\experiment_data\profiles")
+PROFILE_DIR = Path(r"D:\GitHub\yr-4-research\mechanisms-by-claude\mech-1\profiles")
 PROFILE_DIR.mkdir(parents=True, exist_ok=True)
 
 per_class_features = defaultdict(list)
