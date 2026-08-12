@@ -48,7 +48,8 @@ class ClsHeadMahalanobisDetector:
             x2, y2 = min(grid_w, x2), min(grid_h, y2)
             predicted_classes[y1:y2, x1:x2] = int(cls.item())
 
-        img_tensor = torch.from_numpy(results.orig_img).permute(2, 0, 1).unsqueeze(0).float().to(self.device) / 255.0
+        resized_img = cv2.resize(results.orig_img, (640, 640))
+        img_tensor = torch.from_numpy(resized_img).permute(2, 0, 1).unsqueeze(0).float().to(self.device) / 255.0
         activations = self.adapter.get_activations(img_tensor)
         feat = activations["P3"]
         

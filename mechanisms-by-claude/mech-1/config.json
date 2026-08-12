@@ -5,7 +5,7 @@
     "calibration_profile_filename": "cls_head_calibration_p3.pkl",
     "patched_data_dir": "D:\\GitHub\\yr-4-research\\mechanisms-by-claude\\gen-adv-patch\\bdd100k_patched",
     "detection_output_dir": "D:\\GitHub\\yr-4-research\\mechanisms-by-claude\\mech-1\\detections",
-    "specific_test_image": "",
+    "specific_test_image": "applied_art_patched_0004a4c0-d4dff0ad.jpg",
     "detector_settings": {
         "threshold": 15.0,
         "stride": 8,
