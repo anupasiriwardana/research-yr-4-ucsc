@@ -99,7 +99,7 @@ patched_batch = attack.apply_patch(x=test_batch, scale=config["patch_settings"][
 patched_img_np = np.transpose(patched_batch[0], (1, 2, 0)) * 255.0
 patched_img_bgr = cv2.cvtColor(patched_img_np.astype(np.uint8), cv2.COLOR_RGB2BGR)
 
-out_file_path = OUTPUT_DIR / f"applied_art_patched_{target_filename}"
+out_file_path = OUTPUT_DIR / f"4-applied_art_patched_{target_filename}"
 cv2.imwrite(str(out_file_path), patched_img_bgr)
 
 print(f"Successfully applied patch! Saved image to: {out_file_path}")

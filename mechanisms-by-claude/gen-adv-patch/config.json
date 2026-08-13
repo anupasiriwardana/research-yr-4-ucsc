@@ -3,13 +3,13 @@
     "clean_dir": "D:\\GitHub\\experiment_data\\bdd100k_images_10k\\train",
     "output_dir": "D:\\GitHub\\yr-4-research\\mechanisms-by-claude\\gen-adv-patch\\bdd100k_patched",
     "patch_detection_dir": "D:\\GitHub\\yr-4-research\\mechanisms-by-claude\\gen-adv-patch\\patch_detections",
-    "specific_clean_image": "",
-    "specific_patched_image": "",
-    "specific_patch_name": "",
+    "specific_clean_image": "0d1fc580-44142e94.jpg",
+    "specific_patched_image": "art_patched_0004a4c0-d4dff0ad.jpg",
+    "specific_patch_name": "art_patch.npy",
     "patch_settings": {
-        "patch_scale": 0.3,
-        "max_iter": 500,
+        "patch_scale": 0.2,
+        "max_iter": 1000,
         "batch_size": 4,
-        "max_images": 16
+        "max_images": 100
     }
 }

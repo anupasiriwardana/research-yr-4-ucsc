@@ -12,6 +12,9 @@ CONFIG_PATH = Path(__file__).parent / "config.json"
 with open(CONFIG_PATH, "r") as f:
     config = json.load(f)
 
+INPUT_SIZE = 640  # keep in sync with calibrate_cls_head.py
+
+
 class ClsHeadMahalanobisDetector:
     def __init__(self, config_data=config):
         self.config = config_data
@@ -20,7 +23,7 @@ class ClsHeadMahalanobisDetector:
         self.adapter = YOLOv8ClsHeadAdapter(self.model.model)
         self.threshold = self.config["detector_settings"]["threshold"]
         self.stride = self.config["detector_settings"]["stride"]
-        
+
         # Load the offline calibration artifact
         profile_path = Path(self.config["profiles_dir"]) / self.config["calibration_profile_filename"]
         if not profile_path.exists():
@@ -28,41 +31,54 @@ class ClsHeadMahalanobisDetector:
 
         with open(profile_path, 'rb') as f:
             self.stats = pickle.load(f)
-            
+
         # Move stats to GPU for fast runtime matrix multiplication
         for cls_id in self.stats:
             self.stats[cls_id]['mean'] = self.stats[cls_id]['mean'].to(self.device)
             self.stats[cls_id]['inv_cov'] = self.stats[cls_id]['inv_cov'].to(self.device)
 
     def detect(self, img_path, save_visualization=True):
-        results = self.model(img_path, verbose=False)[0]
-        
-        # Create a predicted class grid matching the P3 spatial resolution
-        img_h, img_w = results.orig_shape
-        grid_h, grid_w = img_h // self.stride, img_w // self.stride
-        predicted_classes = torch.full((grid_h, grid_w), -1, dtype=torch.long, device=self.device)
-        
-        for box, cls in zip(results.boxes.xyxy, results.boxes.cls):
-            x1, y1, x2, y2 = (box / self.stride).int()
-            x1, y1 = max(0, x1), max(0, y1)
-            x2, y2 = min(grid_w, x2), min(grid_h, y2)
-            predicted_classes[y1:y2, x1:x2] = int(cls.item())
+        orig_img = cv2.imread(str(img_path))
+        if orig_img is None:
+            raise FileNotFoundError(f"Could not read image: {img_path}")
 
-        resized_img = cv2.resize(results.orig_img, (640, 640))
+        # --- FIX 1: one tensor, shared by prediction and activation
+        # extraction. Everything downstream (boxes, class grid, feat,
+        # heatmap, visualization) now lives in this same 640x640 space --
+        # there is only ever one coordinate system in play.
+        orig_img_rgb = cv2.cvtColor(orig_img, cv2.COLOR_BGR2RGB)
+        resized_img = cv2.resize(orig_img_rgb, (INPUT_SIZE, INPUT_SIZE))
         img_tensor = torch.from_numpy(resized_img).permute(2, 0, 1).unsqueeze(0).float().to(self.device) / 255.0
-        activations = self.adapter.get_activations(img_tensor)
-        feat = activations["P3"]
-        
-        B, C, H, W = feat.shape
-        feat_flat = feat.permute(0, 2, 3, 1).reshape(H * W, C)
 
+        results = self.model.predict(source=img_tensor, verbose=False)[0]
+        print(f"size : {results.boxes.xyxy.max()}")
+        activations = self.adapter.get_activations(img_tensor)
+        feat = activations["P3"]  # [1, C, H, W]
+        B, C, H, W = feat.shape
+
+        # Class-assignment grid is sized to match feat exactly -- no more
+        # separately-computed img_h/img_w // stride that could disagree
+        # with feat's actual spatial dimensions.
+        predicted_classes = torch.full((H, W), -1, dtype=torch.long, device=self.device)
+
+        if len(results.boxes) > 0:
+            for box, cls in zip(results.boxes.xyxy, results.boxes.cls):
+                x1, y1, x2, y2 = (box / self.stride).int().tolist()
+                x1 = min(max(x1, 0), W - 1)
+                x2 = min(max(x2, 0), W)
+                y1 = min(max(y1, 0), H - 1)
+                y2 = min(max(y2, 0), H)
+                if x2 > x1 and y2 > y1:
+                    predicted_classes[y1:y2, x1:x2] = int(cls.item())
+
+        feat_flat = feat.permute(0, 2, 3, 1).reshape(H * W, C)
         scores = torch.zeros(H, W, device=self.device)
-        
+
         # Compute Mahalanobis distance strictly on regions with predicted objects
         for idx in range(H * W):
             y, x = divmod(idx, W)
             cls_id = predicted_classes[y, x].item()
-            
+
             if cls_id in self.stats:
                 mean = self.stats[cls_id]['mean']
                 inv_cov = self.stats[cls_id]['inv_cov']
@@ -84,36 +100,36 @@ class ClsHeadMahalanobisDetector:
             if contours:
                 largest_contour = max(contours, key=cv2.contourArea)
                 x, y, w, h = cv2.boundingRect(largest_contour)
-                # Scale up from grid coordinates to pixel coordinates using the stride
+                # Scale up from grid coordinates to pixel coordinates using
+                # the stride -- these pixel coordinates are in the 640x640
+                # space, matching the image this detector actually operated on.
                 bounding_box = (x * self.stride, y * self.stride, (x + w) * self.stride, (y + h) * self.stride)
 
         # --- VISUALIZATION OVERLAY GENERATOR ---
         if save_visualization:
             scores_np = scores.cpu().numpy()
-            
+
             # Normalize Mahalanobis distance scores to [0, 255] range for display
             scores_norm = cv2.normalize(scores_np, None, 0, 255, cv2.NORM_MINMAX, dtype=cv2.CV_8U)
-            
-            # Resize heatmap grid to match full input image resolution
-            heatmap_resized = cv2.resize(scores_norm, (img_w, img_h))
-            
-            # Apply JET color map (Red = High Mahalanobis anomaly score, Blue = Low/Normal)
+
+            # Resize heatmap grid up to the 640x640 canvas -- the same
+            # space the tensor/boxes/feat all share, so no separate
+            # original-resolution tracking is needed anymore.
+            heatmap_resized = cv2.resize(scores_norm, (INPUT_SIZE, INPUT_SIZE))
             colored_heatmap = cv2.applyColorMap(heatmap_resized, cv2.COLORMAP_JET)
-            
-            # Blend 50% heatmap over original image
-            original_bgr = results.orig_img
-            overlay = cv2.addWeighted(original_bgr, 0.5, colored_heatmap, 0.5, 0)
-            
-            # Draw detected bounding box in bright red if an attack was triggered
+
+            # Blend 50% heatmap over the resized (640x640) image
+            overlay = cv2.addWeighted(resized_img, 0.5, colored_heatmap, 0.5, 0)
+
             if is_attack and bounding_box != (0, 0, 0, 0):
                 x1, y1, x2, y2 = bounding_box
                 cv2.rectangle(overlay, (x1, y1), (x2, y2), (0, 0, 255), 3)
-                cv2.putText(overlay, f"PATCH DETECTED (Score: {score_val:.1f})", 
+                cv2.putText(overlay, f"PATCH DETECTED (Score: {score_val:.1f})",
                             (x1, max(y1 - 10, 20)), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
-            
+
             output_dir = Path(self.config["detection_output_dir"])
             output_dir.mkdir(parents=True, exist_ok=True)
-            out_visualization_path = output_dir / f"detected_cls_head_{Path(img_path).name}"
+            out_visualization_path = output_dir / f"clean_detected_cls_head_{Path(img_path).name}"
             cv2.imwrite(str(out_visualization_path), overlay)
             print(f"\n[Visualizer] Heatmap saved to: {out_visualization_path}")
 
@@ -123,17 +139,16 @@ class ClsHeadMahalanobisDetector:
             "bounding_box": bounding_box
         }
 
+
 if __name__ == "__main__":
     detector = ClsHeadMahalanobisDetector(config)
-    
+
     PATCHED_DIR = Path(config["patched_data_dir"])
-    
-    # Priority: Check if a specific test image is defined in config
+
     if config["specific_test_image"]:
         test_image = str(PATCHED_DIR / config["specific_test_image"])
     else:
         patched_files = list(PATCHED_DIR.glob("*.jpg")) + list(PATCHED_DIR.glob("*.png"))
-        # Exclude visual overlays generated in prior runs
         patched_files = [f for f in patched_files if "detected_cls_head" not in f.name]
         test_image = str(patched_files[0]) if patched_files else None
 
