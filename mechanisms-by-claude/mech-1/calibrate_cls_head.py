@@ -22,13 +22,13 @@ stride = config["detector_settings"]["stride"]
 min_samples = config["detector_settings"]["min_calibration_samples"]
 INPUT_SIZE = 640  # keep in sync with cls_head_detector.py
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+device = torch.device('cuda' if torch.cuda.is_available() else ('mps' if torch.backends.mps.is_available() else 'cpu'))
 model = YOLO(config["model_path"]).to(device)
 adapter = YOLOv8ClsHeadAdapter(model.model)
 
 per_class_features = defaultdict(list)
 
-print("Starting offline calibration on clean dataset...")
+print("Starting offline calibration on clean dataset with device:", device)
 n_images = 0
 for img_file in os.listdir(DATA_DIR):
     if not img_file.lower().endswith(('.png', '.jpg', '.jpeg')):

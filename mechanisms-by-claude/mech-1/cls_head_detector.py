@@ -18,7 +18,7 @@ INPUT_SIZE = 640  # keep in sync with calibrate_cls_head.py
 class ClsHeadMahalanobisDetector:
     def __init__(self, config_data=config):
         self.config = config_data
-        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        self.device = torch.device('cuda' if torch.cuda.is_available() else ('mps' if torch.backends.mps.is_available() else 'cpu'))
         self.model = YOLO(self.config["model_path"]).to(self.device)
         self.adapter = YOLOv8ClsHeadAdapter(self.model.model)
         self.threshold = self.config["detector_settings"]["threshold"]
