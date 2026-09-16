@@ -12,7 +12,8 @@ CONFIG_PATH = Path(__file__).parent / "config.json"
 with open(CONFIG_PATH, "r") as f:
     config = json.load(f)
 
-INPUT_SIZE = 640  # keep in sync with calibrate_cls_head.py
+INPUT_WIDTH = 640
+INPUT_HEIGHT = 384   # 16:9 ratio, divisible by 32
 
 
 class ClsHeadMahalanobisDetector:
@@ -47,7 +48,7 @@ class ClsHeadMahalanobisDetector:
         # heatmap, visualization) now lives in this same 640x640 space --
         # there is only ever one coordinate system in play.
         orig_img_rgb = cv2.cvtColor(orig_img, cv2.COLOR_BGR2RGB)
-        resized_img = cv2.resize(orig_img_rgb, (INPUT_SIZE, INPUT_SIZE))
+        resized_img = cv2.resize(orig_img_rgb, (INPUT_WIDTH, INPUT_HEIGHT))
         img_tensor = torch.from_numpy(resized_img).permute(2, 0, 1).unsqueeze(0).float().to(self.device) / 255.0
 
         results = self.model.predict(source=img_tensor, verbose=False)[0]
@@ -115,7 +116,7 @@ class ClsHeadMahalanobisDetector:
             # Resize heatmap grid up to the 640x640 canvas -- the same
             # space the tensor/boxes/feat all share, so no separate
             # original-resolution tracking is needed anymore.
-            heatmap_resized = cv2.resize(scores_norm, (INPUT_SIZE, INPUT_SIZE))
+            heatmap_resized = cv2.resize(scores_norm, (INPUT_WIDTH, INPUT_HEIGHT))
             colored_heatmap = cv2.applyColorMap(heatmap_resized, cv2.COLORMAP_JET)
 
             # Blend 50% heatmap over the resized (640x640) image

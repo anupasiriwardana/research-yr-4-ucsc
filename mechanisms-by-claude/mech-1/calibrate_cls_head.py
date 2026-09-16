@@ -20,7 +20,8 @@ PROFILE_DIR.mkdir(parents=True, exist_ok=True)
 profile_path = PROFILE_DIR / config["calibration_profile_filename"]
 stride = config["detector_settings"]["stride"]
 min_samples = config["detector_settings"]["min_calibration_samples"]
-INPUT_SIZE = 640  # keep in sync with cls_head_detector.py
+INPUT_WIDTH = 640
+INPUT_HEIGHT = 384   # 16:9 ratio, divisible by 32
 
 device = torch.device('cuda' if torch.cuda.is_available() else ('mps' if torch.backends.mps.is_available() else 'cpu'))
 model = YOLO(config["model_path"]).to(device)
@@ -43,7 +44,7 @@ for img_file in os.listdir(DATA_DIR):
     # --- FIX 1: build ONE tensor and use it for both prediction and
     # activation extraction, so boxes and feat share a coordinate system.
     orig_img_rgb = cv2.cvtColor(orig_img, cv2.COLOR_BGR2RGB)
-    resized_img = cv2.resize(orig_img_rgb, (INPUT_SIZE, INPUT_SIZE))
+    resized_img = cv2.resize(orig_img_rgb, (INPUT_WIDTH, INPUT_HEIGHT))
     img_tensor = torch.from_numpy(resized_img).permute(2, 0, 1).unsqueeze(0).float().to(device) / 255.0
 
     results = model.predict(source=img_tensor, verbose=False)[0]
