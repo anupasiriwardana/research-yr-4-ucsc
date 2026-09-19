@@ -1,0 +1,13 @@
+{
+  "model_path": "ape_detection/models/yolov5s.pt",
+  "test_images_dir": "ape_detection/test_images",
+  "detection_output_dir": "ape_detection/runs/detect_v5",
+  "input_size": [640, 384],
+  "target_classes": [2],
+  "defense_settings": {
+    "enabled": true,
+    "anomaly_tau": 5.0,
+    "layer_index": 2,
+    "heatmap_dir": "ape_detection/runs/defense_heatmaps_v5"
+  }
+}
