@@ -1,15 +1,32 @@
 {
     "model_path": "yolov8n.pt",
-    "clean_dir": "D:\\GitHub\\experiment_data\\bdd100k_images_10k\\train",
+    "clean_dir": "D:\\GitHub\\experiment_data\\bdd100k_images_10k\\test",
+    "patch_dir": "D:\\GitHub\\yr-4-research\\mechanisms-by-claude\\gen-adv-patch\\patches",
     "output_dir": "D:\\GitHub\\yr-4-research\\mechanisms-by-claude\\gen-adv-patch\\bdd100k_patched",
     "patch_detection_dir": "D:\\GitHub\\yr-4-research\\mechanisms-by-claude\\gen-adv-patch\\patch_detections",
-    "specific_clean_image": "0d1fc580-44142e94.jpg",
-    "specific_patched_image": "art_patched_0004a4c0-d4dff0ad.jpg",
-    "specific_patch_name": "art_patch.npy",
+    "specific_clean_image": "ac6e638d-7c84846d.jpg",
+    "specific_patched_image": "applied_art_patch_v6_ac6e638d-7c84846d.jpg",
+    "specific_patch_name": "art_patch_v6.npy",
     "patch_settings": {
         "patch_scale": 0.2,
-        "max_iter": 1000,
+        "patch_size": 150,
+        "num_steps": 1000,
+        "learning_rate": 0.02,
+        "conf_thresh": 0.25,
+        "rotation_max": 22.5,
+        "scale_min": 0.2,
+        "scale_max": 0.4,
+        "placement_jitter": 0.1,
+        "target_class": 2,
         "batch_size": 4,
-        "max_images": 100
+        "gpu_batch_size": 20,
+        "max_images": 2000
+    },
+    "apply_settings": {
+        "placement_mode": "auto",
+        "manual_x": 320,
+        "manual_y": 400,
+        "scale": 0.3,
+        "rotation": 0.0
     }
 }
