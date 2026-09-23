@@ -3,3 +3,4 @@ __pycache__/
 runs
 test_images
 models
+.DS_Store
