@@ -1,4 +1,4 @@
-mechanisms-by-claude/gen-adv-patch/bdd100k_patched/
-mechanisms-by-claude/gen-adv-patch/patch_detections/
+**/bdd100k_patched/*
+**/patch_detections/*
 
-**/detections/
+**/detections/*

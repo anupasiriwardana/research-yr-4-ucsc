@@ -40,10 +40,6 @@ CONFIG_PATH = Path(__file__).parent / "config.json"
 with open(CONFIG_PATH, "r") as f:
     config = json.load(f)
 
-PATCHED_DIR = Path(config["patched_data_dir"])
-CLEAN_DIR = Path(config["clean_data_dir"])
-TEST_IMG_PATH = PATCHED_DIR
-
 INPUT_SIZE = 640  # keep in sync with calibrate_cls_head.py
 
 
@@ -126,8 +122,44 @@ class ClsHeadMahalanobisDetector:
             contours, _ = cv2.findContours(mask_np, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
             if contours:
                 largest_contour = max(contours, key=cv2.contourArea)
-                x, y, w, h = cv2.boundingRect(largest_contour)
-                bounding_box = (x * self.stride, y * self.stride, (x + w) * self.stride, (y + h) * self.stride)
+
+                # Isolate just this connected component, so unrelated
+                # anomalous cells elsewhere in the image don't bias the
+                # moment calculation below.
+                component_mask = np.zeros_like(mask_np)
+                cv2.drawContours(component_mask, [largest_contour], -1, 255, thickness=cv2.FILLED)
+                component_bool = torch.from_numpy(component_mask > 0).to(scores.device)
+
+                # --- Moment-based box, not erosion ---
+                # Weight each cell in this component by how far ABOVE
+                # threshold its score is (its "excess" anomaly), then
+                # take the weighted centroid and weighted spread
+                # (like fitting a blob to the score mass, rather than
+                # eroding whatever raw shape the binary mask happens to
+                # have). This is symmetric around the centroid BY
+                # CONSTRUCTION -- a lopsided or noisy raw blob can no
+                # longer produce a box that's shifted or shrunk from
+                # only one side, and the spread naturally scales with
+                # each blob's own size instead of using one fixed
+                # global erosion amount for every patch.
+                ys, xs = torch.where(component_bool)
+                weights = (scores[ys, xs] - self.threshold).clamp(min=0) + 1e-6
+
+                cx = (xs.float() * weights).sum() / weights.sum()
+                cy = (ys.float() * weights).sum() / weights.sum()
+                std_x = ((xs.float() - cx) ** 2 * weights).sum().div(weights.sum()).sqrt()
+                std_y = ((ys.float() - cy) ** 2 * weights).sum().div(weights.sum()).sqrt()
+
+                spread_multiplier = self.config["detector_settings"].get("box_spread_multiplier", 1.5)
+                half_w = max(std_x.item() * spread_multiplier, 1.0)
+                half_h = max(std_y.item() * spread_multiplier, 1.0)
+
+                x1 = max(0, int(round(cx.item() - half_w)))
+                x2 = min(W, int(round(cx.item() + half_w)))
+                y1 = max(0, int(round(cy.item() - half_h)))
+                y2 = min(H, int(round(cy.item() + half_h)))
+
+                bounding_box = (x1 * self.stride, y1 * self.stride, x2 * self.stride, y2 * self.stride)
 
         if save_visualization:
             scores_np = scores.cpu().numpy()
@@ -155,7 +187,7 @@ class ClsHeadMahalanobisDetector:
 
             output_dir = Path(self.config["detection_output_dir"])
             output_dir.mkdir(parents=True, exist_ok=True)
-            out_visualization_path = output_dir / f"detected_{Path(img_path).name}"
+            out_visualization_path = output_dir / f"3-tightV2_{Path(img_path).name}"
             cv2.imwrite(str(out_visualization_path), overlay)
             print(f"\n[Visualizer] Heatmap saved to: {out_visualization_path}")
 
@@ -169,8 +201,10 @@ class ClsHeadMahalanobisDetector:
 if __name__ == "__main__":
     detector = ClsHeadMahalanobisDetector(config)
 
+    PATCHED_DIR = Path(config["patched_data_dir"])
+
     if config["specific_test_image"]:
-        test_image = str(TEST_IMG_PATH / config["specific_test_image"])
+        test_image = str(PATCHED_DIR / config["specific_test_image"])
     else:
         patched_files = list(PATCHED_DIR.glob("*.jpg")) + list(PATCHED_DIR.glob("*.png"))
         patched_files = [f for f in patched_files if "detected_cls_head" not in f.name]

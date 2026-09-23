@@ -3,14 +3,15 @@
     "clean_data_dir": "D:\\GitHub\\experiment_data\\bdd100k_images_10k\\train",
     "profiles_dir": "D:\\GitHub\\yr-4-research\\mechanisms-by-claude\\mech-1-updated\\profiles",
     "calibration_profile_filename": "cls_head_calibration_p3_mech1_updated.pkl",
-    "patched_data_dir": "D:\\GitHub\\yr-4-research\\mechanisms-by-claude\\gen-adv-patch\\bdd100k_patched",
+    "patched_data_dir": "D:\\GitHub\\yr-4-research\\mechanisms-by-claude\\gen-adv-patch-hiding\\bdd100k_patched",
     "detection_output_dir": "D:\\GitHub\\yr-4-research\\mechanisms-by-claude\\mech-1-updated\\detections",
-    "specific_test_image": "applied_art_patch_v6_0c113798-00000000.jpg",
+    "specific_test_image": "applied_art_patch_v6_ac6e638d-7c84846d.jpg",
     "detector_settings": {
         "threshold": 25.0,
         "stride": 8,
         "min_calibration_samples": 100,
         "background_class_id": -1,
-        "background_samples_per_image": 50
+        "background_samples_per_image": 50,
+        "box_spread_multiplier": 1.7
     }
 }

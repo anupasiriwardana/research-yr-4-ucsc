@@ -12,9 +12,14 @@ By evaluating Mahalanobis distances strictly on intermediate classification acti
 This module runs in the primary research environment (`yolo_adv`).
 
 ```bash
+#create the enviorenment
 conda deactivate
+conda create -n yolo_adv=3.10 -y
 conda activate yolo_adv
-pip install ultralytics opencv-python torch torchvision pandas
+
+# Core dependencies
+conda install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia -y   # match your CUDA version if using GPU
+pip install ultralytics opencv-python pandas
 ```
 
 ---
