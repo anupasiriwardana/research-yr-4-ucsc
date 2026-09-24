@@ -1,0 +1,20 @@
+{
+    "model_path": "yolov8n.pt",
+    "clean_data_dir": "D:\\GitHub\\experiment_data\\bdd100k_images_10k\\test",
+    "profiles_dir": "D:\\GitHub\\yr-4-research\\mechanisms-by-claude\\mech-4\\profiles",
+    "calibration_profile_filename": "energy_calibration_v4(2-3).pkl",
+    "patched_data_dir": "D:\\GitHub\\yr-4-research\\mechanisms-by-claude\\gen-adv-patch-hiding\\bdd100k_patched",
+    "detection_output_dir": "D:\\GitHub\\yr-4-research\\mechanisms-by-claude\\mech-4\\detections",
+    "specific_test_image": "ccece5b4-960bf7a9.jpg",
+    "detector_settings": {
+        "tap_layers": [2, 3],
+        "stride_per_layer": {
+            "0": 2,
+            "1": 4,
+            "2": 4,
+            "3": 8
+        },
+        "sigma_multiplier": 2.1,
+        "min_region_cells": 4
+    }
+}

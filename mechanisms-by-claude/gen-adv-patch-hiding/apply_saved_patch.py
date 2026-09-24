@@ -176,7 +176,8 @@ patched_image = image * (1 - warped_mask) + warped_patch * warped_mask
 # 6. Save output
 out_np = (patched_image.permute(1, 2, 0).cpu().numpy() * 255.0).clip(0, 255).astype(np.uint8)
 out_bgr = cv2.cvtColor(out_np, cv2.COLOR_RGB2BGR)
-out_file_path = OUTPUT_DIR / f"applied_{Path(config['specific_patch_name']).stem}_{target_filename}"
+# out_file_path = OUTPUT_DIR / f"1-{Path(config['specific_patch_name']).stem}_{target_filename}"
+out_file_path = OUTPUT_DIR / f"5-patched-{target_filename}"
 cv2.imwrite(str(out_file_path), out_bgr)
 
 print(f"Successfully applied patch! Saved image to: {out_file_path}")

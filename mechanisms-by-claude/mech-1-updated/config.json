@@ -1,11 +1,11 @@
 {
     "model_path": "yolov8n.pt",
-    "clean_data_dir": "D:\\GitHub\\experiment_data\\bdd100k_images_10k\\train",
+    "clean_data_dir": "D:\\GitHub\\experiment_data\\bdd100k_images_10k\\test",
     "profiles_dir": "D:\\GitHub\\yr-4-research\\mechanisms-by-claude\\mech-1-updated\\profiles",
     "calibration_profile_filename": "cls_head_calibration_p3_mech1_updated.pkl",
     "patched_data_dir": "D:\\GitHub\\yr-4-research\\mechanisms-by-claude\\gen-adv-patch-hiding\\bdd100k_patched",
     "detection_output_dir": "D:\\GitHub\\yr-4-research\\mechanisms-by-claude\\mech-1-updated\\detections",
-    "specific_test_image": "applied_art_patch_v6_ac6e638d-7c84846d.jpg",
+    "specific_test_image": "d3cb8fe9-54ba1bbc.jpg",
     "detector_settings": {
         "threshold": 25.0,
         "stride": 8,

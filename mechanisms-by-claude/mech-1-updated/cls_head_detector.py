@@ -42,7 +42,7 @@ with open(CONFIG_PATH, "r") as f:
 
 PATCHED_DIR = Path(config["patched_data_dir"])
 CLEAN_DIR = Path(config["clean_data_dir"])
-TEST_IMG_PATH = PATCHED_DIR
+TEST_IMG_PATH = CLEAN_DIR
 
 INPUT_SIZE = 640  # keep in sync with calibrate_cls_head.py
 
@@ -155,7 +155,7 @@ class ClsHeadMahalanobisDetector:
 
             output_dir = Path(self.config["detection_output_dir"])
             output_dir.mkdir(parents=True, exist_ok=True)
-            out_visualization_path = output_dir / f"detected_{Path(img_path).name}"
+            out_visualization_path = output_dir / f"11-clean-mech1_{Path(img_path).name}"
             cv2.imwrite(str(out_visualization_path), overlay)
             print(f"\n[Visualizer] Heatmap saved to: {out_visualization_path}")
 
