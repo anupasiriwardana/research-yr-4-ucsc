@@ -199,7 +199,7 @@ class ClsHeadMahalanobisDetector:
 
             output_dir = Path(self.config["detection_output_dir"])
             output_dir.mkdir(parents=True, exist_ok=True)
-            out_visualization_path = output_dir / f"16-clean-mech1_{img_name}"
+            out_visualization_path = output_dir / f"36-clean-mech1_{img_name}"
             cv2.imwrite(str(out_visualization_path), overlay)
             print(f"\n[Visualizer] Heatmap saved to: {out_visualization_path}")
 

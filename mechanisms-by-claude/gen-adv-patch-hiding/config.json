@@ -4,8 +4,8 @@
     "patch_dir": "D:\\GitHub\\yr-4-research\\mechanisms-by-claude\\gen-adv-patch-hiding\\patches",
     "output_dir": "D:\\GitHub\\yr-4-research\\mechanisms-by-claude\\gen-adv-patch-hiding\\bdd100k_patched",
     "patch_detection_dir": "D:\\GitHub\\yr-4-research\\mechanisms-by-claude\\gen-adv-patch-hiding\\patch_detections",
-    "specific_clean_image": "b6a6df2d-4354e644.jpg",
-    "specific_patched_image": "12-multi-patched_b6a6df2d-4354e644.jpg",
+    "specific_clean_image": "ccf42930-03bcfe59.jpg",
+    "specific_patched_image": "20-multi-patched_ccf42930-03bcfe59.jpg",
     "specific_patch_name": "art_patch_v7(0.1-0.2).npy",
     "patch_settings": {
         "patch_scale": 0.15,
