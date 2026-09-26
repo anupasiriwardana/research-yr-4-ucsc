@@ -4,18 +4,18 @@
     "patch_dir": "D:\\GitHub\\yr-4-research\\mechanisms-by-claude\\gen-adv-patch-hiding\\patches",
     "output_dir": "D:\\GitHub\\yr-4-research\\mechanisms-by-claude\\gen-adv-patch-hiding\\bdd100k_patched",
     "patch_detection_dir": "D:\\GitHub\\yr-4-research\\mechanisms-by-claude\\gen-adv-patch-hiding\\patch_detections",
-    "specific_clean_image": "b503cd8a-00000000.jpg",
-    "specific_patched_image": "5-patched-b503cd8a-00000000.jpg",
-    "specific_patch_name": "art_patch_v6.npy",
+    "specific_clean_image": "b6a6df2d-4354e644.jpg",
+    "specific_patched_image": "12-multi-patched_b6a6df2d-4354e644.jpg",
+    "specific_patch_name": "art_patch_v7(0.1-0.2).npy",
     "patch_settings": {
-        "patch_scale": 0.2,
+        "patch_scale": 0.15,
         "patch_size": 150,
         "num_steps": 1000,
         "learning_rate": 0.02,
         "conf_thresh": 0.25,
         "rotation_max": 22.5,
-        "scale_min": 0.2,
-        "scale_max": 0.4,
+        "scale_min": 0.1,
+        "scale_max": 0.2,
         "placement_jitter": 0.1,
         "target_class": 2,
         "batch_size": 4,
@@ -23,10 +23,12 @@
         "max_images": 2000
     },
     "apply_settings": {
-        "placement_mode": "auto",
+        "placement_mode": "multi",
         "manual_x": 320,
         "manual_y": 400,
-        "scale": 0.3,
-        "rotation": 0.0
+        "scale": 0.15,
+        "rotation": 0.0,
+        "multi_max_patches": 3,
+        "multi_min_separation": 0.3
     }
 }

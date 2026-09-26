@@ -5,13 +5,14 @@
     "calibration_profile_filename": "cls_head_calibration_p3_mech1_updated.pkl",
     "patched_data_dir": "D:\\GitHub\\yr-4-research\\mechanisms-by-claude\\gen-adv-patch-hiding\\bdd100k_patched",
     "detection_output_dir": "D:\\GitHub\\yr-4-research\\mechanisms-by-claude\\mech-1-updated\\detections",
-    "specific_test_image": "d3cb8fe9-54ba1bbc.jpg",
+    "specific_test_image": "af0a7e94-deae0001.jpg",
     "detector_settings": {
         "threshold": 25.0,
         "stride": 8,
         "min_calibration_samples": 100,
         "background_class_id": -1,
         "background_samples_per_image": 50,
-        "box_spread_multiplier": 1.7
+        "box_spread_multiplier": 1.5,
+        "min_region_cells": 4
     }
 }

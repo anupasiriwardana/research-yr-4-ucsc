@@ -48,11 +48,7 @@ with open(CONFIG_PATH, "r") as f:
 DATA_DIR = Path(config["clean_dir"])
 OUTPUT_DIR = Path(config["output_dir"])
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-
-PATCH_DIR = Path(config["output_dir"])
-PATCH_DIR.mkdir(parents=True, exist_ok=True)
-NEW_PATCH_NAME = "art_patch_v7(0.1-0.2).npy"
-STANDALONE_PATCH_NAME = "art_patch_standalone_v7.png"
+NEW_PATCH_NAME = "art_patch.npy"
 
 PS = config["patch_settings"]
 INPUT_SIZE = 640
@@ -137,23 +133,32 @@ def select_target_object(preds, conf_thresh=CONF_THRESH, target_class=None):
 
 
 def build_patch_overlay(patch, canvas_hw, cx, cy, angle_deg, scale):
-    """Differentiably places `patch` (C,ph,pw) onto a (C,H,W) canvas via
-    an affine warp -- rotated by angle_deg, scaled by `scale` (relative
-    to canvas size), centered at normalized coords (cx, cy) in [-1, 1].
-    Returns (warped_patch, warped_mask), both shaped for direct
-    compositing onto the target image. Differentiable w.r.t. `patch`,
-    so gradients flow back into the patch's pixels during training."""
+    """FIXED: see apply_saved_patch.py's version of this function for
+    the full explanation -- the translation terms now correctly divide
+    by `scale` and combine with rotation, so the patch actually renders
+    centered at canvas position (cx, cy). The previous version's
+    translation terms were off by a factor of scale, meaning the patch
+    consistently rendered much closer to canvas center than the
+    intended (cx, cy) -- for the placement-jitter training added
+    around each image's own detected object, this means training was
+    not actually placing the patch as precisely on the object as
+    intended. RETRAIN after this fix -- a patch already trained under
+    the old, incorrect placement is not guaranteed to behave the same
+    way once composited through the corrected version.
+    """
     C, ph, pw = patch.shape
     H, W = canvas_hw
-    theta = torch.deg2rad(torch.tensor(float(angle_deg), device=patch.device))
-    cos, sin = torch.cos(theta), torch.sin(theta)
+    theta_rad = torch.deg2rad(torch.tensor(float(angle_deg), device=patch.device))
+    cos, sin = torch.cos(theta_rad), torch.sin(theta_rad)
+    cx_t = torch.tensor(float(cx), device=patch.device)
+    cy_t = torch.tensor(float(cy), device=patch.device)
 
-    # grid_sample convention: this matrix maps OUTPUT (canvas) coords
-    # to INPUT (patch) coords, so dividing by `scale` here makes the
-    # patch appear LARGER on the canvas as `scale` increases.
+    tx = -(cos * cx_t + sin * cy_t) / scale
+    ty = (sin * cx_t - cos * cy_t) / scale
+
     affine = torch.stack([
-        torch.stack([cos / scale, -sin / scale, torch.tensor(cx, device=patch.device)]),
-        torch.stack([sin / scale,  cos / scale, torch.tensor(cy, device=patch.device)]),
+        torch.stack([cos / scale, sin / scale, tx]),
+        torch.stack([-sin / scale, cos / scale, ty]),
     ]).unsqueeze(0).float()
 
     grid = F.affine_grid(affine, size=(1, C, H, W), align_corners=False)
@@ -273,12 +278,13 @@ for step in range(NUM_STEPS):
 # reuse) AND as a standalone image file, so you can paste it manually
 # onto any image in an editor, or hand it to someone without a Python
 # dependency to open it.
-np.save(PATCH_DIR / NEW_PATCH_NAME, patch.detach().cpu().numpy())
-print(f"\nSaved optimized patch (array) to {PATCH_DIR / NEW_PATCH_NAME}")
+np.save(OUTPUT_DIR / NEW_PATCH_NAME, patch.detach().cpu().numpy())
+print(f"\nSaved optimized patch (array) to {OUTPUT_DIR / NEW_PATCH_NAME}")
 
 patch_img_np = (patch.detach().permute(1, 2, 0).cpu().numpy() * 255.0).clip(0, 255).astype(np.uint8)
 patch_img_bgr = cv2.cvtColor(patch_img_np, cv2.COLOR_RGB2BGR)
-patch_image_path = PATCH_DIR / STANDALONE_PATCH_NAME
+STANDALONE_PATCH_NAME = "art_patch_standalone.png"
+patch_image_path = OUTPUT_DIR / STANDALONE_PATCH_NAME
 cv2.imwrite(str(patch_image_path), patch_img_bgr)
 print(f"Saved standalone patch image to {patch_image_path}")
 
@@ -320,7 +326,7 @@ patched_test = test_image * (1 - warped_mask) + warped_patch * warped_mask
 
 out_np = (patched_test.permute(1, 2, 0).cpu().numpy() * 255.0).astype(np.uint8)
 out_bgr = cv2.cvtColor(out_np, cv2.COLOR_RGB2BGR)
-out_path = OUTPUT_DIR / f"art_patched_v2_{demo_filename}"
+out_path = OUTPUT_DIR / f"art_patched_{demo_filename}"
 cv2.imwrite(str(out_path), out_bgr)
 print(f"Patched test image saved to: {out_path}")
 print("\nNext: run verify_patch_efficacy.py to check whether the real "
