@@ -36,8 +36,8 @@ from pathlib import Path
 class FeatureEnergyDetector:
     def __init__(self, adapter, device, tap_layers: list, stride_per_layer: dict,
                  calibration_stats: dict, sigma_multiplier: float = 5.5,
-                 min_region_cells: int = 4, input_size: int = 640,
-                 detection_output_dir: str = None):
+                 min_region_cells: int = 4, min_region_score: float = 2.0,
+                 input_size: int = 640, detection_output_dir: str = None):
         self.adapter = adapter
         self.device = device
         self.tap_layers = tap_layers
@@ -45,6 +45,14 @@ class FeatureEnergyDetector:
         self.stats = calibration_stats                     # {layer_idx: {'mean', 'std'}}, from calibrate_energy_stats.py
         self.sigma_multiplier = sigma_multiplier
         self.min_region_cells = min_region_cells
+        # Minimum peak layer-agreement score a region must reach to
+        # count -- the targeted fix for pervasive low-level noise (see
+        # score_from_activations). Distinct from min_layer_agreement,
+        # which was applied to the WHOLE mask before labeling and
+        # broke small legitimate regions; this is applied per-region,
+        # after labeling, so a region's own peak score decides its
+        # fate rather than a blanket cutoff shrinking everything first.
+        self.min_region_score = min_region_score
         self.input_size = input_size
         self.detection_output_dir = Path(detection_output_dir) if detection_output_dir else None
 
@@ -126,27 +134,31 @@ class FeatureEnergyDetector:
         # a region's outline and can noticeably underestimate the true
         # size of small or thin regions.
         num_labels, labels_im, stats_cc, _ = cv2.connectedComponentsWithStats(mask_np, connectivity=8)
-        significant_labels = [
-            i for i in range(1, num_labels)  # label 0 is background
-            if stats_cc[i, cv2.CC_STAT_AREA] >= self.min_region_cells
-        ]
-
-        is_attack = len(significant_labels) > 0
-
-        # Report EVERY significant component as its own box, not just
-        # the largest -- same fix as Mechanism 1, for the same reason:
-        # separate patches on different objects produce separate
-        # regions, and picking only the biggest silently drops the rest.
-        # Each entry gets its OWN score (max layer-agreement count
-        # within that specific region), not the global max repeated.
         labels_im_t = torch.from_numpy(labels_im).to(self.device)
+
+        # Filter on BOTH area and per-region score, computed per
+        # candidate region -- not a mask-wide threshold applied before
+        # labeling (that's what broke min_layer_agreement last time: a
+        # stricter mask-wide cutoff shrank regions before area could
+        # even be checked). Score filtering here is the direct,
+        # targeted fix for pervasive low-level noise: real patches
+        # scored 2-3 layers agreeing in your own measurements, while
+        # most noise regions sit at 1 -- raising the area floor alone
+        # can't reliably separate them, since some noise blobs are
+        # already comparable in size to genuine small patches.
         bounding_boxes = []
-        for i in significant_labels:
+        for i in range(1, num_labels):  # label 0 is background
+            area = stats_cc[i, cv2.CC_STAT_AREA]
+            if area < self.min_region_cells:
+                continue
+            region_score = aggregated_mask[labels_im_t == i].max().item()
+            if region_score < self.min_region_score:
+                continue
+
             x = int(stats_cc[i, cv2.CC_STAT_LEFT])
             y = int(stats_cc[i, cv2.CC_STAT_TOP])
             w = int(stats_cc[i, cv2.CC_STAT_WIDTH])
             h = int(stats_cc[i, cv2.CC_STAT_HEIGHT])
-            region_score = aggregated_mask[labels_im_t == i].max().item()
             bounding_boxes.append({
                 "box": (x * self.base_stride, y * self.base_stride,
                         (x + w) * self.base_stride, (y + h) * self.base_stride),
@@ -154,6 +166,7 @@ class FeatureEnergyDetector:
             })
 
         score_val = max((b["score"] for b in bounding_boxes), default=0.0)
+        is_attack = len(bounding_boxes) > 0
 
         if save_visualization:
             agg_np = aggregated_mask.cpu().numpy()
@@ -171,7 +184,7 @@ class FeatureEnergyDetector:
 
             if self.detection_output_dir:
                 self.detection_output_dir.mkdir(parents=True, exist_ok=True)
-                out_path = self.detection_output_dir / f"144-patched-mech4_{img_name}"
+                out_path = self.detection_output_dir / f"159-patched-mech4_{img_name}"
                 overlay_bgr = cv2.cvtColor(overlay, cv2.COLOR_RGB2BGR)
                 cv2.imwrite(str(out_path), overlay_bgr)
                 print(f"[Visualizer] Heatmap saved to: {out_path}")
@@ -230,12 +243,12 @@ if __name__ == "__main__":
         stride_per_layer=stride_per_layer,
         calibration_stats=calibration_stats,
         sigma_multiplier=ds.get("sigma_multiplier", 5.5),
+        min_region_score=ds.get("min_region_score", 2.0),
         min_region_cells=ds.get("min_region_cells", 4),
         detection_output_dir=config["detection_output_dir"],
     )
 
     PATCHED_DIR = Path(config["patched_data_dir"])
-    CLEAN_DIR = Path(config["clean_data_dir"])
     if config["specific_test_image"]:
         test_image = str(PATCHED_DIR / config["specific_test_image"])
     else:

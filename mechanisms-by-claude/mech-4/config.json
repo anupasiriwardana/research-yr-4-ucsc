@@ -5,7 +5,7 @@
     "calibration_profile_filename": "energy_calibration_v3(1-2-3).pkl",
     "patched_data_dir": "D:\\GitHub\\yr-4-research\\mechanisms-by-claude\\gen-adv-patch-hiding\\bdd100k_patched",
     "detection_output_dir": "D:\\GitHub\\yr-4-research\\mechanisms-by-claude\\mech-4\\detections",
-    "specific_test_image": "12-multi-patched_b6a6df2d-4354e644.jpg",
+    "specific_test_image": "21-multi-patched_ccf42930-03bcfe59.jpg",
     "detector_settings": {
         "tap_layers": [1, 2, 3],
         "stride_per_layer": {
@@ -14,7 +14,8 @@
             "2": 4,
             "3": 8
         },
-        "sigma_multiplier": 2.1,
-        "min_region_cells": 4
+        "sigma_multiplier": 4.0,
+        "min_region_cells": 4,
+        "min_region_score": 3.0
     }
 }

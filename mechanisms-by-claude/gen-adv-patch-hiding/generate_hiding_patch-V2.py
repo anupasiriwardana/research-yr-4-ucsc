@@ -47,8 +47,9 @@ with open(CONFIG_PATH, "r") as f:
 
 DATA_DIR = Path(config["clean_dir"])
 OUTPUT_DIR = Path(config["output_dir"])
-OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-NEW_PATCH_NAME = "art_patch.npy"
+PATCH_DIR = Path(config["patch_dir"])
+PATCH_DIR.mkdir(parents=True, exist_ok=True)
+NEW_PATCH_NAME = "art_patch_v8.npy"
 
 PS = config["patch_settings"]
 INPUT_SIZE = 640
@@ -278,13 +279,13 @@ for step in range(NUM_STEPS):
 # reuse) AND as a standalone image file, so you can paste it manually
 # onto any image in an editor, or hand it to someone without a Python
 # dependency to open it.
-np.save(OUTPUT_DIR / NEW_PATCH_NAME, patch.detach().cpu().numpy())
-print(f"\nSaved optimized patch (array) to {OUTPUT_DIR / NEW_PATCH_NAME}")
+np.save(PATCH_DIR / NEW_PATCH_NAME, patch.detach().cpu().numpy())
+print(f"\nSaved optimized patch (array) to {PATCH_DIR / NEW_PATCH_NAME}")
 
 patch_img_np = (patch.detach().permute(1, 2, 0).cpu().numpy() * 255.0).clip(0, 255).astype(np.uint8)
 patch_img_bgr = cv2.cvtColor(patch_img_np, cv2.COLOR_RGB2BGR)
-STANDALONE_PATCH_NAME = "art_patch_standalone.png"
-patch_image_path = OUTPUT_DIR / STANDALONE_PATCH_NAME
+STANDALONE_PATCH_NAME = "art_patch_standalone_v8.png"
+patch_image_path = PATCH_DIR / STANDALONE_PATCH_NAME
 cv2.imwrite(str(patch_image_path), patch_img_bgr)
 print(f"Saved standalone patch image to {patch_image_path}")
 

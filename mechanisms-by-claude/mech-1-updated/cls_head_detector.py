@@ -199,7 +199,7 @@ class ClsHeadMahalanobisDetector:
 
             output_dir = Path(self.config["detection_output_dir"])
             output_dir.mkdir(parents=True, exist_ok=True)
-            out_visualization_path = output_dir / f"36-clean-mech1_{img_name}"
+            out_visualization_path = output_dir / f"39-patched-mech1_{img_name}"
             cv2.imwrite(str(out_visualization_path), overlay)
             print(f"\n[Visualizer] Heatmap saved to: {out_visualization_path}")
 
@@ -238,7 +238,7 @@ if __name__ == "__main__":
     CLEAN_DIR = Path(config["clean_data_dir"])
 
     if config["specific_test_image"]:
-        test_image = str(CLEAN_DIR / config["specific_test_image"])
+        test_image = str(PATCHED_DIR / config["specific_test_image"])
     else:
         patched_files = list(PATCHED_DIR.glob("*.jpg")) + list(PATCHED_DIR.glob("*.png"))
         patched_files = [f for f in patched_files if "detected_cls_head" not in f.name]
