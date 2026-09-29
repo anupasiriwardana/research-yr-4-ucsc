@@ -2,3 +2,5 @@
 **/patch_detections/*
 
 **/detections/*
+
+**/__pycache__/*

@@ -42,12 +42,17 @@ import pickle
 import numpy as np
 from pathlib import Path
 from ultralytics import YOLO
-from cls_head_adapter import YOLOv8ClsHeadAdapter
+from ultralytics_cls_head_adapter import UltralyticsClsHeadAdapter
 
 # 1. Load Configuration
 CONFIG_PATH = Path(__file__).parent / "config.json"
 with open(CONFIG_PATH, "r") as f:
     config = json.load(f)
+
+CLEAN_DIR = Path(config["clean_data_dir"])
+PATCHED_DIR = Path(config["patched_data_dir"])
+TEST_DIR = CLEAN_DIR  # for now, just run on the patched set (can be changed to CLEAN_DIR for clean images)
+OUTPUT_FILENAME_TEMPLATE = "14-clean_{img_name}"
 
 INPUT_SIZE = 640  # keep in sync with calibrate_cls_head.py
 
@@ -61,7 +66,8 @@ class ClsHeadMahalanobisDetector:
         self.config = config_data
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.model = YOLO(self.config["model_path"]).to(self.device)
-        self.adapter = YOLOv8ClsHeadAdapter(self.model.model)
+        self.adapter = UltralyticsClsHeadAdapter(self.model.model)
+        print(self.adapter.describe())  # sanity check -- confirm this matches the model in use
         self.threshold = self.config["detector_settings"]["threshold"]
         self.stride = self.config["detector_settings"]["stride"]
 
@@ -199,7 +205,7 @@ class ClsHeadMahalanobisDetector:
 
             output_dir = Path(self.config["detection_output_dir"])
             output_dir.mkdir(parents=True, exist_ok=True)
-            out_visualization_path = output_dir / f"43-patched-mech1_{img_name}"
+            out_visualization_path = output_dir / OUTPUT_FILENAME_TEMPLATE.format(img_name=img_name)
             cv2.imwrite(str(out_visualization_path), overlay)
             print(f"\n[Visualizer] Heatmap saved to: {out_visualization_path}")
 
@@ -234,11 +240,8 @@ class ClsHeadMahalanobisDetector:
 if __name__ == "__main__":
     detector = ClsHeadMahalanobisDetector(config)
 
-    PATCHED_DIR = Path(config["patched_data_dir"])
-    CLEAN_DIR = Path(config["clean_data_dir"])
-
     if config["specific_test_image"]:
-        test_image = str(PATCHED_DIR / config["specific_test_image"])
+        test_image = str(TEST_DIR / config["specific_test_image"])
     else:
         patched_files = list(PATCHED_DIR.glob("*.jpg")) + list(PATCHED_DIR.glob("*.png"))
         patched_files = [f for f in patched_files if "detected_cls_head" not in f.name]

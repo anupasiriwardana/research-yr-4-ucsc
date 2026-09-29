@@ -5,7 +5,7 @@
     "calibration_profile_filename": "cls_head_calibration_p3_mech1_updated.pkl",
     "patched_data_dir": "D:\\GitHub\\yr-4-research\\mechanisms-by-claude\\gen-adv-patch-hiding\\bdd100k_patched",
     "detection_output_dir": "D:\\GitHub\\yr-4-research\\mechanisms-by-claude\\mech-1-updated\\detections",
-    "specific_test_image": "21-multi-patched_ccf42930-03bcfe59.jpg",
+    "specific_test_image": "20-multi-patched_ccf42930-03bcfe59.jpg",
     "detector_settings": {
         "threshold": 25.0,
         "stride": 8,
