@@ -35,6 +35,26 @@ def run_telea_inpainting(image, mask, output_path):
     print("Option 2: OpenCV Telea inpainting completed.")
 
 
+def run_lama_inpainting(image, mask, output_path):
+    try:
+        from PIL import Image
+        from simple_lama_inpainting import SimpleLama
+    except ImportError:
+        print("Error: Install LaMa with 'pip install simple-lama-inpainting'")
+        return
+    except OSError as error:
+        print(f"Error: Could not load a required LaMa library: {error}")
+        return
+
+    image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    pil_image = Image.fromarray(image_rgb)
+    pil_mask = Image.fromarray(mask)
+    result_pil = SimpleLama()(pil_image, pil_mask)
+    result = cv2.cvtColor(np.array(result_pil), cv2.COLOR_RGB2BGR)
+    cv2.imwrite(str(output_path), result)
+    print("Option 3: LaMa deep learning inpainting completed.")
+
+
 def main():
     script_dir = Path(__file__).resolve().parent
     image_path = script_dir / "data" / "ccc43019-54a0931a.jpg"
@@ -55,6 +75,8 @@ def main():
         output_dir / f"restored_inpainted_{input_stem}.jpg",
     )
 
+    run_lama_inpainting(image, mask, output_dir / f"restored_lama_{input_stem}.jpg")
+   
 
 if __name__ == "__main__":
     main()
