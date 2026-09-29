@@ -55,6 +55,46 @@ def run_lama_inpainting(image, mask, output_path):
     print("Option 3: LaMa deep learning inpainting completed.")
 
 
+def run_stable_diffusion_inpainting(image, mask, output_path):
+    try:
+        import torch
+        from diffusers import StableDiffusionInpaintPipeline
+        from PIL import Image
+    except ImportError:
+        print("Error: Install dependencies with 'pip install diffusers transformers accelerate torch'")
+        return
+    except OSError as error:
+        print(f"Error: Could not load a required Stable Diffusion library: {error}")
+        return
+
+    image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    pil_image = Image.fromarray(image_rgb)
+    pil_mask = Image.fromarray(mask)
+
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    print(f"Loading Stable Diffusion on {device}... this might take a minute.")
+    pipeline = StableDiffusionInpaintPipeline.from_pretrained(
+        "sd2-community/stable-diffusion-2-inpainting",
+        torch_dtype=torch.float16 if device == "cuda" else torch.float32,
+        use_safetensors=True,
+    ).to(device)
+
+    width, height = pil_image.size
+    width = (width // 8) * 8
+    height = (height // 8) * 8
+    result_pil = pipeline(
+        prompt="high quality, seamless background",
+        image=pil_image,
+        mask_image=pil_mask,
+        height=height,
+        width=width,
+    ).images[0]
+
+    result = cv2.cvtColor(np.array(result_pil), cv2.COLOR_RGB2BGR)
+    cv2.imwrite(str(output_path), result)
+    print("Option 4: Stable Diffusion inpainting completed.")
+
+
 def main():
     script_dir = Path(__file__).resolve().parent
     image_path = script_dir / "data" / "ccc43019-54a0931a.jpg"
@@ -76,7 +116,11 @@ def main():
     )
 
     run_lama_inpainting(image, mask, output_dir / f"restored_lama_{input_stem}.jpg")
-   
+    run_stable_diffusion_inpainting(
+        image,
+        mask,
+        output_dir / f"restored_sd_{input_stem}_diffusers.jpg",
+    )
 
 if __name__ == "__main__":
     main()
