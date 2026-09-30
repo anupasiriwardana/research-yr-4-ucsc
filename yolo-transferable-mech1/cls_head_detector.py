@@ -39,6 +39,7 @@ import torch
 import cv2
 import json
 import pickle
+import ultralytics
 import numpy as np
 from pathlib import Path
 from ultralytics import YOLO
@@ -51,8 +52,8 @@ with open(CONFIG_PATH, "r") as f:
 
 CLEAN_DIR = Path(config["clean_data_dir"])
 PATCHED_DIR = Path(config["patched_data_dir"])
-TEST_DIR = CLEAN_DIR  # for now, just run on the patched set (can be changed to CLEAN_DIR for clean images)
-OUTPUT_FILENAME_TEMPLATE = "14-clean_{img_name}"
+TEST_DIR = PATCHED_DIR  # for now, just run on the patched set (can be changed to CLEAN_DIR for clean images)
+OUTPUT_FILENAME_TEMPLATE = "3-patched_{img_name}"
 
 INPUT_SIZE = 640  # keep in sync with calibrate_cls_head.py
 
@@ -66,6 +67,7 @@ class ClsHeadMahalanobisDetector:
         self.config = config_data
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.model = YOLO(self.config["model_path"]).to(self.device)
+        print(f"Ultralytics version: {ultralytics.__version__}")
         self.adapter = UltralyticsClsHeadAdapter(self.model.model)
         print(self.adapter.describe())  # sanity check -- confirm this matches the model in use
         self.threshold = self.config["detector_settings"]["threshold"]

@@ -1,13 +1,13 @@
 {
     "model_path": "yolo11n.pt",
-    "clean_data_dir": "D:\\GitHub\\experiment_data\\bdd100k_images_10k\\train",
+    "clean_data_dir": "D:\\GitHub\\experiment_data\\bdd100k_images_10k\\test",
     "profiles_dir": "D:\\GitHub\\yr-4-research\\yolo-transferable-mech1\\profiles",
-    "calibration_profile_filename": "cls_head_calibration_p3_yolo11n.pkl",
+    "calibration_profile_filename": "cls_head_calibration_p3_yolo11.pkl",
     "patched_data_dir": "D:\\GitHub\\yr-4-research\\mechanisms-by-claude\\gen-adv-patch-hiding\\bdd100k_patched",
     "detection_output_dir": "D:\\GitHub\\yr-4-research\\yolo-transferable-mech1\\detections",
-    "specific_test_image": "ac9be3fe-790d1f8e.jpg",
+    "specific_test_image": "20-multi-patched_ccf42930-03bcfe59.jpg",
     "detector_settings": {
-        "threshold": 25.0,
+        "threshold": 15.0,
         "stride": 8,
         "min_calibration_samples": 50,
         "background_class_id": -1,

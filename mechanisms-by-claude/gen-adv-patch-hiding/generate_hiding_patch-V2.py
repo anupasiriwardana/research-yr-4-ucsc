@@ -49,7 +49,7 @@ DATA_DIR = Path(config["clean_dir"])
 OUTPUT_DIR = Path(config["output_dir"])
 PATCH_DIR = Path(config["patch_dir"])
 PATCH_DIR.mkdir(parents=True, exist_ok=True)
-NEW_PATCH_NAME = "art_patch_v8.npy"
+NEW_PATCH_NAME = "art_patch_v11.npy"
 
 PS = config["patch_settings"]
 INPUT_SIZE = 640
@@ -71,6 +71,7 @@ yolo_model.model.eval()
 for p in yolo_model.model.parameters():
     p.requires_grad_(False)
 
+print(f"Model checkpoint: {config['model_path']}")
 
 def get_raw_preds(model, x):
     """Raw YOLOv8 forward pass -> decoded per-anchor predictions.
