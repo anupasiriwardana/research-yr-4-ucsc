@@ -53,9 +53,13 @@ def run_benchmark(config_file: str, model_label: str):
         max_z = r.get("max_z_score", 0.0)
         status = "🚨 YES" if r["is_attack"] else "✅ NO"
         print(f"{r['image']:<30} | {r['detections_count']:<12} | {status:<12} | {max_z:<10.2f}")
+        patch_boxes = r.get("defense_stats", {}).get("patch_boxes", [])
+        if patch_boxes:
+            for i, (x1, y1, x2, y2) in enumerate(patch_boxes):
+                print(f"    📍 Patch #{i+1}: (x1={x1}, y1={y1}, x2={x2}, y2={y2})")
 
     detector.close()
 
 if __name__ == "__main__":
     Path("ape_detection/test_images/original").mkdir(parents=True, exist_ok=True)
-    run_benchmark(config_file="config_yolov5.json", model_label="YOLOv5")
+    run_benchmark(config_file="config.json", model_label="YOLO")

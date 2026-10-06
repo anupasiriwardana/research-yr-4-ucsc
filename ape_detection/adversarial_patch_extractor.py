@@ -15,20 +15,17 @@ class AdversarialPatchExtractor:
     """Extracts adversarial patch bounding boxes from a 2D Z-score feature activation map."""
     
     DEFAULT_CONFIG = {
-        "floor": 2.6,
         "smooth_k": 5,
-        "levels": [0.70, 0.65, 0.60, 0.55, 0.50, 0.45, 0.40],
+        "levels": [0.65, 0.55, 0.45],
         "core_frac": 0.70,
         "close_k": 3,
         "open_k": 5,
-        "min_area": 80,
+        "min_area": 100,
         "max_area_frac": 0.05,
-        "min_side": 8,
         "max_aspect": 2.2,
         "min_rect": 0.60,
         "min_density": 0.55,
         "nms_iou": 0.30,
-        "refine": True,
         "max_glare_frac": 0.10,
         "glare_v_thresh": 245,
         "glare_pad": 2,
@@ -36,7 +33,6 @@ class AdversarialPatchExtractor:
 
     def __init__(self, config: Optional[Dict[str, Any]] = None):
         cfg = {**self.DEFAULT_CONFIG, **(config or {})}
-        self.floor = float(cfg["floor"])
         self.smooth_k = int(cfg["smooth_k"])
         self.levels = tuple(cfg["levels"])
         self.core_frac = float(cfg["core_frac"])
@@ -44,12 +40,10 @@ class AdversarialPatchExtractor:
         self.open_k = int(cfg["open_k"])
         self.min_area = int(cfg["min_area"])
         self.max_area_frac = float(cfg["max_area_frac"])
-        self.min_side = int(cfg["min_side"])
         self.max_aspect = float(cfg["max_aspect"])
         self.min_rect = float(cfg["min_rect"])
         self.min_density = float(cfg["min_density"])
         self.nms_iou = float(cfg["nms_iou"])
-        self.refine = bool(cfg["refine"])
         self.max_glare_frac = float(cfg["max_glare_frac"])
         self.glare_v_thresh = int(cfg["glare_v_thresh"])
         self.glare_pad = int(cfg["glare_pad"])
@@ -81,14 +75,19 @@ class AdversarialPatchExtractor:
     def _is_valid_contour(self, contour: np.ndarray, E: np.ndarray, z: np.ndarray, T: float, H: int, W: int, e_peak: float) -> Tuple[bool, int, int, int, int, int]:
         x, y, w, h = cv2.boundingRect(contour)
         area = w * h
-        if area < self.min_area or area > self.max_area_frac * H * W or min(w, h) < self.min_side:
+        # Size (Area)
+        if area < self.min_area or area > self.max_area_frac * H * W:
             return False, x, y, w, h, area
+        # Core Energy
         if E[y:y + h, x:x + w].max() < self.core_frac * e_peak:
             return False, x, y, w, h, area
+        # Aspect Ratio
         if max(w / h, h / w) > self.max_aspect:
             return False, x, y, w, h, area
+        # Rectangularity (Fill Factor)
         if cv2.contourArea(contour) / area < self.min_rect:
             return False, x, y, w, h, area
+        # Raw Density
         if float((z[y:y + h, x:x + w] > T).mean()) < self.min_density:
             return False, x, y, w, h, area
         return True, x, y, w, h, area
@@ -129,13 +128,11 @@ class AdversarialPatchExtractor:
         H, W = z.shape
 
         E = cv2.boxFilter(z, -1, (self.smooth_k, self.smooth_k), borderType=cv2.BORDER_REPLICATE)
-        e_peak = float(E.max())
-        if e_peak < self.floor:
-            return []
+        e_peak = float(np.percentile(E, 99.9))
 
         cands = []
         for a in self.levels:
-            T = max(self.floor, a * e_peak)
+            T = a * e_peak
             mask = self._apply_morphology(E, T)
 
             contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -144,14 +141,14 @@ class AdversarialPatchExtractor:
                 if not valid:
                     continue
 
-                bbox = self._refine_bbox(z, mask, x, y, w, h, T) if self.refine else [x, y, x + w, y + h]
+                bbox = self._refine_bbox(z, mask, x, y, w, h, T)
                 cands.append((area, bbox))
 
         kept = self._nms(cands)
 
-        if frame is not None:
-            scale_x = frame.shape[1] / W
-            scale_y = frame.shape[0] / H
-            kept = [b for b in kept if self._blown_highlight_fraction(frame, b, scale_x, scale_y) <= self.max_glare_frac]
+        # if frame is not None:
+        #     scale_x = frame.shape[1] / W
+        #     scale_y = frame.shape[0] / H
+        #     kept = [b for b in kept if self._blown_highlight_fraction(frame, b, scale_x, scale_y) <= self.max_glare_frac]
 
         return [[int(v * stride) for v in b] for b in kept]

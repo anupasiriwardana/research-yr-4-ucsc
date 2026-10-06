@@ -44,7 +44,6 @@ class ApeDetector:
         # Automatically pass the nested patch_extractor settings to the new class
         extractor_cfg = defense_cfg.get("patch_extractor", {})
         self.patch_extractor = AdversarialPatchExtractor(config=extractor_cfg)
-        self.anomaly_floor = self.patch_extractor.floor
 
     def _compute_z_score_map(self, feat: torch.Tensor) -> np.ndarray:
         """Compute a robust MAD-based Z-score map from layer activations."""
@@ -78,10 +77,10 @@ class ApeDetector:
         cv2.imwrite(str(yolo_out_path), cv2.cvtColor(yolo_vis, cv2.COLOR_RGB2BGR))
         LOGGER.info(f"[Visualizer] YOLO detection saved to: {yolo_out_path}")
 
-    def _save_heatmap_and_csv(self, z_map: np.ndarray, img_stem: str):
+    def _save_heatmap_and_csv(self, z_map: np.ndarray, img_stem: str, feat: torch.tensor):
         """Render the Z-score map as a JET heatmap and export the raw values as CSV."""
         self.heatmap_dir.mkdir(parents=True, exist_ok=True)
-        max_val = max(float(np.max(z_map)), self.anomaly_floor * 2.0)
+        max_val = float(np.percentile(z_map, 99.9))
         z_clipped = np.clip(z_map, 0, max_val)
         z_norm = (z_clipped / max_val * 255).astype(np.uint8)
         
@@ -97,6 +96,13 @@ class ApeDetector:
         z_score_path = z_score_dir / f"z_score_{img_stem}.csv"
         np.savetxt(str(z_score_path), z_map, fmt="%.4f", delimiter=",")
         LOGGER.info(f"[Visualizer] Z-score map saved to: {z_score_path}")
+
+        # Save raw feature map [B, C, H, W] as .npy
+        feat_dir = self.heatmap_dir.parent / "feature_maps"
+        feat_dir.mkdir(parents=True, exist_ok=True)
+        feat_path = feat_dir / f"feat_{img_stem}.npy"
+        np.save(str(feat_path), feat.detach().cpu().numpy())
+        LOGGER.info(f"[Visualizer] Feature map saved to: {feat_path}")
 
     def detect(self, img_path: str, save_visualization: bool = True):
         orig_img = cv2.imread(str(img_path))
@@ -122,7 +128,6 @@ class ApeDetector:
             z_map_2d = z_score[0, 0].detach().cpu().numpy()
             max_z_val = z_map_2d.max()
             
-            # Extract patches using the dedicated OOP class
             stride = self.input_width // feat.shape[3]
             patch_boxes = self.patch_extractor.extract(z_map_2d, stride=stride, frame=orig_img)
             is_attack = len(patch_boxes) > 0
@@ -139,7 +144,7 @@ class ApeDetector:
         if save_visualization:
             self._save_detection_overlay(resized_img, results, patch_boxes, is_attack, img_stem)
             if self.defense_enabled and defense_stats.get("z_score_map") is not None:
-                self._save_heatmap_and_csv(defense_stats["z_score_map"], img_stem)
+                # self._save_heatmap_and_csv(defense_stats["z_score_map"], img_stem, feat)
 
         return {
             "image": Path(img_path).name,
