@@ -1,0 +1,28 @@
+{
+    "detector_dir": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img",
+    "model_path": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\yolov8n.pt",
+    "profiles_dir": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\profiles",
+    "calibration_profile_filename": "cls_head_calibration_p3_yolov8.pkl",
+    "detector_output_dir": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\patch-det-visualizations",
+    "detector_settings": {
+        "threshold": 25.0,
+        "stride": 8,
+        "min_calibration_samples": 100,
+        "background_class_id": -1,
+        "background_samples_per_image": 50,
+        "box_spread_multiplier": 1.5,
+        "min_region_cells": 6
+    },
+    "batch_settings": {
+        "input_dir": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\yolov8-patched-imgs",
+        "coordinates_dir": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\yolov8-detected-patch-coordinates",
+        "num_images": 100,
+        "start_index": 0,
+        "save_visualizations": true,
+        "image_extensions": [
+            ".jpg",
+            ".jpeg",
+            ".png"
+        ]
+    }
+}

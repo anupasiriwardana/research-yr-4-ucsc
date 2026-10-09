@@ -4,3 +4,8 @@
 **/detections/*
 
 **/__pycache__/*
+
+**/yolov8-patched-imgs/*
+**/yolov8-patch_coordinates/*
+**/patch-det-visualizations/*
+**/yolov8-detected-patch-coordinates/*

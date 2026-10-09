@@ -1,0 +1,39 @@
+{
+    "model_path": "yolov8n.pt",
+    "clean_dir": "D:\\GitHub\\experiment_data\\bdd100k_images_10k\\test",
+    "patch_dir": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\patches\\yolov8",
+    "specific_patch_name": "art_patch_v7(0.1-0.2).npy",
+    "patch_settings": {
+        "patch_scale": 0.15,
+        "patch_size": 150,
+        "num_steps": 1000,
+        "learning_rate": 0.02,
+        "conf_thresh": 0.25,
+        "rotation_max": 22.5,
+        "scale_min": 0.10,
+        "scale_max": 0.20,
+        "placement_jitter": 0.1,
+        "target_class": 2,
+        "batch_size": 4,
+        "gpu_batch_size": 20,
+        "max_images": 2000
+    },
+    "apply_settings": {
+        "placement_mode": "multi",
+        "scale": 0.15,
+        "rotation": 0.0,
+        "multi_max_patches": 2,
+        "multi_min_separation": 0.3
+    },
+    "batch_settings": {
+        "num_images": 100,
+        "start_index": 0,
+        "output_dir": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\yolov8-patched-imgs",
+        "coordinates_dir": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\yolov8-patch_coordinates",
+        "image_extensions": [
+            ".jpg",
+            ".jpeg",
+            ".png"
+        ]
+    }
+}
