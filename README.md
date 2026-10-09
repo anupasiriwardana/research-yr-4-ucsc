@@ -1,125 +1,179 @@
-# Research Blueprint: Decoupling Runtime Behavioral Monitoring from Model Architecture
+# Decoupling Runtime Behavioral Monitoring from Model Architecture
 
-## Project Information
-* **Project Title:** Decoupling Runtime Behavioral Monitoring from Model Architecture: An Adversarial Patch Defense Approach for Object Detection Pipelines
-* **Team Members:** Sakith Thewmika (22002022), Anupa Siriwardana (22001921), Pamali Weerasinghe (22002162)
-* **Institution:** University of Colombo School of Computing (UCSC)
-* **Supervisors:** Prof. Kasun De Zoysa (Internal), Mr. Yasas Mahima (External)
-* **Domain:** Software Engineering for Machine Learning (SE4ML), Autonomous Vehicle Security
+Research code for detecting physical adversarial patches against YOLO object-detection
+pipelines using decoupled runtime monitoring. The project explores how a security
+middleware layer can observe internal model behavior without modifying the detector
+architecture or blocking the primary perception loop.
 
----
+## Project information
 
-## 1. Executive Summary & Research Progress
+- **Project title:** Decoupling Runtime Behavioral Monitoring from Model Architecture:
+  An Adversarial Patch Defense Approach for Object Detection Pipelines
+- **Team:** Sakith Thewmika (22002022), Anupa Siriwardana (22001921), Pamali
+  Weerasinghe (22002162)
+- **Institution:** University of Colombo School of Computing (UCSC)
+- **Supervisors:** Prof. Kasun De Zoysa (Internal), Mr. Yasas Mahima (External)
+- **Domain:** Software Engineering for Machine Learning (SE4ML) and autonomous-vehicle
+  security
+- **Current branch:** `multi-patch-detection`
+- **Latest recorded commit:** `ec2f782` — `patch generation for yolo11`
 
-Modern safety-critical systems, such as Autonomous Vehicles (AVs), rely heavily on deep-learning perception pipelines (e.g., YOLO) to identify pedestrians, vehicles, and navigation signs in real time. However, these models are inherently vulnerable to **Physical Adversarial Patch Attacks**, where visual patterns placed on real-world objects cause target detectors to completely ignore critical entities.
+## Current repository state
 
-Existing ML defenses fail from a **Software Engineering (SE)** perspective because they are either:
-1. **Inline / Synchronous:** Blocking the main inference path and introducing unacceptable latency.
-2. **Tightly Coupled:** Hardcoded to specific network layer indices, breaking completely when the target model is updated (e.g., upgrading from YOLOv5 to YOLOv8).
+The repository currently contains working research scripts, calibration profiles,
+model checkpoints, generated patch examples, and design documents. The main
+implementation work is organized as follows:
 
-**Our Solution:** A formally decoupled **Runtime Security Middleware (Sidecar Pattern)** that monitors internal model behavioral signals asynchronously without altering the underlying model architecture or blocking the primary perception loop.
+| Area | Location | Current state |
+| :--- | :--- | :--- |
+| Generic adversarial patch generation | [`gen-adv-patch/`](./mechanisms-by-claude/gen-adv-patch/) | YOLOv8 white-box patch generation using ART/EoT, saved-patch application, and efficacy verification |
+| Object-aware hiding patches | [`gen-adv-patch-hiding/`](./mechanisms-by-claude/gen-adv-patch-hiding/) | Direct PyTorch patch optimization targeted at detected objects, including multi-patch application and verification |
+| Mechanism 1: classification-head monitoring | [`mech-1/`](./mechanisms-by-claude/mech-1/) | Baseline decoupled classification-branch tap with Mahalanobis anomaly scoring |
+| Mechanism 1 updated | [`mech-1-updated/`](./mechanisms-by-claude/mech-1-updated/) | Box-independent scoring, tighter anomaly boxes, and multi-patch detection variants |
+| Mechanism 4: feature-energy monitoring | [`mech-4/`](./mechanisms-by-claude/mech-4/) | Feature-energy detector with multi-layer activation support, calibration experiments, region filtering, and heatmap output |
+| Cross-model Mechanism 1 | [`yolo-transferable-mech1/`](./yolo-transferable-mech1/) | Calibration and detection workflow prepared for both YOLOv8 and YOLO11 checkpoints |
+| Mechanism 2 | [`mech-2/`](./mechanisms-by-claude/mech-2/) | Pre-PANet backbone-tap design specification; implementation is not yet present |
 
-### Project Roadmap & Implementation Status
-| Module / Mechanism | Target Directory | Description | Status |
-| :--- | :--- | :--- | :--- |
-| **Adversarial Patch Generator** | [`mechanisms-by-claude/gen-adv-patch/`](./mechanisms-by-claude/gen-adv-patch/) | White-box physical patch generator using ART and Expectation Over Transformation (EoT) targeting YOLOv8 | **COMPLETED & VERIFIED** |
-| **Mechanism 1: Decoupled-Head Tap** | [`mechanisms-by-claude/mech-1/`](./mechanisms-by-claude/mech-1/) | Anomaly detection targeting the intermediate classification branch (`cv3`) using per-class Mahalanobis distance | **COMPLETED & VERIFIED** |
-| **Mechanism 2: Pre-Fusion Backbone Tap** | [`mechanisms-by-claude/mech-2/`](./mechanisms-by-claude/mech-2/) | Tapping backbone features before PANet multi-scale fusion to isolate clean receptive fields | **PLANNED** |
-| **Mechanism 3: APE Feature Energy** | [`mechanisms-by-claude/mech-3/`](./mechanisms-by-claude/mech-3/) | Self-referential per-image feature energy thresholding operating on early stem layers | **PLANNED** |
+The generated images, NumPy patches, serialized calibration profiles, and local
+checkpoint files under these directories are research artifacts used by the scripts.
+They are not a substitute for a clean, reproducible dataset setup.
 
----
+## Architecture
 
-## 2. Architectural Overview
+The intended system separates the detector from the security middleware:
 
 ```text
-                      +-----------------------------------+
-                      |      Primary Perception Loop     |
-                      |    Input Frame ---> YOLOv8 Model  |
-                      +-----------------+-----------------+
-                                        | (Asynchronous Forward Hook)
-                                        v
-+---------------------------------------------------------------------------------+
-|                        Runtime Security Middleware (Sidecar)                     |
-|                                                                                 |
-|  +----------------------------------+     +----------------------------------+  |
-|  |     Model-Agnostic Adapter       | --> |   Class-Conditioned Strategy     |  |
-|  |  (YOLOv8ClsHeadAdapter: cv3[-2]) |     |  (ClsHeadMahalanobisDetector)    |  |
-|  +----------------------------------+     +-----------------+----------------+  |
-|                                                              |                  |
-|                                                              v                  |
-|                                                  +-----------------------+      |
-|                                                  | AnomalyResult Schema  |      |
-|                                                  | - is_attack: bool     |      |
-|                                                  | - score: float        |      |
-|                                                  | - bounding_box: tuple |      |
-|                                                  +-----------+-----------+      |
-+--------------------------------------------------------------|------------------+
-                                                               |
-                                                               v
-                                                +------------------------------+
-                                                |       Recovery Engine        |
-                                                | (Pixel Blackout / Re-infer)  |
-                                                +------------------------------+
+Input frame ──► YOLO detector ──► normal detections
+                    │
+                    └─ internal activation hook
+                                  │
+                                  ▼
+                    Runtime security middleware
+                    ├─ model-specific adapter
+                    ├─ anomaly-detection strategy
+                    └─ AnomalyResult
+                       ├─ is_attack
+                       ├─ score
+                       └─ bounding_box
+                                  │
+                                  ▼
+                    optional recovery / re-inference
 ```
 
-### The Interface Contract (`AnomalyResult`)
-To preserve strict separation of concerns, all anomaly detection strategies must return a unified JSON/dictionary schema:
-* `is_attack` *(boolean)*: Flags whether an adversarial anomaly exceeded the calibrated threshold.
-* `score` *(float)*: The maximum statistical anomaly score (e.g., Mahalanobis distance) observed in the frame.
-* `bounding_box` *(tuple)*: `(x1, y1, x2, y2)` pixel coordinates isolating the patch location for downstream recovery.
+Mechanism 1 uses class-conditioned Mahalanobis distances over classification-head
+activations. Mechanism 4 computes feature energy and filters anomalous regions.
+Both expose the same conceptual result: whether an attack was detected, an anomaly
+score, and a pixel-space region for downstream recovery.
 
----
+## Quick start
 
-## 3. Quick Start Guide
+Each module has its own configuration and environment notes. The paths in the
+checked-in JSON files point to the original local research-data layout, so update
+them before running on another machine.
 
-### Step 1: Clone Repository
+### 1. Set up the environments
+
+The patch-generation modules use a separate environment, while the detection
+modules use `yolo_adv`:
+
 ```bash
-git clone [https://github.com/AnupaSiriwardhana/yr-4-research.git](https://github.com/AnupaSiriwardhana/yr-4-research.git)
-cd yr-4-research
-```
-
-### Step 2: Generate an Adversarial Test Patch
-Follow the guide in the [`gen-adv-patch`](./mechanisms-by-claude/gen-adv-patch/) folder to build white-box test assets.
-```bash
+conda create -n patch_gen_yolov8 python=3.10 -y
 conda activate patch_gen_yolov8
-python mechanisms-by-claude/gen-adv-patch/generate_art_patch.py
-```
+# Install the dependencies described in the selected patch-generator README.
 
-### Step 3: Run the Anomaly Detection Middleware
-Follow the guide in the [`mech-1`](./mechanisms-by-claude/mech-1/) folder to calibrate and execute the Decoupled-Head Middleware.
-```bash
+conda create -n yolo_adv python=3.10 -y
 conda activate yolo_adv
-python mechanisms-by-claude/mech-1/calibrate_cls_head.py
-python mechanisms-by-claude/mech-1/cls_head_detector.py
+# Install PyTorch, Ultralytics, OpenCV, NumPy, and the other dependencies
+# described in the selected detector README.
 ```
 
----
+### 2. Generate and verify an object-aware hiding patch
 
-## 4. Repository Structure
+```bash
+cd mechanisms-by-claude/gen-adv-patch-hiding
+python generate_hiding_patch.py
+python apply_saved_patch.py
+python verify_patch_efficacy.py
+```
+
+See [`gen-adv-patch-hiding/README.md`](./mechanisms-by-claude/gen-adv-patch-hiding/README.md)
+for the configuration schema, target-class settings, placement modes, and output
+locations.
+
+### 3. Run the updated Mechanism 1 detector
+
+Calibrate on clean images before running detection:
+
+```bash
+cd mechanisms-by-claude/mech-1-updated
+python calibrate_cls_head.py
+python cls_head_detector.py
+# Optional tighter recovery box:
+python cls_head_detector_for_tightPatch.py
+```
+
+See [`mech-1-updated/README.md`](./mechanisms-by-claude/mech-1-updated/README.md).
+The original [`mech-1/`](./mechanisms-by-claude/mech-1/) module remains available
+for comparison with the earlier calibration and scoring workflow.
+
+### 4. Run the feature-energy detector
+
+The current Mechanism 4 directory includes both calibration tooling and the runtime
+detector:
+
+```bash
+cd mechanisms-by-claude/mech-4
+python calibrate_energy_stats.py
+python feature_energy_detector.py
+```
+
+Review [`mech-4/README.md`](./mechanisms-by-claude/mech-4/README.md) and
+[`new-mech-4-detection-process.md`](./mechanisms-by-claude/mech-4/new-mech-4-detection-process.md)
+before changing tap layers, stride mappings, or thresholds.
+
+### 5. Compare YOLOv8 and YOLO11 transferability
+
+```bash
+cd yolo-transferable-mech1
+python calibrate_cls_head.py
+python cls_head_detector.py
+```
+
+The configuration selects the checkpoint and calibration profile. Use separate
+profiles for YOLOv8 and YOLO11; a profile calibrated for one model must not be
+reused for the other.
+
+## Repository layout
 
 ```text
 yr-4-research/
 ├── LICENSE
-├── README.md                              <-- Main Project Documentation
-└── mechanisms-by-claude/
-    ├── gen-adv-patch/                     <-- Adversarial Patch Generator Tooling
-    │   ├── config.json
-    │   ├── generate_art_patch.py
-    │   ├── apply_saved_patch.py
-    │   ├── verify_patch_efficacy.py
-    │   └── README.md
-    ├── mech-1/                            <-- Mechanism 1: Decoupled Head Anomaly Module
-    │   ├── config.json
-    │   ├── cls_head_adapter.py
-    │   ├── calibrate_cls_head.py
-    │   ├── cls_head_detector.py
-    │   ├── mechanism-1-decoupled-head-cls-branch.md
-    │   └── README.md
-    ├── mech-2/                            <-- Mechanism 2 Specification (Planned)
-    └── mech-3/                            <-- Mechanism 3 Specification (Planned)
+├── README.md
+├── mechanisms-by-claude/
+│   ├── gen-adv-patch/          # Generic YOLOv8 ART/EoT patch workflow
+│   ├── gen-adv-patch-hiding/   # Object-aware and multi-patch workflow
+│   ├── mech-1/                 # Original classification-head detector
+│   ├── mech-1-updated/         # Updated multi-patch/tight-box detector
+│   ├── mech-2/                 # Pre-fusion backbone-tap specification
+│   └── mech-4/                 # Feature-energy detector and calibration
+└── yolo-transferable-mech1/    # YOLOv8/YOLO11 transferability workflow
 ```
 
----
+For module-specific implementation details, use the README and design documents
+inside each directory rather than assuming that all mechanisms share identical
+configuration fields or calibration requirements.
 
-## 5. License
-Distributed under the MIT License. See `LICENSE` for details.
+## Reproducibility notes
+
+- Use the same model family and checkpoint for calibration and runtime detection.
+- Keep clean calibration images separate from patched evaluation images.
+- Re-derive thresholds when changing the scoring rule, tap layer, model version, or
+  calibration profile.
+- Verify the configured stride and hooked layer against the actual checkpoint before
+  interpreting bounding boxes.
+- GPU execution is recommended; CPU execution is supported by the scripts but can
+  make calibration and patch generation substantially slower.
+
+## License
+
+Distributed under the MIT License. See [`LICENSE`](./LICENSE) for details.

@@ -1,164 +1,261 @@
-# Redesigning the Patch Generator: From a Classifier-Style Attack to a Practical, Object-Aware Pipeline
+# Patch-generation process
 
 ## Status
-Documents the three problems that drove the patch generator away from its original ART-based design, and the current solution in `generate_hiding_patch.py` / `apply_saved_patch.py`, with supporting literature. Companion to the updated `README.md` for this module (setup and execution).
 
----
+This document describes the current patch-hiding pipeline in
+`gen-adv-patch-hiding`. The active configuration uses `yolo11n.pt`, the V2
+generator, and multi-object application. `generate_hiding_patch.py` and
+`apply_saved_patch.py` remain in the directory as earlier single-patch
+variants; they should not be treated as interchangeable with the V2/multi
+workflow.
 
-## 1. The Problems That Led to This Redesign
+The pipeline is a white-box attack against the configured Ultralytics YOLO
+model. It is intended to suppress detections of an existing target object,
+not merely to create arbitrary detections elsewhere in an image.
 
-These were discovered in sequence, each fix exposing the next issue once the previous one was resolved.
+## 1. Problems that motivated the redesign
 
-### 1.1 Problem 1 — The attack loss was classifier-style, not detector-aware
+### 1.1 The original loss was not detector-aware
 
-The original script used ART's `AdversarialPatchPyTorch` with a custom loss:
+The first implementation used a whole-image aggregate similar to:
 
 ```python
 class_probs = preds[:, :, 4:]
 max_class_probs, _ = torch.max(class_probs, dim=-1)
-loss_total = torch.mean(max_class_probs)     # averaged across EVERY anchor in the image
+loss = torch.mean(max_class_probs)
 ```
 
-This is structurally the same kind of objective as the original, classifier-only adversarial patch concept — "raise confidence of *something*, somewhere in the image" — with no notion of *where* the real target object actually is. In practice, this caused the patch to hallucinate spurious new detections elsewhere in the frame (persons, umbrellas) while barely affecting the real target's own confidence, since nothing in the loss singled out that location. Our supervisor's feedback specifically pointed at this: classic object detectors compute an **objectness score** — a class-agnostic "is there an object here" signal, separate from "what class is it" — and a proper detector-specific patch attack needs to suppress that score *at the target's location specifically*, not chase a whole-image aggregate. Full background on objectness and why classifier-style patches don't transfer to detectors is in Section 3.
+This objective did not identify a real object or its location. The optimizer
+could therefore satisfy the loss by producing unrelated detections
+elsewhere, while leaving the intended vehicle or other target detectable.
 
-### 1.2 Problem 2 — Patch placement was decoupled from the target object's location
+### 1.2 Placement was not tied to the target
 
-Once the loss was rewritten to target specific anchors (Section 2.1), the patch still appeared at effectively random positions during both training and the demo application step, and in one case was itself recognized as an unrelated object ("vase"). The cause: the *loss* knew which anchors to suppress, but the *placement* logic sampled position uniformly across the whole canvas during training, and used a hardcoded canvas-center position for the demo — neither ever looked at where the actual target object was. A patch trained at random, mostly-irrelevant positions has little consistent gradient signal tying its pixels to "suppress the object when placed here," because it usually isn't placed anywhere near the object it's supposed to affect.
+Earlier versions sampled a position independently of the detected object, and
+the demo used a fixed or canvas-centre position. A patch trained mostly away
+from its target does not receive a reliable gradient for hiding that target.
+The current generator derives both the training placement and the demo
+placement from a clean detection.
 
-### 1.3 Problem 3 — Practical/operational issues
+### 1.3 Operational problems
 
-Three separate issues surfaced once the core attack was working:
-- **GPU memory**: the original data-loading step pushed the *entire* configured image batch (up to thousands of images) to GPU memory upfront, which is roughly 9+ GB for 2,000 640×640 images — far beyond what a memory-constrained GPU (e.g. an RTX 2050) can hold, well before the model itself even runs. This caused `CUDA error: out of memory` crashes.
-- **Config semantics**: `specific_clean_image`, when set, was silently shrinking the *entire training set* down to one image, rather than only selecting which image the finished patch gets demonstrated on.
-- **Reusability**: the optimized patch was only ever saved as a raw `.npy` array and as one pre-composited demo image — there was no plain image file of the patch itself to paste manually elsewhere, and no reliable way to apply a saved patch to a *different* image later, since `apply_saved_patch.py` still used ART's own compositing function (`attack.apply_patch`), which does not use the same geometric convention as the training script's own placement logic. Applying a patch through a different function than the one it was optimized under silently changes its effective size/position, even when the code "looks" correct.
+The earlier pipeline also:
 
----
+- loaded too much image data into memory at once;
+- allowed `specific_clean_image` to accidentally become the training set;
+- saved a raw array without a convenient standalone patch image;
+- applied a saved patch through a compositor whose geometry differed from the
+  training compositor; and
+- had no distinct-object placement mode for applying several patches to one
+  image.
 
-## 2. What Changed
+## 2. Current design
 
-### 2.1 Objectness-aware, spatially-targeted loss
+### 2.1 Spatially targeted pseudo-label loss
 
-Instead of a whole-image aggregate, the loss now targets only the anchors that correspond to a real, confidently-detected object in the *clean* (unpatched) image — used as a pseudo-label, since no ground-truth annotations are available for this dataset:
+`generate_hiding_patch-V2.py` performs one clean forward pass per sampled
+image. `select_target_object`:
 
-```python
-def select_target_object(preds, conf_thresh=CONF_THRESH, target_class=None):
-    """From a CLEAN forward pass, pick ONE object to attack (highest
-    confidence, optionally restricted to target_class). Returns the
-    anchors covering that object, its center (for placement), and its
-    box. This is the pseudo-labeling step -- no annotations needed."""
-    boxes_cxcywh = preds[0, :, 0:4]
-    class_probs = preds[0, :, 4:]
-    max_probs, max_classes = class_probs.max(dim=-1)
+1. computes the highest class confidence for each decoded prediction;
+2. keeps predictions above `conf_thresh`, optionally restricted to
+   `target_class`;
+3. selects the highest-confidence candidate;
+4. uses that candidate's box to select all confident prediction centres inside
+   the box; and
+5. returns the selected anchors and the object's normalized centre.
 
-    candidate_mask = max_probs > conf_thresh
-    if target_class is not None:
-        candidate_mask = candidate_mask & (max_classes == target_class)
-    if candidate_mask.sum() == 0:
-        return None
-
-    candidate_indices = candidate_mask.nonzero(as_tuple=True)[0]
-    best_idx = candidate_indices[max_probs[candidate_indices].argmax()]
-    bx, by, bw, bh = boxes_cxcywh[best_idx].tolist()
-    x1, y1, x2, y2 = bx - bw / 2, by - bh / 2, bx + bw / 2, by + bh / 2
-
-    ax, ay = boxes_cxcywh[:, 0], boxes_cxcywh[:, 1]
-    anchor_mask = (ax >= x1) & (ax <= x2) & (ay >= y1) & (ay <= y2) & (max_probs > conf_thresh)
-    return anchor_mask, ((bx / INPUT_SIZE) * 2 - 1, (by / INPUT_SIZE) * 2 - 1), (x1, y1, x2, y2)
-```
-
-The training step then minimizes confidence **only** at those anchors:
+The patched image is then evaluated and the loss is the mean maximum class
+confidence **only at those selected anchors**:
 
 ```python
 patched_preds = get_raw_preds(yolo_model.model, patched_image.unsqueeze(0))
 max_probs, _ = patched_preds[0, :, 4:].max(dim=-1)
-targeted_conf = max_probs[target_mask]
-loss = targeted_conf.mean()   # directly minimize confidence at the real object's anchors
+loss = max_probs[target_mask].mean()
 ```
 
-Note that YOLOv8's anchor-free, decoupled head has **no separate objectness branch** (confirmed in multiple technical sources — see Section 3) — so "suppress the objectness score" from the classic literature is adapted here to "suppress the class confidence specifically at the target's anchors," which is the closest equivalent quantity YOLOv8 actually exposes.
+This is pseudo-labeling from the model's clean prediction; the dataset does
+not provide ground-truth boxes. YOLOv8/YOLO11's decoded output has box values
+followed by per-class confidence values and no separate objectness channel,
+so the implementation suppresses class confidence at the target anchors
+rather than a classic YOLO objectness score.
 
-### 2.2 Object-centered placement, both during training and at demo time
+### 2.2 Object-centred EoT placement
 
-Placement is now derived from the same `select_target_object` call used for the loss, both during training (with a small random jitter, for physical realism and EoT-style robustness) and in the script's own demo step:
+For every valid training image, the patch is:
+
+- randomly rotated in `[-rotation_max, rotation_max]`;
+- randomly scaled in `[scale_min, scale_max]`; and
+- placed near the detected target centre with `placement_jitter`.
+
+The V2 compositor uses an affine grid with translation terms corrected for
+both scale and rotation. This matters because the earlier translation formula
+caused placements to collapse toward the canvas centre when small scales were
+used. Patches trained with the earlier compositor should be considered
+incompatible with the corrected geometry and retrained.
+
+At demo/application time, the same clean-detection convention is used:
+
+- `auto` places one patch on the highest-confidence target;
+- `manual` converts `manual_x`/`manual_y` from the 640×640 working space; and
+- `multi` finds several candidates in one clean forward pass, orders them by
+  confidence, and rejects centres closer than `multi_min_separation`.
+
+The `multi` mode is implemented in `apply_saved_multi_patch.py`. It is not
+equivalent to repeatedly calling `auto`, which would select the same highest
+confidence object and stack patches on it.
+
+### 2.3 Disk-streamed training
+
+The generator indexes filenames only:
 
 ```python
-# Training -- jittered AROUND the object's own location, not the whole canvas
-jitter = PS.get("placement_jitter", 0.1)
-cx = float(np.clip(obj_cx + np.random.uniform(-jitter, jitter), -0.9, 0.9))
-cy = float(np.clip(obj_cy + np.random.uniform(-jitter, jitter), -0.9, 0.9))
+train_files = discover_image_files(DATA_DIR, max_images)
 ```
 
-```python
-# Demo step -- re-detects the target in THIS specific demo image, rather
-# than assuming a fixed canvas position
-demo_result = select_target_object(demo_preds, target_class=PS.get("target_class"))
-if demo_result is not None:
-    _, (demo_cx, demo_cy), _ = demo_result
-```
+Images are read and resized to 640×640 only when sampled. At most
+`gpu_batch_size` images are held for a training step, and CUDA's cache is
+released after the step. `max_images` therefore limits the candidate filename
+pool rather than allocating a tensor for the entire dataset.
 
-### 2.3 Disk-streamed training data, with an explicit `gpu_batch_size`
+### 2.4 `specific_clean_image` semantics
 
-The dataset is now only ever listed as filenames (`discover_image_files`) — no pixel data is loaded until a specific image is sampled for a training step, at which point exactly `gpu_batch_size` images are read from disk straight to GPU, used, and released:
+`specific_clean_image` selects the image used for the generator's final demo
+composite and by the application scripts. It does **not** restrict the
+training pool. When it is empty, the scripts fall back to the first available
+image.
 
-```python
-def discover_image_files(folder_path, max_images):
-    """Lists filenames only -- no pixel data loaded. Keeps memory flat
-    regardless of dataset size."""
-    return [f for f in os.listdir(folder_path) if f.lower().endswith((".png", ".jpg", ".jpeg"))][:max_images]
+### 2.5 Saved artifacts
 
-def load_single_image(path, target_size=INPUT_SIZE):
-    """Loads ONE image from disk straight to GPU, on demand -- called
-    fresh each time it's sampled, so the dataset never sits in GPU (or
-    CPU) memory all at once."""
-    ...
-```
+The V2 generator saves:
 
-`max_images` can now safely be set to the full dataset size (e.g. `2000`) without any memory cost until training actually samples that many distinct files across all steps.
+- `art_patch_v11.npy` in `patch_dir`, for reuse by the application scripts;
+- `art_patch_standalone_v8.png`, the raw optimized patch as an image; and
+- `art_patched_<image-name>.jpg` in `output_dir`, a single-patch demo
+  composite.
 
-### 2.4 `specific_clean_image` now only controls the demo image
+The current checked-in configuration points `specific_patch_name` at
+`art_patch_v11(0.10-0.20).npy`; that name must match an actual file before
+running an application script. The repository currently also contains older
+V6/V7/V8 patch arrays and standalone images; their filenames identify their
+generation, but do not by themselves guarantee compatibility with the V2
+compositor.
 
-Training always pulls its batch from `clean_dir` directly, regardless of `specific_clean_image` — that setting now exclusively determines which image the finished patch is demonstrated on, decoupling "what the patch learns from" (diverse, for generalization) from "what you look at afterward" (one chosen image).
+## 3. Current configuration
 
-### 2.5 A standalone patch image, for manual use outside the pipeline
+The checked-in `config.json` currently specifies:
 
-Alongside the `.npy` array, the raw trained patch is now also saved as a plain image file:
+| Setting | Current value | Meaning |
+|---|---:|---|
+| `model_path` | `yolo11n.pt` | Model used for training and inference |
+| `patch_scale` | `0.15` | Demo/application scale fallback |
+| `patch_size` | `150` | Raw square patch dimensions |
+| `num_steps` | `1000` | Optimization iterations |
+| `learning_rate` | `0.02` | Adam learning rate |
+| `conf_thresh` | `0.25` | Clean-prediction confidence threshold |
+| `rotation_max` | `22.5` | Maximum training rotation in degrees |
+| `scale_min`, `scale_max` | `0.10`, `0.20` | Training scale range |
+| `placement_jitter` | `0.1` | Normalized centre jitter |
+| `target_class` | `2` | COCO class id for cars |
+| `gpu_batch_size` | `20` | Images loaded per training step |
+| `max_images` | `2000` | Candidate training-image count |
+| `placement_mode` | `multi` | Apply separate patches to several targets |
+| `multi_max_patches` | `3` | Maximum number of applied patches |
+| `multi_min_separation` | `0.3` | Minimum normalized centre separation |
 
-```python
-patch_img_np = (patch.detach().permute(1, 2, 0).cpu().numpy() * 255.0).clip(0, 255).astype(np.uint8)
-patch_img_bgr = cv2.cvtColor(patch_img_np, cv2.COLOR_RGB2BGR)
-cv2.imwrite(str(OUTPUT_DIR / "art_patch_standalone.png"), patch_img_bgr)
-```
+The application scripts read `patch_dir` for the saved array and
+`output_dir` for composites. The efficacy verifier reads
+`specific_patched_image`, pairs it with `specific_clean_image`, and writes a
+side-by-side detector visualization to `patch_detection_dir`. In the current
+configuration, `target_class` is nested under `patch_settings`, while the
+application scripts use that value as their fallback target class.
 
-### 2.6 `apply_saved_patch.py` rewritten to match training's own compositing convention
+## 4. Script responsibilities
 
-The script no longer imports ART at all. It uses the **exact same** `build_patch_overlay` affine-warp function that `generate_art_patch.py` trains with, so a given `scale`/`cx`/`cy` means the same thing at application time as it did during optimization — this was the direct fix for weak results observed when applying the patch through ART's `attack.apply_patch` (a different function, different geometric convention) or by hand in an image editor (which also risks lossy recompression and off-envelope scale/rotation, further degrading the patch's fine-grained pattern).
+### `generate_hiding_patch-V2.py`
 
-It also adds two placement modes, since the script otherwise has no way to know where an object is in a *new* image:
+This is the current generator. It freezes the configured model, optimizes
+only the patch, streams images from disk, applies object-centred EoT, and
+saves the V11 array, V8 standalone image, and one demo composite.
 
-```python
-if PLACEMENT_MODE == "manual":
-    cx = (MANUAL_X / INPUT_SIZE) * 2 - 1
-    cy = (MANUAL_Y / INPUT_SIZE) * 2 - 1
-else:  # "auto" -- re-run the same detection-based targeting used in training
-    preds = get_raw_preds(yolo_model.model, image.unsqueeze(0))
-    result = select_target_object(preds, target_class=TARGET_CLASS)
-    (cx, cy), _ = result
-```
+### `generate_hiding_patch.py`
 
-`"auto"` (the default) requires no manual coordinate-finding at all; `"manual"` exists for testing a specific spot, or when the target isn't confidently detected on its own in a particular test image.
+This is an older single-patch generator. It has the same broad
+object-aware/pseudo-label approach, but uses different output names and
+should not be assumed to produce the patch named by the current
+`config.json`.
 
----
+### `apply_saved_multi_patch.py`
 
-## 3. Supporting Research Papers
+This is the current application path for the checked-in `placement_mode:
+"multi"` configuration. It performs one clean detection pass, selects up to
+`multi_max_patches` distinct targets, applies a separate corrected overlay to
+each, and writes a `multi-patched` output.
+
+### `apply_saved_patch.py`
+
+This is the earlier one-patch application path. It supports `auto` and
+`manual`, but its current overlay implementation is not identical to the
+corrected V2/multi compositor. Use it only for legacy comparisons, or update
+it before relying on it for V2 quantitative results.
+
+### `verify_patch_efficacy.py`
+
+This runs the configured YOLO model on the selected clean/patched pair,
+prints all detections and confidences, and saves a side-by-side annotated
+comparison. It is the required check that the intended target was suppressed,
+rather than simply replaced by spurious detections.
+
+## 5. Execution workflow
+
+1. Confirm that `model_path`, `clean_dir`, `patch_dir`, and the patch filename
+   in `specific_patch_name` are valid.
+2. Generate the current patch:
+
+   ```bash
+   python generate_hiding_patch-V2.py
+   ```
+
+3. Set `specific_patch_name` to `art_patch_v11.npy` (the V2 generator's
+   output), or rename/copy that file to the configured name
+   `art_patch_v11(0.10-0.20).npy`. Apply it to the selected image:
+
+   ```bash
+   python apply_saved_multi_patch.py
+   ```
+
+4. Set `specific_patched_image` to the generated `21-multi-patched_...`
+   output (or another selected patched image), then compare clean and patched
+   detections:
+
+   ```bash
+   python verify_patch_efficacy.py
+   ```
+
+5. For a single target, use the legacy-compatible application script only
+   after checking its compositor convention:
+
+   ```bash
+   python apply_saved_patch.py
+   ```
+
+6. Feed the resulting image into the downstream detection-mechanism
+   experiments described by `mech-1-updated`.
+
+The confidence trend printed by the generator is an optimization diagnostic,
+not a substitute for the clean/patched comparison. A successful run should
+show lower confidence for the intended target while preserving the rest of
+the scene as much as possible.
+
+## 6. Supporting literature
 
 | Claim | Source |
 |---|---|
-| "Objectness" is a distinct, class-agnostic concept ("is there an object here") separate from classification | Alexe, Deselaers & Ferrari, *"Measuring the Objectness of Image Windows,"* IEEE TPAMI 34(11), 2012 |
-| Object detectors formalize objectness as part of their confidence score (`objectness × class_probability`) | Redmon, Divvala, Girshick & Farhadi, *"You Only Look Once: Unified, Real-Time Object Detection,"* CVPR 2016 |
-| The original classifier-style adversarial patch concept (whole-image target class, no spatial awareness) | Brown, Mané, Roy, Abadi & Gilmer, *"Adversarial Patch,"* NeurIPS Workshop, 2017 |
-| Classifier-style patches **fail** against object detectors, motivating detector-specific attack design | Liu, Yang, Liu, Song, Li & Chen, *"DPatch: An Adversarial Patch Attack on Object Detectors,"* arXiv:1806.02299, 2018 |
-| A patch can be trained to suppress detection confidence specifically at a real target's location (the "hiding" objective this project adapts) | Thys, Van Ranst & Goedemé, *"Fooling Automated Surveillance Cameras: Adversarial Patches to Attack Person Detection,"* CVPR Workshops, 2019 |
-| EoT — randomizing transformations during optimization produces patches robust to real-world viewing/placement variation | Athalye, Engstrom, Ilyas & Kwok, *"Synthesizing Robust Adversarial Examples,"* ICML 2018 |
-| YOLOv8 removed the separate objectness branch (anchor-free, decoupled head) | MMYOLO project documentation (OpenMMLab); Ju & Cai, *"Fracture Detection in Pediatric Wrist Trauma X-ray Images Using YOLOv8 Algorithm,"* Scientific Reports, 2023; *"Ultralytics YOLO Evolution: An Overview of YOLO26, YOLO11, YOLOv8 and YOLOv5 Object Detectors,"* 2025 |
+| Objectness is a class-agnostic measure of whether an image window contains an object | Alexe, Deselaers & Ferrari, “Measuring the Objectness of Image Windows,” IEEE TPAMI, 2012 |
+| Classic YOLO combines objectness and class probability | Redmon, Divvala, Girshick & Farhadi, “You Only Look Once: Unified, Real-Time Object Detection,” CVPR, 2016 |
+| Classifier-style adversarial patches are spatially unaware | Brown, Mané, Roy, Abadi & Gilmer, “Adversarial Patch,” NeurIPS Workshop, 2017 |
+| Detector-specific patch attacks motivate spatial targeting | Liu et al., “DPatch: An Adversarial Patch Attack on Object Detectors,” arXiv:1806.02299, 2018 |
+| Detection confidence can be suppressed at a real target location | Thys, Van Ranst & Goedemé, “Fooling Automated Surveillance Cameras,” CVPR Workshops, 2019 |
+| Expectation over Transformation improves robustness to placement variation | Athalye, Engstrom, Ilyas & Kwok, “Synthesizing Robust Adversarial Examples,” ICML, 2018 |
 
-**Not independently cited, and deliberately so:** the pseudo-labeling approach (Section 2.1), the object-centered placement fix (Section 2.2), the disk-streaming/memory design (Section 2.3), and the `apply_saved_patch.py` rewrite (Section 2.6) are this project's own engineering solutions to problems specific to this pipeline and dataset (no ground-truth annotations, limited GPU memory, a training/application convention mismatch) — not techniques drawn from a specific paper. Frame them in your writeup as your own contributions, distinct from the literature-grounded design choices above (objectness-targeting, EoT).
+The pseudo-label selection, corrected compositor, disk streaming, and
+multi-object separation are engineering decisions specific to this project.
