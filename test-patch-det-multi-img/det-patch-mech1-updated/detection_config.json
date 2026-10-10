@@ -1,10 +1,10 @@
 {
     "detector_dir": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\det-patch-mech1-updated",
-    "model_path": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\yolov8n.pt",
+    "model_path": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\yolo11n.pt",
     "profiles_dir": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\det-patch-mech1-updated\\profiles",
-    "calibration_profile_filename": "cls_head_calibration_p3_yolov8.pkl",
+    "calibration_profile_filename": "cls_head_calibration_p3_yolo11.pkl",
     "specific_test_image": "",
-    "detector_output_dir": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\det-patch-mech1-updated\\patch-det-visualizations",
+    "detector_output_dir": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\det-patch-mech1-updated\\patch-det-visualizations\\yolov11",
     "detector_settings": {
         "threshold": 25.0,
         "stride": 8,
@@ -15,9 +15,9 @@
         "min_region_cells": 6
     },
     "batch_settings": {
-        "input_dir": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\gen-patched-img\\yolov8-patched-imgs",
-        "coordinates_dir": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\det-patch-mech1-updated\\yolov8-detected-patch-coordinates",
-        "num_images": 100,
+        "input_dir": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\gen-patched-img\\yolov11-patched-imgs",
+        "coordinates_dir": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\det-patch-mech1-updated\\yolov11-detected-patch-coordinates",
+        "num_images": 10,
         "start_index": 0,
         "save_visualizations": true,
         "image_extensions": [

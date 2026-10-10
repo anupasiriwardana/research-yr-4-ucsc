@@ -15,11 +15,7 @@ by cls_head_detector.py.
 import argparse
 import json
 import sys
-import time
 from pathlib import Path
-
-import torch
-
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 CONFIG_PATH = SCRIPT_DIR / "detection_config.json"
@@ -63,11 +59,6 @@ def discover_images(start_index, num_images):
     return selected
 
 
-def synchronize_device(device):
-    if device.type == "cuda":
-        torch.cuda.synchronize(device)
-
-
 def write_detection_file(path, result, latency_ms):
     with path.open("w", encoding="utf-8") as detection_file:
         detection_file.write(f"latency_ms={latency_ms:.3f}\n")
@@ -82,17 +73,10 @@ def write_detection_file(path, result, latency_ms):
 
 
 def process_image(detector, image_path):
-    synchronize_device(detector.device)
-    start_time = time.perf_counter()
     result = detector.detect(
         image_path, save_visualization=SAVE_VISUALIZATIONS
     )
-    synchronize_device(detector.device)
-    total_latency_ms = (time.perf_counter() - start_time) * 1000.0
-    latency_ms = max(
-        0.0,
-        total_latency_ms - result.get("visualization_latency_ms", 0.0),
-    )
+    latency_ms = result["detection_latency_ms"]
 
     output_path = OUTPUT_DIR / f"{image_path.stem}.txt"
     write_detection_file(output_path, result, latency_ms)

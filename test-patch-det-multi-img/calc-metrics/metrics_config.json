@@ -4,6 +4,6 @@
     "output_dir": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\calc-metrics\\patch-detection-metrics",
     "detection_filename_prefix": "multi-patched_",
     "strict_file_matching": true,
-    "metrics_json": "patch_detection_metrics.json",
-    "per_image_csv": "patch_detection_per_image.csv"
+    "metrics_json": "patch_detection_metrics-yolov8.json",
+    "per_image_csv": "patch_detection_per_image-yolov8.csv"
 }

@@ -99,6 +99,10 @@ class ClsHeadMahalanobisDetector:
         print(f"Loaded {len(self.class_ids)} calibrated distributions "
               f"(including background) for Option B scoring.")
 
+    def _synchronize_device(self):
+        if self.device.type == "cuda":
+            torch.cuda.synchronize(self.device)
+
     def _min_mahalanobis_scores(self, feat_flat):
         """feat_flat: [N, C] -- one row per grid cell, N = H*W.
         Returns scores: [N], the MINIMUM Mahalanobis distance across
@@ -217,7 +221,13 @@ class ClsHeadMahalanobisDetector:
         """Standalone entry point: loads the image itself, runs its
         OWN forward pass via its OWN adapter, then scores. Used when
         Mechanism 1 runs alone (see run_detection.py for the combined,
-        shared-pass alternative)."""
+        shared-pass alternative).
+
+        ``detection_latency_ms`` starts immediately before feature-map
+        extraction and covers feature-map extraction, anomaly scoring, and
+        bounding-box extraction. Image loading, preprocessing, the separate
+        YOLO prediction, and visualization are excluded.
+        """
         orig_img = cv2.imread(str(img_path))
         if orig_img is None:
             raise FileNotFoundError(f"Could not read image: {img_path}")
@@ -227,12 +237,21 @@ class ClsHeadMahalanobisDetector:
         img_tensor = torch.from_numpy(resized_img).permute(2, 0, 1).unsqueeze(0).float().to(self.device) / 255.0
 
         results = self.model.predict(source=img_tensor, verbose=False)[0]
+        self._synchronize_device()
+        detection_start = time.perf_counter()
         activations = self.adapter.get_activations(img_tensor)
 
-        return self.score_from_activations(
+        result = self.score_from_activations(
             activations["P3"], resized_img, results,
             img_name=Path(img_path).name, save_visualization=save_visualization,
         )
+        self._synchronize_device()
+        result["detection_latency_ms"] = max(
+            0.0,
+            (time.perf_counter() - detection_start) * 1000.0
+            - result.get("visualization_latency_ms", 0.0),
+        )
+        return result
 
 
 if __name__ == "__main__":

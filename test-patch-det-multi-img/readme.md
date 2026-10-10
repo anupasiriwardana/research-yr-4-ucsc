@@ -117,9 +117,12 @@ score=37.197308
 box=(104, 272, 192, 352) score=37.197308
 ```
 
-The `latency_ms` value is the detector latency after visualization time has
-been removed. A file may contain latency and no `box=` lines when the detector
-does not produce a patch detection.
+The `latency_ms` value measures the feature-map detection stage: classification
+feature-map extraction, anomaly scoring, connected-component detection, and
+bounding-box extraction. It starts immediately before the feature-map
+extraction call and excludes image loading, preprocessing, the separate YOLO
+prediction, and visualization. A file may contain latency and no `box=` lines
+when the detector does not produce a patch detection.
 
 The detector also writes visualization images when
 `save_visualizations` is enabled.

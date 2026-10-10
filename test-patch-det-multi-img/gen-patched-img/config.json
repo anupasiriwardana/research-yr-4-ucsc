@@ -1,8 +1,8 @@
 {
-    "model_path": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\yolov8n.pt",
+    "model_path": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\yolo11n.pt",
     "clean_dir": "D:\\GitHub\\experiment_data\\bdd100k_images_10k\\test",
-    "patch_dir": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\gen-patched-img\\patches\\yolov8",
-    "specific_patch_name": "art_patch_v7(0.1-0.2).npy",
+    "patch_dir": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\gen-patched-img\\patches\\yolov11",
+    "specific_patch_name": "art_patch_v11.npy",
     "patch_settings": {
         "patch_scale": 0.15,
         "patch_size": 150,
@@ -28,8 +28,8 @@
     "batch_settings": {
         "num_images": 100,
         "start_index": 0,
-        "output_dir": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\gen-patched-img\\yolov8-patched-imgs",
-        "coordinates_dir": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\gen-patched-img\\yolov8-patch_coordinates",
+        "output_dir": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\gen-patched-img\\yolov11-patched-imgs",
+        "coordinates_dir": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\gen-patched-img\\yolov11-patch_coordinates",
         "image_extensions": [
             ".jpg",
             ".jpeg",

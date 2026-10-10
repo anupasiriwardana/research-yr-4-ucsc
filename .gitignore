@@ -11,3 +11,8 @@
 **/yolov8-detected-patch-coordinates/*
 
 .vscode
+
+**/yolov11-patched-imgs/*
+**/yolov11-patch_coordinates/*
+**/yolov11-detected-patch-coordinates/*
+

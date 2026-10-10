@@ -32,9 +32,9 @@
   },
   "latency": {
     "images_with_latency": 100,
-    "average_ms": 68.6163,
-    "minimum_ms": 32.083,
-    "maximum_ms": 2389.088
+    "average_ms": 21.559640000000005,
+    "minimum_ms": 16.028,
+    "maximum_ms": 114.868
   },
   "per_image": [
     {
@@ -47,7 +47,7 @@
       "false_positives": 0,
       "false_negatives": 1,
       "image_status": "TP",
-      "latency_ms": 2389.088,
+      "latency_ms": 114.868,
       "matched_ious": [
         0.291498
       ]
@@ -62,7 +62,7 @@
       "false_positives": 1,
       "false_negatives": 1,
       "image_status": "TP",
-      "latency_ms": 51.765,
+      "latency_ms": 20.003,
       "matched_ious": [
         0.260274
       ]
@@ -77,7 +77,7 @@
       "false_positives": 0,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 63.066,
+      "latency_ms": 20.138,
       "matched_ious": [
         0.817556,
         0.763889
@@ -93,7 +93,7 @@
       "false_positives": 0,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 51.21,
+      "latency_ms": 20.894,
       "matched_ious": [
         0.643836,
         0.5625
@@ -109,7 +109,7 @@
       "false_positives": 0,
       "false_negatives": 0,
       "image_status": "TN",
-      "latency_ms": 44.508,
+      "latency_ms": 25.376,
       "matched_ious": []
     },
     {
@@ -122,7 +122,7 @@
       "false_positives": 0,
       "false_negatives": 1,
       "image_status": "TP",
-      "latency_ms": 50.662,
+      "latency_ms": 26.237,
       "matched_ious": [
         0.237391
       ]
@@ -137,7 +137,7 @@
       "false_positives": 2,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 48.074,
+      "latency_ms": 18.755,
       "matched_ious": [
         0.863291,
         0.702479
@@ -153,7 +153,7 @@
       "false_positives": 0,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 57.871,
+      "latency_ms": 19.083,
       "matched_ious": [
         0.852071,
         0.773317
@@ -169,7 +169,7 @@
       "false_positives": 0,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 77.396,
+      "latency_ms": 19.575,
       "matched_ious": [
         0.692308,
         0.642857
@@ -185,7 +185,7 @@
       "false_positives": 1,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 75.536,
+      "latency_ms": 20.361,
       "matched_ious": [
         0.883892,
         0.852388
@@ -201,7 +201,7 @@
       "false_positives": 0,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 50.613,
+      "latency_ms": 18.014,
       "matched_ious": [
         0.626536
       ]
@@ -216,7 +216,7 @@
       "false_positives": 2,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 44.961,
+      "latency_ms": 16.729,
       "matched_ious": [
         0.904762,
         0.840278
@@ -232,7 +232,7 @@
       "false_positives": 0,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 44.063,
+      "latency_ms": 20.456,
       "matched_ious": [
         0.815354
       ]
@@ -247,7 +247,7 @@
       "false_positives": 2,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 44.688,
+      "latency_ms": 23.838,
       "matched_ious": [
         0.898538,
         0.497382
@@ -263,7 +263,7 @@
       "false_positives": 0,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 38.063,
+      "latency_ms": 17.792,
       "matched_ious": [
         0.873016,
         0.869159
@@ -279,7 +279,7 @@
       "false_positives": 0,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 50.739,
+      "latency_ms": 19.185,
       "matched_ious": [
         0.778411,
         0.625
@@ -295,7 +295,7 @@
       "false_positives": 0,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 49.03,
+      "latency_ms": 27.648,
       "matched_ious": [
         0.758403
       ]
@@ -310,7 +310,7 @@
       "false_positives": 4,
       "false_negatives": 1,
       "image_status": "TP",
-      "latency_ms": 56.691,
+      "latency_ms": 18.913,
       "matched_ious": [
         0.28125
       ]
@@ -325,7 +325,7 @@
       "false_positives": 0,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 41.171,
+      "latency_ms": 24.271,
       "matched_ious": [
         0.835777,
         0.676538
@@ -341,7 +341,7 @@
       "false_positives": 2,
       "false_negatives": 1,
       "image_status": "TP",
-      "latency_ms": 50.703,
+      "latency_ms": 19.15,
       "matched_ious": [
         0.313725
       ]
@@ -356,7 +356,7 @@
       "false_positives": 2,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 67.2,
+      "latency_ms": 32.943,
       "matched_ious": [
         0.799649,
         0.641504
@@ -372,7 +372,7 @@
       "false_positives": 1,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 46.512,
+      "latency_ms": 16.294,
       "matched_ious": [
         0.939802,
         0.657761
@@ -388,7 +388,7 @@
       "false_positives": 0,
       "false_negatives": 0,
       "image_status": "TN",
-      "latency_ms": 36.361,
+      "latency_ms": 18.001,
       "matched_ious": []
     },
     {
@@ -401,7 +401,7 @@
       "false_positives": 0,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 50.614,
+      "latency_ms": 18.743,
       "matched_ious": [
         0.784514,
         0.731707
@@ -417,7 +417,7 @@
       "false_positives": 1,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 38.694,
+      "latency_ms": 17.95,
       "matched_ious": [
         0.190981,
         0.00768
@@ -433,7 +433,7 @@
       "false_positives": 1,
       "false_negatives": 1,
       "image_status": "TP",
-      "latency_ms": 42.243,
+      "latency_ms": 23.591,
       "matched_ious": [
         0.235294
       ]
@@ -448,7 +448,7 @@
       "false_positives": 0,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 32.083,
+      "latency_ms": 16.705,
       "matched_ious": [
         0.795181,
         0.628571
@@ -464,7 +464,7 @@
       "false_positives": 0,
       "false_negatives": 0,
       "image_status": "TN",
-      "latency_ms": 36.909,
+      "latency_ms": 18.205,
       "matched_ious": []
     },
     {
@@ -477,7 +477,7 @@
       "false_positives": 0,
       "false_negatives": 1,
       "image_status": "TP",
-      "latency_ms": 33.712,
+      "latency_ms": 17.655,
       "matched_ious": [
         0.3
       ]
@@ -492,7 +492,7 @@
       "false_positives": 3,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 38.349,
+      "latency_ms": 16.936,
       "matched_ious": [
         0.884615,
         0.615385
@@ -508,7 +508,7 @@
       "false_positives": 0,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 34.195,
+      "latency_ms": 22.157,
       "matched_ious": [
         0.857143,
         0.748709
@@ -524,7 +524,7 @@
       "false_positives": 1,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 47.26,
+      "latency_ms": 16.737,
       "matched_ious": [
         0.774681,
         0.59499
@@ -540,7 +540,7 @@
       "false_positives": 0,
       "false_negatives": 1,
       "image_status": "TP",
-      "latency_ms": 43.749,
+      "latency_ms": 17.011,
       "matched_ious": [
         0.183908
       ]
@@ -555,7 +555,7 @@
       "false_positives": 0,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 44.854,
+      "latency_ms": 26.009,
       "matched_ious": [
         0.843841,
         0.750799
@@ -571,7 +571,7 @@
       "false_positives": 1,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 52.444,
+      "latency_ms": 31.585,
       "matched_ious": [
         0.657513
       ]
@@ -586,7 +586,7 @@
       "false_positives": 0,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 100.185,
+      "latency_ms": 18.709,
       "matched_ious": [
         0.757072,
         0.298137
@@ -602,7 +602,7 @@
       "false_positives": 0,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 40.849,
+      "latency_ms": 18.773,
       "matched_ious": [
         0.898538,
         0.898538
@@ -618,7 +618,7 @@
       "false_positives": 3,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 43.87,
+      "latency_ms": 17.499,
       "matched_ious": [
         0.736434,
         0.736434
@@ -634,7 +634,7 @@
       "false_positives": 0,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 37.941,
+      "latency_ms": 16.797,
       "matched_ious": [
         0.742521
       ]
@@ -649,7 +649,7 @@
       "false_positives": 2,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 37.596,
+      "latency_ms": 21.804,
       "matched_ious": [
         0.772199,
         0.453376
@@ -665,7 +665,7 @@
       "false_positives": 0,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 44.425,
+      "latency_ms": 17.414,
       "matched_ious": [
         1.0
       ]
@@ -680,7 +680,7 @@
       "false_positives": 0,
       "false_negatives": 1,
       "image_status": "TP",
-      "latency_ms": 35.845,
+      "latency_ms": 16.187,
       "matched_ious": [
         0.355556
       ]
@@ -695,7 +695,7 @@
       "false_positives": 1,
       "false_negatives": 1,
       "image_status": "TP",
-      "latency_ms": 45.871,
+      "latency_ms": 17.586,
       "matched_ious": [
         0.3
       ]
@@ -710,7 +710,7 @@
       "false_positives": 0,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 38.634,
+      "latency_ms": 22.667,
       "matched_ious": [
         0.840278,
         0.789137
@@ -726,7 +726,7 @@
       "false_positives": 0,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 39.421,
+      "latency_ms": 39.03,
       "matched_ious": [
         0.6875,
         0.570552
@@ -742,7 +742,7 @@
       "false_positives": 1,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 41.695,
+      "latency_ms": 33.091,
       "matched_ious": [
         0.788571,
         0.537118
@@ -758,7 +758,7 @@
       "false_positives": 1,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 56.022,
+      "latency_ms": 16.929,
       "matched_ious": [
         0.638614,
         0.521024
@@ -774,7 +774,7 @@
       "false_positives": 1,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 48.439,
+      "latency_ms": 48.093,
       "matched_ious": [
         0.883315,
         0.701625
@@ -790,7 +790,7 @@
       "false_positives": 1,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 43.148,
+      "latency_ms": 18.097,
       "matched_ious": [
         0.779221,
         0.628571
@@ -806,7 +806,7 @@
       "false_positives": 0,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 35.482,
+      "latency_ms": 27.66,
       "matched_ious": [
         0.869159
       ]
@@ -821,7 +821,7 @@
       "false_positives": 0,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 35.974,
+      "latency_ms": 17.717,
       "matched_ious": [
         0.898538,
         0.831843
@@ -837,7 +837,7 @@
       "false_positives": 0,
       "false_negatives": 1,
       "image_status": "TP",
-      "latency_ms": 36.7,
+      "latency_ms": 18.043,
       "matched_ious": [
         0.230833
       ]
@@ -852,7 +852,7 @@
       "false_positives": 0,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 38.753,
+      "latency_ms": 20.578,
       "matched_ious": [
         0.825427,
         0.780645
@@ -868,7 +868,7 @@
       "false_positives": 0,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 50.358,
+      "latency_ms": 17.055,
       "matched_ious": [
         0.916667,
         0.756098
@@ -884,7 +884,7 @@
       "false_positives": 3,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 46.996,
+      "latency_ms": 23.503,
       "matched_ious": [
         0.692308,
         0.385027
@@ -900,7 +900,7 @@
       "false_positives": 1,
       "false_negatives": 1,
       "image_status": "TP",
-      "latency_ms": 48.098,
+      "latency_ms": 17.757,
       "matched_ious": [
         0.236453
       ]
@@ -915,7 +915,7 @@
       "false_positives": 1,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 54.287,
+      "latency_ms": 17.009,
       "matched_ious": [
         0.817556
       ]
@@ -930,7 +930,7 @@
       "false_positives": 1,
       "false_negatives": 1,
       "image_status": "TP",
-      "latency_ms": 41.919,
+      "latency_ms": 21.201,
       "matched_ious": [
         0.303158
       ]
@@ -945,7 +945,7 @@
       "false_positives": 0,
       "false_negatives": 0,
       "image_status": "TN",
-      "latency_ms": 39.957,
+      "latency_ms": 25.506,
       "matched_ious": []
     },
     {
@@ -958,7 +958,7 @@
       "false_positives": 1,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 33.822,
+      "latency_ms": 25.792,
       "matched_ious": [
         0.709924,
         0.5
@@ -974,7 +974,7 @@
       "false_positives": 0,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 41.972,
+      "latency_ms": 16.187,
       "matched_ious": [
         0.6875,
         0.645426
@@ -990,7 +990,7 @@
       "false_positives": 1,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 35.833,
+      "latency_ms": 16.146,
       "matched_ious": [
         0.564706
       ]
@@ -1005,7 +1005,7 @@
       "false_positives": 0,
       "false_negatives": 0,
       "image_status": "TN",
-      "latency_ms": 36.159,
+      "latency_ms": 25.049,
       "matched_ious": []
     },
     {
@@ -1018,7 +1018,7 @@
       "false_positives": 0,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 39.135,
+      "latency_ms": 18.173,
       "matched_ious": [
         0.702184,
         0.686901
@@ -1034,7 +1034,7 @@
       "false_positives": 0,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 46.391,
+      "latency_ms": 18.028,
       "matched_ious": [
         0.693215,
         0.62212
@@ -1050,7 +1050,7 @@
       "false_positives": 2,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 39.793,
+      "latency_ms": 17.545,
       "matched_ious": [
         0.541353
       ]
@@ -1065,7 +1065,7 @@
       "false_positives": 1,
       "false_negatives": 1,
       "image_status": "TP",
-      "latency_ms": 39.053,
+      "latency_ms": 20.98,
       "matched_ious": [
         0.252632
       ]
@@ -1080,7 +1080,7 @@
       "false_positives": 0,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 63.246,
+      "latency_ms": 24.242,
       "matched_ious": [
         0.786802,
         0.734694
@@ -1096,7 +1096,7 @@
       "false_positives": 0,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 57.137,
+      "latency_ms": 19.489,
       "matched_ious": [
         0.763889
       ]
@@ -1111,7 +1111,7 @@
       "false_positives": 0,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 42.47,
+      "latency_ms": 25.951,
       "matched_ious": [
         0.586957
       ]
@@ -1126,7 +1126,7 @@
       "false_positives": 2,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 37.992,
+      "latency_ms": 23.668,
       "matched_ious": [
         0.610503,
         0.560748
@@ -1142,7 +1142,7 @@
       "false_positives": 0,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 38.405,
+      "latency_ms": 17.681,
       "matched_ious": [
         0.779221
       ]
@@ -1157,7 +1157,7 @@
       "false_positives": 1,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 38.729,
+      "latency_ms": 28.603,
       "matched_ious": [
         0.819334,
         0.709677
@@ -1173,7 +1173,7 @@
       "false_positives": 0,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 41.903,
+      "latency_ms": 16.747,
       "matched_ious": [
         0.883315,
         0.833333
@@ -1189,7 +1189,7 @@
       "false_positives": 0,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 45.847,
+      "latency_ms": 27.113,
       "matched_ious": [
         0.890339,
         0.863291
@@ -1205,7 +1205,7 @@
       "false_positives": 1,
       "false_negatives": 1,
       "image_status": "TP",
-      "latency_ms": 41.068,
+      "latency_ms": 16.114,
       "matched_ious": [
         0.285714
       ]
@@ -1220,7 +1220,7 @@
       "false_positives": 0,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 57.968,
+      "latency_ms": 20.526,
       "matched_ious": [
         0.869159,
         0.734387
@@ -1236,7 +1236,7 @@
       "false_positives": 1,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 40.89,
+      "latency_ms": 16.294,
       "matched_ious": [
         0.728
       ]
@@ -1251,7 +1251,7 @@
       "false_positives": 0,
       "false_negatives": 0,
       "image_status": "TN",
-      "latency_ms": 40.847,
+      "latency_ms": 16.028,
       "matched_ious": []
     },
     {
@@ -1264,7 +1264,7 @@
       "false_positives": 2,
       "false_negatives": 1,
       "image_status": "TP",
-      "latency_ms": 77.575,
+      "latency_ms": 17.393,
       "matched_ious": [
         0.375494
       ]
@@ -1279,7 +1279,7 @@
       "false_positives": 0,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 60.979,
+      "latency_ms": 16.196,
       "matched_ious": [
         0.723077,
         0.686567
@@ -1295,7 +1295,7 @@
       "false_positives": 0,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 41.069,
+      "latency_ms": 16.157,
       "matched_ious": [
         0.872711,
         0.75
@@ -1311,7 +1311,7 @@
       "false_positives": 2,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 36.572,
+      "latency_ms": 16.756,
       "matched_ious": [
         0.728,
         0.696429
@@ -1327,7 +1327,7 @@
       "false_positives": 3,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 37.583,
+      "latency_ms": 16.234,
       "matched_ious": [
         0.629464
       ]
@@ -1342,7 +1342,7 @@
       "false_positives": 1,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 37.154,
+      "latency_ms": 20.01,
       "matched_ious": [
         0.6,
         0.59499
@@ -1358,7 +1358,7 @@
       "false_positives": 1,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 37.516,
+      "latency_ms": 17.654,
       "matched_ious": [
         0.886792,
         0.817556
@@ -1374,7 +1374,7 @@
       "false_positives": 1,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 34.521,
+      "latency_ms": 16.079,
       "matched_ious": [
         0.467532
       ]
@@ -1389,7 +1389,7 @@
       "false_positives": 0,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 43.824,
+      "latency_ms": 18.579,
       "matched_ious": [
         0.51028,
         0.315789
@@ -1405,7 +1405,7 @@
       "false_positives": 0,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 37.474,
+      "latency_ms": 22.037,
       "matched_ious": [
         0.829329,
         0.827436
@@ -1421,7 +1421,7 @@
       "false_positives": 0,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 39.314,
+      "latency_ms": 32.069,
       "matched_ious": [
         0.814433,
         0.709828
@@ -1437,7 +1437,7 @@
       "false_positives": 1,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 39.028,
+      "latency_ms": 16.442,
       "matched_ious": [
         0.866343,
         0.583333
@@ -1453,7 +1453,7 @@
       "false_positives": 0,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 36.959,
+      "latency_ms": 20.013,
       "matched_ious": [
         0.840278,
         0.625
@@ -1469,7 +1469,7 @@
       "false_positives": 1,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 55.107,
+      "latency_ms": 16.576,
       "matched_ious": [
         0.886447,
         0.840278
@@ -1485,7 +1485,7 @@
       "false_positives": 0,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 39.892,
+      "latency_ms": 16.781,
       "matched_ious": [
         0.748709
       ]
@@ -1500,7 +1500,7 @@
       "false_positives": 0,
       "false_negatives": 1,
       "image_status": "TP",
-      "latency_ms": 49.385,
+      "latency_ms": 16.42,
       "matched_ious": [
         0.321429
       ]
@@ -1515,7 +1515,7 @@
       "false_positives": 4,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 35.337,
+      "latency_ms": 20.859,
       "matched_ious": [
         0.730835,
         0.422222
@@ -1531,7 +1531,7 @@
       "false_positives": 0,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 37.6,
+      "latency_ms": 21.751,
       "matched_ious": [
         0.88075,
         0.840708
@@ -1547,7 +1547,7 @@
       "false_positives": 2,
       "false_negatives": 1,
       "image_status": "TP",
-      "latency_ms": 45.59,
+      "latency_ms": 18.805,
       "matched_ious": [
         0.478261
       ]
@@ -1562,7 +1562,7 @@
       "false_positives": 0,
       "false_negatives": 1,
       "image_status": "TP",
-      "latency_ms": 34.213,
+      "latency_ms": 17.011,
       "matched_ious": [
         0.395604
       ]
@@ -1577,7 +1577,7 @@
       "false_positives": 0,
       "false_negatives": 0,
       "image_status": "TP",
-      "latency_ms": 38.736,
+      "latency_ms": 21.273,
       "matched_ious": [
         0.886792,
         0.705977
