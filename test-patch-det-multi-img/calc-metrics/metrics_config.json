@@ -1,0 +1,9 @@
+{
+    "ground_truth_dir": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\gen-patched-img\\yolov8-patch_coordinates",
+    "detection_dir": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\det-patch-mech1-updated\\yolov8-detected-patch-coordinates",
+    "output_dir": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\calc-metrics\\patch-detection-metrics",
+    "detection_filename_prefix": "multi-patched_",
+    "strict_file_matching": true,
+    "metrics_json": "patch_detection_metrics.json",
+    "per_image_csv": "patch_detection_per_image.csv"
+}

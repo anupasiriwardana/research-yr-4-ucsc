@@ -1,0 +1,1587 @@
+{
+  "coordinate_matching": {
+    "criterion": "positive-area intersection",
+    "one_to_one_matching": true,
+    "matching_tie_breaker": "highest IoU first",
+    "coordinate_space": "640x640 pixel space"
+  },
+  "dataset": {
+    "images_compared": 100,
+    "ground_truth_directory": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\gen-patched-img\\yolov8-patch_coordinates",
+    "detection_directory": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\det-patch-mech1-updated\\yolov8-detected-patch-coordinates",
+    "missing_ground_truth_files": [],
+    "missing_detection_files": []
+  },
+  "object_metrics": {
+    "true_positives": 152,
+    "false_positives": 68,
+    "false_negatives": 19,
+    "precision": 0.6909090909090909,
+    "recall": 0.8888888888888888,
+    "f1": 0.7774936061381074
+  },
+  "image_metrics": {
+    "true_positives": 94,
+    "false_positives": 0,
+    "false_negatives": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "true_negatives": 6,
+    "false_positive_rate": 0.0
+  },
+  "latency": {
+    "images_with_latency": 100,
+    "average_ms": 68.6163,
+    "minimum_ms": 32.083,
+    "maximum_ms": 2389.088
+  },
+  "per_image": [
+    {
+      "image_key": "ac517380-00000000",
+      "ground_truth_file": "ac517380-00000000.txt",
+      "detection_file": "multi-patched_ac517380-00000000.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 1,
+      "true_positives": 1,
+      "false_positives": 0,
+      "false_negatives": 1,
+      "image_status": "TP",
+      "latency_ms": 2389.088,
+      "matched_ious": [
+        0.291498
+      ]
+    },
+    {
+      "image_key": "ac56c836-bdabca21",
+      "ground_truth_file": "ac56c836-bdabca21.txt",
+      "detection_file": "multi-patched_ac56c836-bdabca21.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 2,
+      "true_positives": 1,
+      "false_positives": 1,
+      "false_negatives": 1,
+      "image_status": "TP",
+      "latency_ms": 51.765,
+      "matched_ious": [
+        0.260274
+      ]
+    },
+    {
+      "image_key": "ac6d4f42-00000000",
+      "ground_truth_file": "ac6d4f42-00000000.txt",
+      "detection_file": "multi-patched_ac6d4f42-00000000.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 2,
+      "true_positives": 2,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 63.066,
+      "matched_ious": [
+        0.817556,
+        0.763889
+      ]
+    },
+    {
+      "image_key": "ac6e638d-7c84846d",
+      "ground_truth_file": "ac6e638d-7c84846d.txt",
+      "detection_file": "multi-patched_ac6e638d-7c84846d.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 2,
+      "true_positives": 2,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 51.21,
+      "matched_ious": [
+        0.643836,
+        0.5625
+      ]
+    },
+    {
+      "image_key": "ac73d367-0cb39ad0",
+      "ground_truth_file": "ac73d367-0cb39ad0.txt",
+      "detection_file": "multi-patched_ac73d367-0cb39ad0.txt",
+      "ground_truth_boxes": 0,
+      "detected_boxes": 0,
+      "true_positives": 0,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "image_status": "TN",
+      "latency_ms": 44.508,
+      "matched_ious": []
+    },
+    {
+      "image_key": "ac985232-00000000",
+      "ground_truth_file": "ac985232-00000000.txt",
+      "detection_file": "multi-patched_ac985232-00000000.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 1,
+      "true_positives": 1,
+      "false_positives": 0,
+      "false_negatives": 1,
+      "image_status": "TP",
+      "latency_ms": 50.662,
+      "matched_ious": [
+        0.237391
+      ]
+    },
+    {
+      "image_key": "ac9be3fe-790d1f8e",
+      "ground_truth_file": "ac9be3fe-790d1f8e.txt",
+      "detection_file": "multi-patched_ac9be3fe-790d1f8e.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 4,
+      "true_positives": 2,
+      "false_positives": 2,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 48.074,
+      "matched_ious": [
+        0.863291,
+        0.702479
+      ]
+    },
+    {
+      "image_key": "aca32929-00000000",
+      "ground_truth_file": "aca32929-00000000.txt",
+      "detection_file": "multi-patched_aca32929-00000000.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 2,
+      "true_positives": 2,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 57.871,
+      "matched_ious": [
+        0.852071,
+        0.773317
+      ]
+    },
+    {
+      "image_key": "aca4b150-00000000",
+      "ground_truth_file": "aca4b150-00000000.txt",
+      "detection_file": "multi-patched_aca4b150-00000000.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 2,
+      "true_positives": 2,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 77.396,
+      "matched_ious": [
+        0.692308,
+        0.642857
+      ]
+    },
+    {
+      "image_key": "acaaf824-00000000",
+      "ground_truth_file": "acaaf824-00000000.txt",
+      "detection_file": "multi-patched_acaaf824-00000000.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 3,
+      "true_positives": 2,
+      "false_positives": 1,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 75.536,
+      "matched_ious": [
+        0.883892,
+        0.852388
+      ]
+    },
+    {
+      "image_key": "ace9bf57-669189d2",
+      "ground_truth_file": "ace9bf57-669189d2.txt",
+      "detection_file": "multi-patched_ace9bf57-669189d2.txt",
+      "ground_truth_boxes": 1,
+      "detected_boxes": 1,
+      "true_positives": 1,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 50.613,
+      "matched_ious": [
+        0.626536
+      ]
+    },
+    {
+      "image_key": "ad522266-1f8f3ba4",
+      "ground_truth_file": "ad522266-1f8f3ba4.txt",
+      "detection_file": "multi-patched_ad522266-1f8f3ba4.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 4,
+      "true_positives": 2,
+      "false_positives": 2,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 44.961,
+      "matched_ious": [
+        0.904762,
+        0.840278
+      ]
+    },
+    {
+      "image_key": "ad9f7908-42ec4c0e",
+      "ground_truth_file": "ad9f7908-42ec4c0e.txt",
+      "detection_file": "multi-patched_ad9f7908-42ec4c0e.txt",
+      "ground_truth_boxes": 1,
+      "detected_boxes": 1,
+      "true_positives": 1,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 44.063,
+      "matched_ious": [
+        0.815354
+      ]
+    },
+    {
+      "image_key": "ada0552e-51d73d3c",
+      "ground_truth_file": "ada0552e-51d73d3c.txt",
+      "detection_file": "multi-patched_ada0552e-51d73d3c.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 4,
+      "true_positives": 2,
+      "false_positives": 2,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 44.688,
+      "matched_ious": [
+        0.898538,
+        0.497382
+      ]
+    },
+    {
+      "image_key": "ae1305f8-00000000",
+      "ground_truth_file": "ae1305f8-00000000.txt",
+      "detection_file": "multi-patched_ae1305f8-00000000.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 2,
+      "true_positives": 2,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 38.063,
+      "matched_ious": [
+        0.873016,
+        0.869159
+      ]
+    },
+    {
+      "image_key": "ae49bf6d-00000000",
+      "ground_truth_file": "ae49bf6d-00000000.txt",
+      "detection_file": "multi-patched_ae49bf6d-00000000.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 2,
+      "true_positives": 2,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 50.739,
+      "matched_ious": [
+        0.778411,
+        0.625
+      ]
+    },
+    {
+      "image_key": "ae4b0c67-4607fe51",
+      "ground_truth_file": "ae4b0c67-4607fe51.txt",
+      "detection_file": "multi-patched_ae4b0c67-4607fe51.txt",
+      "ground_truth_boxes": 1,
+      "detected_boxes": 1,
+      "true_positives": 1,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 49.03,
+      "matched_ious": [
+        0.758403
+      ]
+    },
+    {
+      "image_key": "ae5f775e-0abb299c",
+      "ground_truth_file": "ae5f775e-0abb299c.txt",
+      "detection_file": "multi-patched_ae5f775e-0abb299c.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 5,
+      "true_positives": 1,
+      "false_positives": 4,
+      "false_negatives": 1,
+      "image_status": "TP",
+      "latency_ms": 56.691,
+      "matched_ious": [
+        0.28125
+      ]
+    },
+    {
+      "image_key": "ae60618a-00000000",
+      "ground_truth_file": "ae60618a-00000000.txt",
+      "detection_file": "multi-patched_ae60618a-00000000.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 2,
+      "true_positives": 2,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 41.171,
+      "matched_ious": [
+        0.835777,
+        0.676538
+      ]
+    },
+    {
+      "image_key": "ae6a0a72-00000000",
+      "ground_truth_file": "ae6a0a72-00000000.txt",
+      "detection_file": "multi-patched_ae6a0a72-00000000.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 3,
+      "true_positives": 1,
+      "false_positives": 2,
+      "false_negatives": 1,
+      "image_status": "TP",
+      "latency_ms": 50.703,
+      "matched_ious": [
+        0.313725
+      ]
+    },
+    {
+      "image_key": "ae7bcd76-00000000",
+      "ground_truth_file": "ae7bcd76-00000000.txt",
+      "detection_file": "multi-patched_ae7bcd76-00000000.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 4,
+      "true_positives": 2,
+      "false_positives": 2,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 67.2,
+      "matched_ious": [
+        0.799649,
+        0.641504
+      ]
+    },
+    {
+      "image_key": "ae9525e3-00000000",
+      "ground_truth_file": "ae9525e3-00000000.txt",
+      "detection_file": "multi-patched_ae9525e3-00000000.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 3,
+      "true_positives": 2,
+      "false_positives": 1,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 46.512,
+      "matched_ious": [
+        0.939802,
+        0.657761
+      ]
+    },
+    {
+      "image_key": "aeb11c82-00000000",
+      "ground_truth_file": "aeb11c82-00000000.txt",
+      "detection_file": "multi-patched_aeb11c82-00000000.txt",
+      "ground_truth_boxes": 0,
+      "detected_boxes": 0,
+      "true_positives": 0,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "image_status": "TN",
+      "latency_ms": 36.361,
+      "matched_ious": []
+    },
+    {
+      "image_key": "aebb3fd2-00000000",
+      "ground_truth_file": "aebb3fd2-00000000.txt",
+      "detection_file": "multi-patched_aebb3fd2-00000000.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 2,
+      "true_positives": 2,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 50.614,
+      "matched_ious": [
+        0.784514,
+        0.731707
+      ]
+    },
+    {
+      "image_key": "aec51649-59747496",
+      "ground_truth_file": "aec51649-59747496.txt",
+      "detection_file": "multi-patched_aec51649-59747496.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 3,
+      "true_positives": 2,
+      "false_positives": 1,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 38.694,
+      "matched_ious": [
+        0.190981,
+        0.00768
+      ]
+    },
+    {
+      "image_key": "aec7cd49-00000000",
+      "ground_truth_file": "aec7cd49-00000000.txt",
+      "detection_file": "multi-patched_aec7cd49-00000000.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 2,
+      "true_positives": 1,
+      "false_positives": 1,
+      "false_negatives": 1,
+      "image_status": "TP",
+      "latency_ms": 42.243,
+      "matched_ious": [
+        0.235294
+      ]
+    },
+    {
+      "image_key": "aed0a80f-1833d0ff",
+      "ground_truth_file": "aed0a80f-1833d0ff.txt",
+      "detection_file": "multi-patched_aed0a80f-1833d0ff.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 2,
+      "true_positives": 2,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 32.083,
+      "matched_ious": [
+        0.795181,
+        0.628571
+      ]
+    },
+    {
+      "image_key": "aeddb3d5-00000000",
+      "ground_truth_file": "aeddb3d5-00000000.txt",
+      "detection_file": "multi-patched_aeddb3d5-00000000.txt",
+      "ground_truth_boxes": 0,
+      "detected_boxes": 0,
+      "true_positives": 0,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "image_status": "TN",
+      "latency_ms": 36.909,
+      "matched_ious": []
+    },
+    {
+      "image_key": "af0a7e94-89b00000",
+      "ground_truth_file": "af0a7e94-89b00000.txt",
+      "detection_file": "multi-patched_af0a7e94-89b00000.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 1,
+      "true_positives": 1,
+      "false_positives": 0,
+      "false_negatives": 1,
+      "image_status": "TP",
+      "latency_ms": 33.712,
+      "matched_ious": [
+        0.3
+      ]
+    },
+    {
+      "image_key": "af0a7e94-deae0000",
+      "ground_truth_file": "af0a7e94-deae0000.txt",
+      "detection_file": "multi-patched_af0a7e94-deae0000.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 5,
+      "true_positives": 2,
+      "false_positives": 3,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 38.349,
+      "matched_ious": [
+        0.884615,
+        0.615385
+      ]
+    },
+    {
+      "image_key": "af0a7e94-deae0001",
+      "ground_truth_file": "af0a7e94-deae0001.txt",
+      "detection_file": "multi-patched_af0a7e94-deae0001.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 2,
+      "true_positives": 2,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 34.195,
+      "matched_ious": [
+        0.857143,
+        0.748709
+      ]
+    },
+    {
+      "image_key": "af2d8f1f-f36ec56e",
+      "ground_truth_file": "af2d8f1f-f36ec56e.txt",
+      "detection_file": "multi-patched_af2d8f1f-f36ec56e.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 3,
+      "true_positives": 2,
+      "false_positives": 1,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 47.26,
+      "matched_ious": [
+        0.774681,
+        0.59499
+      ]
+    },
+    {
+      "image_key": "af38b9e7-e94ada5b",
+      "ground_truth_file": "af38b9e7-e94ada5b.txt",
+      "detection_file": "multi-patched_af38b9e7-e94ada5b.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 1,
+      "true_positives": 1,
+      "false_positives": 0,
+      "false_negatives": 1,
+      "image_status": "TP",
+      "latency_ms": 43.749,
+      "matched_ious": [
+        0.183908
+      ]
+    },
+    {
+      "image_key": "af3dc221-1f206eeb",
+      "ground_truth_file": "af3dc221-1f206eeb.txt",
+      "detection_file": "multi-patched_af3dc221-1f206eeb.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 2,
+      "true_positives": 2,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 44.854,
+      "matched_ious": [
+        0.843841,
+        0.750799
+      ]
+    },
+    {
+      "image_key": "af4bcae9-00000000",
+      "ground_truth_file": "af4bcae9-00000000.txt",
+      "detection_file": "multi-patched_af4bcae9-00000000.txt",
+      "ground_truth_boxes": 1,
+      "detected_boxes": 2,
+      "true_positives": 1,
+      "false_positives": 1,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 52.444,
+      "matched_ious": [
+        0.657513
+      ]
+    },
+    {
+      "image_key": "af60c09f-00000000",
+      "ground_truth_file": "af60c09f-00000000.txt",
+      "detection_file": "multi-patched_af60c09f-00000000.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 2,
+      "true_positives": 2,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 100.185,
+      "matched_ious": [
+        0.757072,
+        0.298137
+      ]
+    },
+    {
+      "image_key": "af7224fc-00000000",
+      "ground_truth_file": "af7224fc-00000000.txt",
+      "detection_file": "multi-patched_af7224fc-00000000.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 2,
+      "true_positives": 2,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 40.849,
+      "matched_ious": [
+        0.898538,
+        0.898538
+      ]
+    },
+    {
+      "image_key": "af73f89e-fe3d0b6a",
+      "ground_truth_file": "af73f89e-fe3d0b6a.txt",
+      "detection_file": "multi-patched_af73f89e-fe3d0b6a.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 5,
+      "true_positives": 2,
+      "false_positives": 3,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 43.87,
+      "matched_ious": [
+        0.736434,
+        0.736434
+      ]
+    },
+    {
+      "image_key": "af7f0bb2-00000000",
+      "ground_truth_file": "af7f0bb2-00000000.txt",
+      "detection_file": "multi-patched_af7f0bb2-00000000.txt",
+      "ground_truth_boxes": 1,
+      "detected_boxes": 1,
+      "true_positives": 1,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 37.941,
+      "matched_ious": [
+        0.742521
+      ]
+    },
+    {
+      "image_key": "af822d18-a1eb2364",
+      "ground_truth_file": "af822d18-a1eb2364.txt",
+      "detection_file": "multi-patched_af822d18-a1eb2364.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 4,
+      "true_positives": 2,
+      "false_positives": 2,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 37.596,
+      "matched_ious": [
+        0.772199,
+        0.453376
+      ]
+    },
+    {
+      "image_key": "af962335-00000000",
+      "ground_truth_file": "af962335-00000000.txt",
+      "detection_file": "multi-patched_af962335-00000000.txt",
+      "ground_truth_boxes": 1,
+      "detected_boxes": 1,
+      "true_positives": 1,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 44.425,
+      "matched_ious": [
+        1.0
+      ]
+    },
+    {
+      "image_key": "afba0fcf-00000000",
+      "ground_truth_file": "afba0fcf-00000000.txt",
+      "detection_file": "multi-patched_afba0fcf-00000000.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 1,
+      "true_positives": 1,
+      "false_positives": 0,
+      "false_negatives": 1,
+      "image_status": "TP",
+      "latency_ms": 35.845,
+      "matched_ious": [
+        0.355556
+      ]
+    },
+    {
+      "image_key": "afbcc97f-ccbd0bad",
+      "ground_truth_file": "afbcc97f-ccbd0bad.txt",
+      "detection_file": "multi-patched_afbcc97f-ccbd0bad.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 2,
+      "true_positives": 1,
+      "false_positives": 1,
+      "false_negatives": 1,
+      "image_status": "TP",
+      "latency_ms": 45.871,
+      "matched_ious": [
+        0.3
+      ]
+    },
+    {
+      "image_key": "afd0aabb-caf615d5",
+      "ground_truth_file": "afd0aabb-caf615d5.txt",
+      "detection_file": "multi-patched_afd0aabb-caf615d5.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 2,
+      "true_positives": 2,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 38.634,
+      "matched_ious": [
+        0.840278,
+        0.789137
+      ]
+    },
+    {
+      "image_key": "afdc295b-5efbee33",
+      "ground_truth_file": "afdc295b-5efbee33.txt",
+      "detection_file": "multi-patched_afdc295b-5efbee33.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 2,
+      "true_positives": 2,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 39.421,
+      "matched_ious": [
+        0.6875,
+        0.570552
+      ]
+    },
+    {
+      "image_key": "affb45a2-ae5450a0",
+      "ground_truth_file": "affb45a2-ae5450a0.txt",
+      "detection_file": "multi-patched_affb45a2-ae5450a0.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 3,
+      "true_positives": 2,
+      "false_positives": 1,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 41.695,
+      "matched_ious": [
+        0.788571,
+        0.537118
+      ]
+    },
+    {
+      "image_key": "b0245632-00000000",
+      "ground_truth_file": "b0245632-00000000.txt",
+      "detection_file": "multi-patched_b0245632-00000000.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 3,
+      "true_positives": 2,
+      "false_positives": 1,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 56.022,
+      "matched_ious": [
+        0.638614,
+        0.521024
+      ]
+    },
+    {
+      "image_key": "b02fa9af-00000000",
+      "ground_truth_file": "b02fa9af-00000000.txt",
+      "detection_file": "multi-patched_b02fa9af-00000000.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 3,
+      "true_positives": 2,
+      "false_positives": 1,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 48.439,
+      "matched_ious": [
+        0.883315,
+        0.701625
+      ]
+    },
+    {
+      "image_key": "b0469fe6-00000000",
+      "ground_truth_file": "b0469fe6-00000000.txt",
+      "detection_file": "multi-patched_b0469fe6-00000000.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 3,
+      "true_positives": 2,
+      "false_positives": 1,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 43.148,
+      "matched_ious": [
+        0.779221,
+        0.628571
+      ]
+    },
+    {
+      "image_key": "b04d65f4-00000000",
+      "ground_truth_file": "b04d65f4-00000000.txt",
+      "detection_file": "multi-patched_b04d65f4-00000000.txt",
+      "ground_truth_boxes": 1,
+      "detected_boxes": 1,
+      "true_positives": 1,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 35.482,
+      "matched_ious": [
+        0.869159
+      ]
+    },
+    {
+      "image_key": "b04dca89-a0ef03ae",
+      "ground_truth_file": "b04dca89-a0ef03ae.txt",
+      "detection_file": "multi-patched_b04dca89-a0ef03ae.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 2,
+      "true_positives": 2,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 35.974,
+      "matched_ious": [
+        0.898538,
+        0.831843
+      ]
+    },
+    {
+      "image_key": "b0575922-7fd7bb12",
+      "ground_truth_file": "b0575922-7fd7bb12.txt",
+      "detection_file": "multi-patched_b0575922-7fd7bb12.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 1,
+      "true_positives": 1,
+      "false_positives": 0,
+      "false_negatives": 1,
+      "image_status": "TP",
+      "latency_ms": 36.7,
+      "matched_ious": [
+        0.230833
+      ]
+    },
+    {
+      "image_key": "b06ef369-89ffa334",
+      "ground_truth_file": "b06ef369-89ffa334.txt",
+      "detection_file": "multi-patched_b06ef369-89ffa334.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 2,
+      "true_positives": 2,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 38.753,
+      "matched_ious": [
+        0.825427,
+        0.780645
+      ]
+    },
+    {
+      "image_key": "b082ee87-a9af7f54",
+      "ground_truth_file": "b082ee87-a9af7f54.txt",
+      "detection_file": "multi-patched_b082ee87-a9af7f54.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 2,
+      "true_positives": 2,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 50.358,
+      "matched_ious": [
+        0.916667,
+        0.756098
+      ]
+    },
+    {
+      "image_key": "b085f3ec-9b432e88",
+      "ground_truth_file": "b085f3ec-9b432e88.txt",
+      "detection_file": "multi-patched_b085f3ec-9b432e88.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 5,
+      "true_positives": 2,
+      "false_positives": 3,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 46.996,
+      "matched_ious": [
+        0.692308,
+        0.385027
+      ]
+    },
+    {
+      "image_key": "b086d358-655a429c",
+      "ground_truth_file": "b086d358-655a429c.txt",
+      "detection_file": "multi-patched_b086d358-655a429c.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 2,
+      "true_positives": 1,
+      "false_positives": 1,
+      "false_negatives": 1,
+      "image_status": "TP",
+      "latency_ms": 48.098,
+      "matched_ious": [
+        0.236453
+      ]
+    },
+    {
+      "image_key": "b0969f2a-02b66fc4",
+      "ground_truth_file": "b0969f2a-02b66fc4.txt",
+      "detection_file": "multi-patched_b0969f2a-02b66fc4.txt",
+      "ground_truth_boxes": 1,
+      "detected_boxes": 2,
+      "true_positives": 1,
+      "false_positives": 1,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 54.287,
+      "matched_ious": [
+        0.817556
+      ]
+    },
+    {
+      "image_key": "b0b5ca0a-79d60001",
+      "ground_truth_file": "b0b5ca0a-79d60001.txt",
+      "detection_file": "multi-patched_b0b5ca0a-79d60001.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 2,
+      "true_positives": 1,
+      "false_positives": 1,
+      "false_negatives": 1,
+      "image_status": "TP",
+      "latency_ms": 41.919,
+      "matched_ious": [
+        0.303158
+      ]
+    },
+    {
+      "image_key": "b0d7eaa8-c94943ff",
+      "ground_truth_file": "b0d7eaa8-c94943ff.txt",
+      "detection_file": "multi-patched_b0d7eaa8-c94943ff.txt",
+      "ground_truth_boxes": 0,
+      "detected_boxes": 0,
+      "true_positives": 0,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "image_status": "TN",
+      "latency_ms": 39.957,
+      "matched_ious": []
+    },
+    {
+      "image_key": "b0e45326-00000000",
+      "ground_truth_file": "b0e45326-00000000.txt",
+      "detection_file": "multi-patched_b0e45326-00000000.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 3,
+      "true_positives": 2,
+      "false_positives": 1,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 33.822,
+      "matched_ious": [
+        0.709924,
+        0.5
+      ]
+    },
+    {
+      "image_key": "b0e6d36f-4a93ff62",
+      "ground_truth_file": "b0e6d36f-4a93ff62.txt",
+      "detection_file": "multi-patched_b0e6d36f-4a93ff62.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 2,
+      "true_positives": 2,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 41.972,
+      "matched_ious": [
+        0.6875,
+        0.645426
+      ]
+    },
+    {
+      "image_key": "b0e9f38b-00000000",
+      "ground_truth_file": "b0e9f38b-00000000.txt",
+      "detection_file": "multi-patched_b0e9f38b-00000000.txt",
+      "ground_truth_boxes": 1,
+      "detected_boxes": 2,
+      "true_positives": 1,
+      "false_positives": 1,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 35.833,
+      "matched_ious": [
+        0.564706
+      ]
+    },
+    {
+      "image_key": "b1205d47-0b5efb64",
+      "ground_truth_file": "b1205d47-0b5efb64.txt",
+      "detection_file": "multi-patched_b1205d47-0b5efb64.txt",
+      "ground_truth_boxes": 0,
+      "detected_boxes": 0,
+      "true_positives": 0,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "image_status": "TN",
+      "latency_ms": 36.159,
+      "matched_ious": []
+    },
+    {
+      "image_key": "b12992c7-ce2d75a0",
+      "ground_truth_file": "b12992c7-ce2d75a0.txt",
+      "detection_file": "multi-patched_b12992c7-ce2d75a0.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 2,
+      "true_positives": 2,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 39.135,
+      "matched_ious": [
+        0.702184,
+        0.686901
+      ]
+    },
+    {
+      "image_key": "b13c3bff-c406a89e",
+      "ground_truth_file": "b13c3bff-c406a89e.txt",
+      "detection_file": "multi-patched_b13c3bff-c406a89e.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 2,
+      "true_positives": 2,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 46.391,
+      "matched_ious": [
+        0.693215,
+        0.62212
+      ]
+    },
+    {
+      "image_key": "b1441884-7587e0f5",
+      "ground_truth_file": "b1441884-7587e0f5.txt",
+      "detection_file": "multi-patched_b1441884-7587e0f5.txt",
+      "ground_truth_boxes": 1,
+      "detected_boxes": 3,
+      "true_positives": 1,
+      "false_positives": 2,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 39.793,
+      "matched_ious": [
+        0.541353
+      ]
+    },
+    {
+      "image_key": "b1455b0a-f8c10efc",
+      "ground_truth_file": "b1455b0a-f8c10efc.txt",
+      "detection_file": "multi-patched_b1455b0a-f8c10efc.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 2,
+      "true_positives": 1,
+      "false_positives": 1,
+      "false_negatives": 1,
+      "image_status": "TP",
+      "latency_ms": 39.053,
+      "matched_ious": [
+        0.252632
+      ]
+    },
+    {
+      "image_key": "b1455b0a-f8c11637",
+      "ground_truth_file": "b1455b0a-f8c11637.txt",
+      "detection_file": "multi-patched_b1455b0a-f8c11637.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 2,
+      "true_positives": 2,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 63.246,
+      "matched_ious": [
+        0.786802,
+        0.734694
+      ]
+    },
+    {
+      "image_key": "b168df58-00000000",
+      "ground_truth_file": "b168df58-00000000.txt",
+      "detection_file": "multi-patched_b168df58-00000000.txt",
+      "ground_truth_boxes": 1,
+      "detected_boxes": 1,
+      "true_positives": 1,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 57.137,
+      "matched_ious": [
+        0.763889
+      ]
+    },
+    {
+      "image_key": "b16a27ef-00000000",
+      "ground_truth_file": "b16a27ef-00000000.txt",
+      "detection_file": "multi-patched_b16a27ef-00000000.txt",
+      "ground_truth_boxes": 1,
+      "detected_boxes": 1,
+      "true_positives": 1,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 42.47,
+      "matched_ious": [
+        0.586957
+      ]
+    },
+    {
+      "image_key": "b187a91a-4203b1fa",
+      "ground_truth_file": "b187a91a-4203b1fa.txt",
+      "detection_file": "multi-patched_b187a91a-4203b1fa.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 4,
+      "true_positives": 2,
+      "false_positives": 2,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 37.992,
+      "matched_ious": [
+        0.610503,
+        0.560748
+      ]
+    },
+    {
+      "image_key": "b1926625-00000000",
+      "ground_truth_file": "b1926625-00000000.txt",
+      "detection_file": "multi-patched_b1926625-00000000.txt",
+      "ground_truth_boxes": 1,
+      "detected_boxes": 1,
+      "true_positives": 1,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 38.405,
+      "matched_ious": [
+        0.779221
+      ]
+    },
+    {
+      "image_key": "b19d350d-e452b8de",
+      "ground_truth_file": "b19d350d-e452b8de.txt",
+      "detection_file": "multi-patched_b19d350d-e452b8de.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 3,
+      "true_positives": 2,
+      "false_positives": 1,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 38.729,
+      "matched_ious": [
+        0.819334,
+        0.709677
+      ]
+    },
+    {
+      "image_key": "b1aed24b-00000000",
+      "ground_truth_file": "b1aed24b-00000000.txt",
+      "detection_file": "multi-patched_b1aed24b-00000000.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 2,
+      "true_positives": 2,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 41.903,
+      "matched_ious": [
+        0.883315,
+        0.833333
+      ]
+    },
+    {
+      "image_key": "b1b17d5d-00000000",
+      "ground_truth_file": "b1b17d5d-00000000.txt",
+      "detection_file": "multi-patched_b1b17d5d-00000000.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 2,
+      "true_positives": 2,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 45.847,
+      "matched_ious": [
+        0.890339,
+        0.863291
+      ]
+    },
+    {
+      "image_key": "b1bea966-61635a47",
+      "ground_truth_file": "b1bea966-61635a47.txt",
+      "detection_file": "multi-patched_b1bea966-61635a47.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 2,
+      "true_positives": 1,
+      "false_positives": 1,
+      "false_negatives": 1,
+      "image_status": "TP",
+      "latency_ms": 41.068,
+      "matched_ious": [
+        0.285714
+      ]
+    },
+    {
+      "image_key": "b1d2fc01-de57a9c3",
+      "ground_truth_file": "b1d2fc01-de57a9c3.txt",
+      "detection_file": "multi-patched_b1d2fc01-de57a9c3.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 2,
+      "true_positives": 2,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 57.968,
+      "matched_ious": [
+        0.869159,
+        0.734387
+      ]
+    },
+    {
+      "image_key": "b1d7b3ac-344d229e",
+      "ground_truth_file": "b1d7b3ac-344d229e.txt",
+      "detection_file": "multi-patched_b1d7b3ac-344d229e.txt",
+      "ground_truth_boxes": 1,
+      "detected_boxes": 2,
+      "true_positives": 1,
+      "false_positives": 1,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 40.89,
+      "matched_ious": [
+        0.728
+      ]
+    },
+    {
+      "image_key": "b1d7b3ac-f31fce3f",
+      "ground_truth_file": "b1d7b3ac-f31fce3f.txt",
+      "detection_file": "multi-patched_b1d7b3ac-f31fce3f.txt",
+      "ground_truth_boxes": 0,
+      "detected_boxes": 0,
+      "true_positives": 0,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "image_status": "TN",
+      "latency_ms": 40.847,
+      "matched_ious": []
+    },
+    {
+      "image_key": "b1d968b9-ce4212c7",
+      "ground_truth_file": "b1d968b9-ce4212c7.txt",
+      "detection_file": "multi-patched_b1d968b9-ce4212c7.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 3,
+      "true_positives": 1,
+      "false_positives": 2,
+      "false_negatives": 1,
+      "image_status": "TP",
+      "latency_ms": 77.575,
+      "matched_ious": [
+        0.375494
+      ]
+    },
+    {
+      "image_key": "b1da9c53-0f3d9146",
+      "ground_truth_file": "b1da9c53-0f3d9146.txt",
+      "detection_file": "multi-patched_b1da9c53-0f3d9146.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 2,
+      "true_positives": 2,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 60.979,
+      "matched_ious": [
+        0.723077,
+        0.686567
+      ]
+    },
+    {
+      "image_key": "b1dac7f7-6b2e0463",
+      "ground_truth_file": "b1dac7f7-6b2e0463.txt",
+      "detection_file": "multi-patched_b1dac7f7-6b2e0463.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 2,
+      "true_positives": 2,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 41.069,
+      "matched_ious": [
+        0.872711,
+        0.75
+      ]
+    },
+    {
+      "image_key": "b2030950-390739f8",
+      "ground_truth_file": "b2030950-390739f8.txt",
+      "detection_file": "multi-patched_b2030950-390739f8.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 4,
+      "true_positives": 2,
+      "false_positives": 2,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 36.572,
+      "matched_ious": [
+        0.728,
+        0.696429
+      ]
+    },
+    {
+      "image_key": "b24702e3-900f69e1",
+      "ground_truth_file": "b24702e3-900f69e1.txt",
+      "detection_file": "multi-patched_b24702e3-900f69e1.txt",
+      "ground_truth_boxes": 1,
+      "detected_boxes": 4,
+      "true_positives": 1,
+      "false_positives": 3,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 37.583,
+      "matched_ious": [
+        0.629464
+      ]
+    },
+    {
+      "image_key": "b26cfcdc-2e2978f0",
+      "ground_truth_file": "b26cfcdc-2e2978f0.txt",
+      "detection_file": "multi-patched_b26cfcdc-2e2978f0.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 3,
+      "true_positives": 2,
+      "false_positives": 1,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 37.154,
+      "matched_ious": [
+        0.6,
+        0.59499
+      ]
+    },
+    {
+      "image_key": "b29806ee-e89abc04",
+      "ground_truth_file": "b29806ee-e89abc04.txt",
+      "detection_file": "multi-patched_b29806ee-e89abc04.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 3,
+      "true_positives": 2,
+      "false_positives": 1,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 37.516,
+      "matched_ious": [
+        0.886792,
+        0.817556
+      ]
+    },
+    {
+      "image_key": "b2d0654e-9e047bd9",
+      "ground_truth_file": "b2d0654e-9e047bd9.txt",
+      "detection_file": "multi-patched_b2d0654e-9e047bd9.txt",
+      "ground_truth_boxes": 1,
+      "detected_boxes": 2,
+      "true_positives": 1,
+      "false_positives": 1,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 34.521,
+      "matched_ious": [
+        0.467532
+      ]
+    },
+    {
+      "image_key": "b2de6f59-9f74a381",
+      "ground_truth_file": "b2de6f59-9f74a381.txt",
+      "detection_file": "multi-patched_b2de6f59-9f74a381.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 2,
+      "true_positives": 2,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 43.824,
+      "matched_ious": [
+        0.51028,
+        0.315789
+      ]
+    },
+    {
+      "image_key": "b2e54795-0a5819bd",
+      "ground_truth_file": "b2e54795-0a5819bd.txt",
+      "detection_file": "multi-patched_b2e54795-0a5819bd.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 2,
+      "true_positives": 2,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 37.474,
+      "matched_ious": [
+        0.829329,
+        0.827436
+      ]
+    },
+    {
+      "image_key": "b2e9eaa4-00000000",
+      "ground_truth_file": "b2e9eaa4-00000000.txt",
+      "detection_file": "multi-patched_b2e9eaa4-00000000.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 2,
+      "true_positives": 2,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 39.314,
+      "matched_ious": [
+        0.814433,
+        0.709828
+      ]
+    },
+    {
+      "image_key": "b2ea3465-e9cc8650",
+      "ground_truth_file": "b2ea3465-e9cc8650.txt",
+      "detection_file": "multi-patched_b2ea3465-e9cc8650.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 3,
+      "true_positives": 2,
+      "false_positives": 1,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 39.028,
+      "matched_ious": [
+        0.866343,
+        0.583333
+      ]
+    },
+    {
+      "image_key": "b2f48fc3-eda037c9",
+      "ground_truth_file": "b2f48fc3-eda037c9.txt",
+      "detection_file": "multi-patched_b2f48fc3-eda037c9.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 2,
+      "true_positives": 2,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 36.959,
+      "matched_ious": [
+        0.840278,
+        0.625
+      ]
+    },
+    {
+      "image_key": "b3053192-cc23ba26",
+      "ground_truth_file": "b3053192-cc23ba26.txt",
+      "detection_file": "multi-patched_b3053192-cc23ba26.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 3,
+      "true_positives": 2,
+      "false_positives": 1,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 55.107,
+      "matched_ious": [
+        0.886447,
+        0.840278
+      ]
+    },
+    {
+      "image_key": "b306ed06-666d7f0e",
+      "ground_truth_file": "b306ed06-666d7f0e.txt",
+      "detection_file": "multi-patched_b306ed06-666d7f0e.txt",
+      "ground_truth_boxes": 1,
+      "detected_boxes": 1,
+      "true_positives": 1,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 39.892,
+      "matched_ious": [
+        0.748709
+      ]
+    },
+    {
+      "image_key": "b318e5aa-00000000",
+      "ground_truth_file": "b318e5aa-00000000.txt",
+      "detection_file": "multi-patched_b318e5aa-00000000.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 1,
+      "true_positives": 1,
+      "false_positives": 0,
+      "false_negatives": 1,
+      "image_status": "TP",
+      "latency_ms": 49.385,
+      "matched_ious": [
+        0.321429
+      ]
+    },
+    {
+      "image_key": "b33cbf48-b8280c19",
+      "ground_truth_file": "b33cbf48-b8280c19.txt",
+      "detection_file": "multi-patched_b33cbf48-b8280c19.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 6,
+      "true_positives": 2,
+      "false_positives": 4,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 35.337,
+      "matched_ious": [
+        0.730835,
+        0.422222
+      ]
+    },
+    {
+      "image_key": "b35d1758-e47f73d7",
+      "ground_truth_file": "b35d1758-e47f73d7.txt",
+      "detection_file": "multi-patched_b35d1758-e47f73d7.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 2,
+      "true_positives": 2,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 37.6,
+      "matched_ious": [
+        0.88075,
+        0.840708
+      ]
+    },
+    {
+      "image_key": "b3899bec-df469373",
+      "ground_truth_file": "b3899bec-df469373.txt",
+      "detection_file": "multi-patched_b3899bec-df469373.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 3,
+      "true_positives": 1,
+      "false_positives": 2,
+      "false_negatives": 1,
+      "image_status": "TP",
+      "latency_ms": 45.59,
+      "matched_ious": [
+        0.478261
+      ]
+    },
+    {
+      "image_key": "b38b2b6a-36aef53a",
+      "ground_truth_file": "b38b2b6a-36aef53a.txt",
+      "detection_file": "multi-patched_b38b2b6a-36aef53a.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 1,
+      "true_positives": 1,
+      "false_positives": 0,
+      "false_negatives": 1,
+      "image_status": "TP",
+      "latency_ms": 34.213,
+      "matched_ious": [
+        0.395604
+      ]
+    },
+    {
+      "image_key": "b397b90f-00000000",
+      "ground_truth_file": "b397b90f-00000000.txt",
+      "detection_file": "multi-patched_b397b90f-00000000.txt",
+      "ground_truth_boxes": 2,
+      "detected_boxes": 2,
+      "true_positives": 2,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "image_status": "TP",
+      "latency_ms": 38.736,
+      "matched_ious": [
+        0.886792,
+        0.705977
+      ]
+    }
+  ]
+}

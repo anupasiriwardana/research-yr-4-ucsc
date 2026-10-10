@@ -9,3 +9,5 @@
 **/yolov8-patch_coordinates/*
 **/patch-det-visualizations/*
 **/yolov8-detected-patch-coordinates/*
+
+.vscode

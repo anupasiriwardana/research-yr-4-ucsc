@@ -39,31 +39,21 @@ import torch
 import cv2
 import json
 import pickle
+import time
 import ultralytics
 import numpy as np
 from pathlib import Path
 from ultralytics import YOLO
 from ultralytics_cls_head_adapter import UltralyticsClsHeadAdapter
 
-# 1. Load Configuration
-CONFIG_PATH = Path(__file__).parent / "detector_config.json"
-with open(CONFIG_PATH, "r") as f:
-    config = json.load(f)
-
-CLEAN_DIR = Path(config["clean_data_dir"])
-PATCHED_DIR = Path(config["patched_data_dir"])
-TEST_DIR = PATCHED_DIR  # for now, just run on the patched set (can be changed to CLEAN_DIR for clean images)
-OUTPUT_FILENAME_TEMPLATE = "3-patched_{img_name}"
+OUTPUT_FILENAME_TEMPLATE = "patched_{img_name}"
 
 INPUT_SIZE = 640  # keep in sync with calibrate_cls_head.py
 
 
 class ClsHeadMahalanobisDetector:
-    def __init__(self, config_data=config):
-        """Standalone constructor: loads its OWN model/adapter from
-        config. Used when Mechanism 1 runs alone. For combined mode
-        (sharing a model/forward pass with Mechanism 4), build via
-        from_stats() instead -- see run_detection.py."""
+    def __init__(self, config_data):
+        """Build the detector from the caller-provided configuration."""
         self.config = config_data
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.model = YOLO(self.config["model_path"]).to(self.device)
@@ -186,7 +176,9 @@ class ClsHeadMahalanobisDetector:
         is_attack = len(bounding_boxes) > 0
         score_val = max((b["score"] for b in bounding_boxes), default=0.0)
 
+        visualization_latency_ms = 0.0
         if save_visualization:
+            visualization_start = time.perf_counter()
             scores_np = scores.cpu().numpy()
             scores_norm = cv2.normalize(scores_np, None, 0, 255, cv2.NORM_MINMAX, dtype=cv2.CV_8U)
             heatmap_resized = cv2.resize(scores_norm, (INPUT_SIZE, INPUT_SIZE))
@@ -210,11 +202,15 @@ class ClsHeadMahalanobisDetector:
             out_visualization_path = output_dir / OUTPUT_FILENAME_TEMPLATE.format(img_name=img_name)
             cv2.imwrite(str(out_visualization_path), overlay)
             print(f"\n[Visualizer] Heatmap saved to: {out_visualization_path}")
+            visualization_latency_ms = (
+                time.perf_counter() - visualization_start
+            ) * 1000.0
 
         return {
             "is_attack": is_attack,
             "score": float(score_val),
             "bounding_boxes": bounding_boxes,   # list of {"box": (x1,y1,x2,y2), "score": float} -- see note below
+            "visualization_latency_ms": visualization_latency_ms,
         }
 
     def detect(self, img_path, save_visualization=True):
@@ -240,12 +236,18 @@ class ClsHeadMahalanobisDetector:
 
 
 if __name__ == "__main__":
+    config_path = Path(__file__).parent / "detection_config.json"
+    with config_path.open("r", encoding="utf-8") as config_file:
+        config = json.load(config_file)
+
+    patched_dir = Path(config["batch_settings"]["input_dir"])
     detector = ClsHeadMahalanobisDetector(config)
 
-    if config["specific_test_image"]:
-        test_image = str(TEST_DIR / config["specific_test_image"])
+    specific_test_image = config.get("specific_test_image", "")
+    if specific_test_image:
+        test_image = str(patched_dir / specific_test_image)
     else:
-        patched_files = list(PATCHED_DIR.glob("*.jpg")) + list(PATCHED_DIR.glob("*.png"))
+        patched_files = list(patched_dir.glob("*.jpg")) + list(patched_dir.glob("*.png"))
         patched_files = [f for f in patched_files if "detected_cls_head" not in f.name]
         test_image = str(patched_files[0]) if patched_files else None
 
