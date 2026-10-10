@@ -49,7 +49,7 @@ DATA_DIR = Path(config["clean_dir"])
 OUTPUT_DIR = Path(config["output_dir"])
 PATCH_DIR = Path(config["patch_dir"])
 PATCH_DIR.mkdir(parents=True, exist_ok=True)
-NEW_PATCH_NAME = "art_patch_v11.npy"
+NEW_PATCH_NAME = "art_patch_v11(0.10-0.20).npy"
 
 PS = config["patch_settings"]
 INPUT_SIZE = 640
@@ -328,7 +328,7 @@ patched_test = test_image * (1 - warped_mask) + warped_patch * warped_mask
 
 out_np = (patched_test.permute(1, 2, 0).cpu().numpy() * 255.0).astype(np.uint8)
 out_bgr = cv2.cvtColor(out_np, cv2.COLOR_RGB2BGR)
-out_path = OUTPUT_DIR / f"art_patched_{demo_filename}"
+out_path = OUTPUT_DIR / f"yolo11-patched_{demo_filename}"
 cv2.imwrite(str(out_path), out_bgr)
 print(f"Patched test image saved to: {out_path}")
 print("\nNext: run verify_patch_efficacy.py to check whether the real "

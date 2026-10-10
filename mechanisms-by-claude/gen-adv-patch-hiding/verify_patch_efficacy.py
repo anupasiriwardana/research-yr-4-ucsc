@@ -12,6 +12,7 @@ with open(CONFIG_PATH, "r") as f:
 CLEAN_DIR = Path(config["clean_dir"])
 PATCHED_DIR = Path(config["output_dir"])
 PATCH_DETECTION_DIR = Path(config["patch_detection_dir"])
+OUTPUT_FILENAME_PREFIX = "2-yolo11_"
 
 # 2. Resolve Patched Image Path
 if config["specific_patched_image"]:
@@ -75,7 +76,9 @@ comparison_img = cv2.hconcat([clean_plot, patched_plot_resized])
 cv2.putText(comparison_img, "CLEAN IMAGE", (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 255, 0), 3)
 cv2.putText(comparison_img, "PATCHED IMAGE", (w + 20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 0, 255), 3)
 
-output_visual_path = PATCH_DETECTION_DIR / f"1-yolo11_{config['specific_patched_image']}.jpg"
+output_visual_path = PATCH_DETECTION_DIR / (
+    f"{OUTPUT_FILENAME_PREFIX}{config['specific_patched_image']}.jpg"
+)
 cv2.imwrite(str(output_visual_path), comparison_img)
 
 print(f"Visual comparison saved to: {output_visual_path}")

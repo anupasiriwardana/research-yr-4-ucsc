@@ -1,16 +1,16 @@
 {
     "model_path": "yolo11n.pt",
-    "clean_dir": "D:\\GitHub\\experiment_data\\bdd100k_images_10k\\train",
-    "patch_dir": "D:\\GitHub\\yr-4-research\\mechanisms-by-claude\\gen-adv-patch-hiding\\patches",
-    "output_dir": "D:\\GitHub\\yr-4-research\\mechanisms-by-claude\\gen-adv-patch-hiding\\bdd100k_patched",
-    "patch_detection_dir": "D:\\GitHub\\yr-4-research\\mechanisms-by-claude\\gen-adv-patch-hiding\\patch_detections",
-    "specific_clean_image": "ccf42930-03bcfe59.jpg",
-    "specific_patched_image": "20-multi-patched_ccf42930-03bcfe59.jpg",
+    "clean_dir": "D:\\GitHub\\experiment_data\\bdd100k_images_10k\\test",
+    "patch_dir": "D:\\GitHub\\yr-4-research\\mechanisms-by-claude\\gen-adv-patch-hiding\\patches\\yolo11",
+    "output_dir": "D:\\GitHub\\yr-4-research\\mechanisms-by-claude\\gen-adv-patch-hiding\\bdd100k_patched\\yolo11",
+    "patch_detection_dir": "D:\\GitHub\\yr-4-research\\mechanisms-by-claude\\gen-adv-patch-hiding\\patch_detections\\yolo11",
+    "specific_clean_image": "b503cd8a-00000000.jpg",
+    "specific_patched_image": "2-patched_b503cd8a-00000000.jpg",
     "specific_patch_name": "art_patch_v11(0.10-0.20).npy",
     "patch_settings": {
         "patch_scale": 0.15,
         "patch_size": 150,
-        "num_steps": 1000,
+        "num_steps": 2000,
         "learning_rate": 0.02,
         "conf_thresh": 0.25,
         "rotation_max": 22.5,
@@ -20,7 +20,7 @@
         "target_class": 2,
         "batch_size": 4,
         "gpu_batch_size": 20,
-        "max_images": 2000
+        "max_images": 4000
     },
     "apply_settings": {
         "placement_mode": "multi",
@@ -28,7 +28,7 @@
         "manual_y": 400,
         "scale": 0.15,
         "rotation": 0.0,
-        "multi_max_patches": 3,
+        "multi_max_patches": 1,
         "multi_min_separation": 0.3
     }
 }
