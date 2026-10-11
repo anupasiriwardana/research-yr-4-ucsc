@@ -91,11 +91,20 @@ python restoration/mi_gan.py
 ```
 
 All scripts use `restoration/data` for input and write results below
-`restoration/runs`, keeping separate subfolders for input folders:
+`restoration/runs`. `restore.py` creates a folder for each recovery option and
+keeps input-folder names underneath it; for example:
 
-- `restore.py`: `restoration/runs/`
+- `restore.py`: `restoration/runs/Option 01 - Solid fill/<input folder>/`
+- `restore.py`: `restoration/runs/Option 02 - Telea inpainting/<input folder>/`
+- `restore.py`: `restoration/runs/Option 03 - LaMa inpainting/<input folder>/`
+- `restore.py`: `restoration/runs/Option 04 - Stable Diffusion inpainting/<input folder>/`
+- `restore.py`: `restoration/runs/Option 05 - MI-GAN/<input folder>/`
 - `precise_telea.py`: `restoration/runs/precise_telea/`
 - `mi_gan.py`: `restoration/runs/migan/`
+
+When images are stored directly in the input directory rather than a
+subfolder, `restore.py` writes them directly into the corresponding option
+folder.
 
 The scripts report total run time and per-folder inpainting latency. The
 per-folder averages are measured per successfully processed image.
@@ -110,6 +119,7 @@ file. The model file is ignored by Git.
 
 The script constructs an inpainting mask from the detector boxes, dilates it,
 and converts it to the MI-GAN pipeline's expected convention before inference.
+`restore.py` uses the same MI-GAN model and mask processing for Option 05.
 
 ## Latency Measurements
 

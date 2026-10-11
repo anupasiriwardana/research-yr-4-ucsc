@@ -111,7 +111,7 @@ def run_lama_inpainting(image, mask, output_path):
     return latency
 
 
-def run_stable_diffusion_inpainting(image, mask, output_path):
+def load_stable_diffusion_runtime():
     try:
         import torch
         from diffusers import StableDiffusionInpaintPipeline
@@ -123,10 +123,6 @@ def run_stable_diffusion_inpainting(image, mask, output_path):
         print(f"Error: Could not load a required Stable Diffusion library: {error}")
         return None
 
-    image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    pil_image = Image.fromarray(image_rgb)
-    pil_mask = Image.fromarray(mask)
-
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(f"Loading Stable Diffusion on {device}... this might take a minute.")
     pipeline = StableDiffusionInpaintPipeline.from_pretrained(
@@ -134,6 +130,13 @@ def run_stable_diffusion_inpainting(image, mask, output_path):
         torch_dtype=torch.float16 if device == "cuda" else torch.float32,
         use_safetensors=True,
     ).to(device)
+    return pipeline, Image
+
+
+def run_stable_diffusion_inpainting(pipeline, image_class, image, mask, output_path):
+    image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    pil_image = image_class.fromarray(image_rgb)
+    pil_mask = image_class.fromarray(mask)
 
     width, height = pil_image.size
     width = (width // 8) * 8
@@ -154,9 +157,32 @@ def run_stable_diffusion_inpainting(image, mask, output_path):
     return latency
 
 
+def load_migan_runtime(script_dir):
+    try:
+        import mi_gan
+    except ImportError:
+        print("Error: Install ONNX Runtime with 'pip install onnxruntime'")
+        return None
+
+    model_path = Path(mi_gan.MIGAN_MODEL_PATH)
+    if not model_path.is_absolute():
+        model_path = script_dir / model_path
+    if not model_path.is_file():
+        print(f"Downloading MI-GAN ONNX model to {model_path}...")
+        mi_gan.download_migan_model(model_path)
+
+    providers = ["CUDAExecutionProvider", "CPUExecutionProvider"]
+    ort_session = mi_gan.ort.InferenceSession(
+        str(model_path),
+        providers=providers,
+    )
+    print(f"Loaded MI-GAN model using providers: {ort_session.get_providers()}")
+    return mi_gan, ort_session
+
+
 def main():
     script_dir = Path(__file__).resolve().parent
-    data_dir = script_dir / "data"
+    data_dir = script_dir / "data/attacked"
     output_dir = script_dir / "runs"
     output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -165,11 +191,20 @@ def main():
     folders.insert(0, data_dir)
     total_start = perf_counter()
     total_images = 0
+    migan_runtime = None
+    migan_setup_attempted = False
+    stable_diffusion_runtime = None
+    stable_diffusion_setup_attempted = False
     option_summaries = {
         "Option 01 - Solid fill": [],
         "Option 02 - Telea inpainting": [],
         "Option 03 - LaMa inpainting": [],
         "Option 04 - Stable Diffusion inpainting": [],
+        "Option 05 - MI-GAN": [],
+    }
+    option_output_roots = {
+        option: output_dir / option
+        for option in option_summaries
     }
 
     for input_folder in folders:
@@ -182,8 +217,14 @@ def main():
             continue
 
         detector_boxes = load_detector_boxes(input_folder, image_paths)
-        folder_output_dir = output_dir / input_folder.name if input_folder != data_dir else output_dir
-        folder_output_dir.mkdir(parents=True, exist_ok=True)
+        folder_output_dirs = {
+            option: option_output_dir / input_folder.name
+            if input_folder != data_dir
+            else option_output_dir
+            for option, option_output_dir in option_output_roots.items()
+        }
+        for folder_output_dir in folder_output_dirs.values():
+            folder_output_dir.mkdir(parents=True, exist_ok=True)
         processed_images = 0
         folder_option_latencies = {option: 0.0 for option in option_summaries}
         folder_option_counts = {option: 0 for option in option_summaries}
@@ -199,7 +240,8 @@ def main():
             latency = run_solid_fill(
                 image,
                 mask,
-                folder_output_dir / f"restored_solid_fill_{input_stem}.jpg",
+                folder_output_dirs["Option 01 - Solid fill"]
+                / f"restored_solid_fill_{input_stem}.jpg",
             )
             folder_option_latencies["Option 01 - Solid fill"] += latency
             folder_option_counts["Option 01 - Solid fill"] += 1
@@ -207,7 +249,8 @@ def main():
             latency = run_telea_inpainting(
                 image,
                 mask,
-                folder_output_dir / f"restored_inpainted_{input_stem}.jpg",
+                folder_output_dirs["Option 02 - Telea inpainting"]
+                / f"restored_inpainted_{input_stem}.jpg",
             )
             folder_option_latencies["Option 02 - Telea inpainting"] += latency
             folder_option_counts["Option 02 - Telea inpainting"] += 1
@@ -215,20 +258,49 @@ def main():
             latency = run_lama_inpainting(
                 image,
                 mask,
-                folder_output_dir / f"restored_lama_{input_stem}.jpg",
+                folder_output_dirs["Option 03 - LaMa inpainting"]
+                / f"restored_lama_{input_stem}.jpg",
             )
             if latency is not None:
                 folder_option_latencies["Option 03 - LaMa inpainting"] += latency
                 folder_option_counts["Option 03 - LaMa inpainting"] += 1
 
-            latency = run_stable_diffusion_inpainting(
-                image,
-                mask,
-                folder_output_dir / f"restored_sd_{input_stem}_diffusers.jpg",
-            )
-            if latency is not None:
+            if not stable_diffusion_setup_attempted:
+                stable_diffusion_setup_attempted = True
+                stable_diffusion_runtime = load_stable_diffusion_runtime()
+            if stable_diffusion_runtime is not None:
+                pipeline, image_class = stable_diffusion_runtime
+                latency = run_stable_diffusion_inpainting(
+                    pipeline,
+                    image_class,
+                    image,
+                    mask,
+                    folder_output_dirs["Option 04 - Stable Diffusion inpainting"]
+                    / f"restored_sd_{input_stem}_diffusers.jpg",
+                )
                 folder_option_latencies["Option 04 - Stable Diffusion inpainting"] += latency
                 folder_option_counts["Option 04 - Stable Diffusion inpainting"] += 1
+
+            if not migan_setup_attempted:
+                migan_setup_attempted = True
+                migan_runtime = load_migan_runtime(script_dir)
+            if migan_runtime is not None:
+                migan, ort_session = migan_runtime
+                migan_mask = migan.create_mask(
+                    image,
+                    detector_boxes[image_path.name],
+                    apply_dilate=True,
+                    kernel_size=7,
+                )
+                latency = migan.run_migan_inpainting(
+                    ort_session,
+                    image,
+                    migan_mask,
+                    folder_output_dirs["Option 05 - MI-GAN"]
+                    / f"restored_migan_{input_stem}.jpg",
+                )
+                folder_option_latencies["Option 05 - MI-GAN"] += latency
+                folder_option_counts["Option 05 - MI-GAN"] += 1
             processed_images += 1
 
         total_images += processed_images
