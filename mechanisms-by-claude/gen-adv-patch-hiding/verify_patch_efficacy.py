@@ -12,7 +12,7 @@ with open(CONFIG_PATH, "r") as f:
 CLEAN_DIR = Path(config["clean_dir"])
 PATCHED_DIR = Path(config["output_dir"])
 PATCH_DETECTION_DIR = Path(config["patch_detection_dir"])
-OUTPUT_FILENAME_PREFIX = "2-yolo11_"
+OUTPUT_FILENAME_PREFIX = "4-yolo11_"
 
 # 2. Resolve Patched Image Path
 if config["specific_patched_image"]:

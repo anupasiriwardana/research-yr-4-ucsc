@@ -2,7 +2,7 @@
     "model_path": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\yolo11n.pt",
     "clean_dir": "D:\\GitHub\\experiment_data\\bdd100k_images_10k\\test",
     "patch_dir": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\gen-patched-img\\patches\\yolov11",
-    "specific_patch_name": "art_patch_v11.npy",
+    "specific_patch_name": "art_patch_v11(0.10-0.20).npy",
     "patch_settings": {
         "patch_scale": 0.15,
         "patch_size": 150,

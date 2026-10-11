@@ -48,7 +48,7 @@ OUTPUT_DIR = Path(config["output_dir"])
 PATCH_DIR = Path(config["patch_dir"])
 PATCH_PATH = PATCH_DIR / config["specific_patch_name"]
 INPUT_SIZE = 640
-OUTPUT_FILENAME_PREFIX = "2-patched_"
+OUTPUT_FILENAME_PREFIX = "5-patched_"
 
 AS = config.get("apply_settings", {})
 PLACEMENT_MODE = AS.get("placement_mode", "auto")

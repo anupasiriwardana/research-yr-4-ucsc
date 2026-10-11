@@ -4,8 +4,8 @@
     "patch_dir": "D:\\GitHub\\yr-4-research\\mechanisms-by-claude\\gen-adv-patch-hiding\\patches\\yolo11",
     "output_dir": "D:\\GitHub\\yr-4-research\\mechanisms-by-claude\\gen-adv-patch-hiding\\bdd100k_patched\\yolo11",
     "patch_detection_dir": "D:\\GitHub\\yr-4-research\\mechanisms-by-claude\\gen-adv-patch-hiding\\patch_detections\\yolo11",
-    "specific_clean_image": "b503cd8a-00000000.jpg",
-    "specific_patched_image": "2-patched_b503cd8a-00000000.jpg",
+    "specific_clean_image": "b12992c7-ce2d75a0.jpg",
+    "specific_patched_image": "4-patched_b12992c7-ce2d75a0.jpg",
     "specific_patch_name": "art_patch_v11(0.10-0.20).npy",
     "patch_settings": {
         "patch_scale": 0.15,
@@ -28,7 +28,7 @@
         "manual_y": 400,
         "scale": 0.15,
         "rotation": 0.0,
-        "multi_max_patches": 1,
+        "multi_max_patches": 2,
         "multi_min_separation": 0.3
     }
 }
