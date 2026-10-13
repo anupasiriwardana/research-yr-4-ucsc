@@ -53,7 +53,7 @@ with open(CONFIG_PATH, "r") as f:
 CLEAN_DIR = Path(config["clean_data_dir"])
 PATCHED_DIR = Path(config["patched_data_dir"])
 TEST_DIR = PATCHED_DIR  # for now, just run on the patched set (can be changed to CLEAN_DIR for clean images)
-OUTPUT_FILENAME_TEMPLATE = "5-patched_{img_name}"
+OUTPUT_FILENAME_TEMPLATE = "8-patched_{img_name}"
 
 INPUT_SIZE = 640  # keep in sync with calibrate_cls_head.py
 

@@ -12,6 +12,6 @@
         "min_calibration_samples": 10,
         "background_class_id": -1,
         "background_samples_per_image": 250,
-        "min_region_cells": 6
+        "min_region_cells": 9
     }
 }
