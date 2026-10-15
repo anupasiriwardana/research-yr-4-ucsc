@@ -1,28 +1,25 @@
 {
   "model_path": "ape_detection/models/yolov8s.pt",
-  "test_images_dir": "ape_detection/test_images/attacked",
-  "detection_output_dir": "ape_detection/runs/attacked_v8",
+  "test_images_dir": "ape_detection/test_images/test",
+  "detection_output_dir": "ape_detection/runs/attacked_test_v8",
   "input_size": [1280, 736],
   "target_classes": [2, 3, 5, 7],
   "defense_settings": {
-    "enabled": true,
+    "enabled": false,
     "layer_index": 2,
-    "heatmap_dir": "ape_detection/runs/attacked_heatmaps_v8",
+    "heatmap_dir": "ape_detection/runs/attacked_heatmaps_test_v8",
     "patch_extractor": {
       "smooth_k": 5,
       "levels": [0.55, 0.45, 0.35],
-      "core_frac": 0.7,
+      "core_frac": 0.75,
       "close_k": 3,
-      "open_k": 5,
+      "open_k": 3,
       "min_area": 100,
       "max_area_frac": 0.10,
-      "max_aspect": 2,
+      "max_aspect": 2.0,
       "min_rect": 0.55,
-      "min_density": 0.45,
-      "nms_iou": 0.30,
-      "max_glare_frac": 0.10,
-      "glare_v_thresh": 245,
-      "glare_pad": 2
+      "min_density": 0.50,
+      "nms_iou": 0.30
     }
   }
 }
