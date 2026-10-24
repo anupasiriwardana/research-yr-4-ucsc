@@ -1,0 +1,29 @@
+{
+  "model_family": "torchvision_rcnn",
+  "architecture": "fasterrcnn_resnet50_fpn",
+  "model_path": null,
+  "test_images_dir": "ape_detection/test_images/attacked_100",
+  "detection_output_dir": "ape_detection/runs/attacked_100_fasterrcnn",
+  "input_size": [1280, 736],
+  "target_classes": ["car", "truck", "bus", "motorcycle"],
+  "score_thresh": 0.5,
+  "defense_settings": {
+    "enabled": true,
+    "layer_name": "backbone.body.layer1",
+    "heatmap_dir": "ape_detection/runs/attacked_heatmaps_100_fasterrcnn",
+    "patch_extractor": {
+      "smooth_k": 5,
+      "levels": [0.65, 0.50, 0.35],
+      "core_frac": 0.65,
+      "close_k": 3,
+      "open_k": 3,
+      "min_area": 900,
+      "max_area_frac": 0.10,
+      "max_aspect": 2.0,
+      "min_rect": 0.50,
+      "min_density": 0.40,
+      "nms_iou": 0.30,
+      "min_ring_ratio": 1.10
+    }
+  }
+}

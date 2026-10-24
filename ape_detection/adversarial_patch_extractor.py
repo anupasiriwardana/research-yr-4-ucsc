@@ -26,9 +26,6 @@ class AdversarialPatchExtractor:
         "min_rect": 0.60,
         "min_density": 0.55,
         "nms_iou": 0.30,
-        "max_glare_frac": 0.10,
-        "glare_v_thresh": 245,
-        "glare_pad": 2,
     }
 
     def __init__(self, config: Optional[Dict[str, Any]] = None):
@@ -44,25 +41,10 @@ class AdversarialPatchExtractor:
         self.min_rect = float(cfg["min_rect"])
         self.min_density = float(cfg["min_density"])
         self.nms_iou = float(cfg["nms_iou"])
-        self.max_glare_frac = float(cfg["max_glare_frac"])
-        self.glare_v_thresh = int(cfg["glare_v_thresh"])
-        self.glare_pad = int(cfg["glare_pad"])
 
         # Pre-compile morphological kernels so they aren't rebuilt in every loop iteration
         self.k_close = cv2.getStructuringElement(cv2.MORPH_RECT, (self.close_k, self.close_k)) if self.close_k > 1 else None
         self.k_open = cv2.getStructuringElement(cv2.MORPH_RECT, (self.open_k, self.open_k)) if self.open_k > 1 else None
-
-    def _blown_highlight_fraction(self, frame: np.ndarray, box_cells: List[int], scale_x: float, scale_y: float) -> float:
-        x1, y1, x2, y2 = box_cells
-        fx1 = max(0, int(x1 * scale_x) - self.glare_pad)
-        fy1 = max(0, int(y1 * scale_y) - self.glare_pad)
-        fx2 = min(frame.shape[1], int(x2 * scale_x) + self.glare_pad)
-        fy2 = min(frame.shape[0], int(y2 * scale_y) + self.glare_pad)
-        if fx2 <= fx1 or fy2 <= fy1:
-            return 0.0
-        crop = frame[fy1:fy2, fx1:fx2]
-        v = crop if crop.ndim == 2 else cv2.cvtColor(crop, cv2.COLOR_BGR2HSV)[..., 2]
-        return float((v > self.glare_v_thresh).mean())
 
     def _apply_morphology(self, E: np.ndarray, T: float) -> np.ndarray:
         mask = (E > T).astype(np.uint8)
@@ -72,29 +54,49 @@ class AdversarialPatchExtractor:
             mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, self.k_open)
         return mask
 
-    def _is_valid_contour(self, contour: np.ndarray, E: np.ndarray, z: np.ndarray, T: float, H: int, W: int, e_peak: float) -> Tuple[bool, int, int, int, int, int]:
+    def _is_valid_contour(
+        self,
+        contour: np.ndarray,
+        E: np.ndarray,
+        T: float,
+        H: int,
+        W: int,
+        e_peak: float,
+        e_bg: float,
+        stride: int = 1,
+    ) -> Tuple[bool, int, int, int, int, int]:
         x, y, w, h = cv2.boundingRect(contour)
         area = w * h
-        # Size (Area)
-        if area < self.min_area or area > self.max_area_frac * H * W:
+
+        # 1. Size (Area) - Stride-invariant image pixel area check (Bug 4 fix)
+        pixel_area = area * (stride ** 2)
+        max_feat_area = self.max_area_frac * H * W
+        if pixel_area < self.min_area or area > max_feat_area:
             return False, x, y, w, h, area
-        # Core Energy
-        if E[y:y + h, x:x + w].max() < self.core_frac * e_peak:
+
+        # 2. Core Energy (anchored above background baseline e_bg)
+        core_thresh = e_bg + self.core_frac * (e_peak - e_bg)
+        if E[y:y + h, x:x + w].max() < core_thresh:
             return False, x, y, w, h, area
-        # Aspect Ratio
+
+        # 3. Aspect Ratio
         if max(w / h, h / w) > self.max_aspect:
             return False, x, y, w, h, area
-        # Rectangularity (Fill Factor)
+
+        # 4. Rectangularity (Fill Factor)
         if cv2.contourArea(contour) / area < self.min_rect:
             return False, x, y, w, h, area
-        # Raw Density
-        if float((z[y:y + h, x:x + w] > T).mean()) < self.min_density:
+
+        # 5. Smoothed Energy Density (Bug 2 fix: E > T instead of z > T)
+        if float((E[y:y + h, x:x + w] > T).mean()) < self.min_density:
             return False, x, y, w, h, area
+
         return True, x, y, w, h, area
 
-    def _refine_bbox(self, z: np.ndarray, mask: np.ndarray, x: int, y: int, w: int, h: int, T: float) -> List[int]:
+    def _refine_bbox(self, E: np.ndarray, mask: np.ndarray, x: int, y: int, w: int, h: int, T: float) -> List[int]:
         x1, y1, x2, y2 = x, y, x + w, y + h
-        ys, xs = np.nonzero((z[y:y + h, x:x + w] > T) & (mask[y:y + h, x:x + w] > 0))
+        # Bug 2 fix: Use E > T for consistent coordinate refinement
+        ys, xs = np.nonzero((E[y:y + h, x:x + w] > T) & (mask[y:y + h, x:x + w] > 0))
         if xs.size >= 8:
             x1 = x + int(np.floor(np.percentile(xs, 3)))
             x2 = x + int(np.ceil(np.percentile(xs, 97))) + 1
@@ -130,25 +132,28 @@ class AdversarialPatchExtractor:
         E = cv2.boxFilter(z, -1, (self.smooth_k, self.smooth_k), borderType=cv2.BORDER_REPLICATE)
         e_peak = float(np.percentile(E, 99.9))
 
+        # Upper background baseline derived directly from max_area_frac (e.g., 95th or 90th percentile)
+        bg_percentile = 100.0 * (1.0 - min(max(self.max_area_frac, 0.01), 0.25))
+        e_bg = float(np.percentile(E, bg_percentile))
+
+
         cands = []
         for a in self.levels:
-            T = a * e_peak
+            # Method 1: Interpolate threshold between upper background (e_bg) and peak (e_peak)
+            T = a * (e_peak - e_bg)
             mask = self._apply_morphology(E, T)
 
             contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
             for c in contours:
-                valid, x, y, w, h, area = self._is_valid_contour(c, E, z, T, H, W, e_peak)
+                valid, x, y, w, h, area = self._is_valid_contour(
+                    c, E, T, H, W, e_peak, e_bg, stride=stride
+                )
                 if not valid:
                     continue
 
-                bbox = self._refine_bbox(z, mask, x, y, w, h, T)
+                bbox = self._refine_bbox(E, mask, x, y, w, h, T)
                 cands.append((area, bbox))
 
         kept = self._nms(cands)
-
-        # if frame is not None:
-        #     scale_x = frame.shape[1] / W
-        #     scale_y = frame.shape[0] / H
-        #     kept = [b for b in kept if self._blown_highlight_fraction(frame, b, scale_x, scale_y) <= self.max_glare_frac]
 
         return [[int(v * stride) for v in b] for b in kept]

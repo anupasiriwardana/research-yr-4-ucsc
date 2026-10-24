@@ -62,4 +62,5 @@ def run_benchmark(config_file: str, model_label: str):
 
 if __name__ == "__main__":
     Path("ape_detection/test_images/original").mkdir(parents=True, exist_ok=True)
-    run_benchmark(config_file="config.json", model_label="YOLO")
+    # run_benchmark(config_file="config_fasterrcnn.json", model_label="Faster-RCNN")
+    run_benchmark(config_file="config_yolo.json", model_label="YOLO")
