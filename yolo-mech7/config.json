@@ -1,8 +1,8 @@
 {
-    "model_path": "D:\\GitHub\\yr-4-research\\yolo-transferable-mech1\\yolo11n.pt",
+    "model_path": "D:\\GitHub\\yr-4-research\\yolo-mech7\\yolo11n.pt",
 
-    "profile_images_dir": "D:\\GitHub\\experiment_data\\bdd100k_images_10k\\test",
-    "threshold_images_dir": "D:\\GitHub\\experiment_data\\REPLACE_WITH_THRESHOLD_CLEAN_IMAGE_DIR",
+    "profile_images_dir": "D:\\GitHub\\experiment_data\\bdd100k_images_10k\\train",
+    "threshold_images_dir": "D:\\GitHub\\experiment_data\\bdd100k_images_10k\\test",
 
     "profiles_dir": "D:\\GitHub\\yr-4-research\\yolo-mech7\\profiles",
     "calibration_profile_filename": "mech7_profiles_yolo11.pkl",
@@ -29,7 +29,7 @@
         "coordinates_dir": "D:\\GitHub\\yr-4-research\\yolo-mech7\\yolov11-detected-patch-coordinates",
         "visualizations_dir": "D:\\GitHub\\yr-4-research\\yolo-mech7\\patch-det-visualizations\\yolov11",
         "summary_filename": "run_summary.json",
-        "num_images": 100,
+        "num_images": 10,
         "start_index": 0,
         "save_visualizations": true,
         "image_extensions": [".jpg", ".jpeg", ".png"]
