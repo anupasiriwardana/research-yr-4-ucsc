@@ -16,3 +16,6 @@
 **/yolov11-patch_coordinates/*
 **/yolov11-detected-patch-coordinates/*
 
+
+**/yolo-mech7/yolov*-detected-patch-coordinates/*
+**/yolo-mech7/patch-det-visualizations/*
