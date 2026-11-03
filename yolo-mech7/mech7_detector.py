@@ -22,6 +22,7 @@ from ultralytics import YOLO
 
 from mech7_core import (INPUT_SIZE, load_config, validated_settings, load_image_tensor,
                         ProfileBank, ThresholdTable)
+from score_heatmap import find_gt_boxes, render_heatmap
 from ultralytics_cls_head_adapter import UltralyticsClsHeadAdapter
 
 
@@ -42,6 +43,14 @@ class Mech7Detector:
         self.score_maps_dir = batch.get("score_maps_dir")
         if self.save_score_maps and not self.score_maps_dir:
             raise ValueError("batch_settings.save_score_maps is on but score_maps_dir is not set.")
+        # Optional: per-image heatmap PNG (image | raw distance | margin) with GT patch boxes
+        # outlined when a GT file is found. Off by default; drawn after the latency timer stops.
+        self.save_heatmaps = bool(batch.get("save_score_heatmaps", False))
+        self.heatmaps_dir = batch.get("score_heatmaps_dir")
+        self.gt_dir = batch.get("gt_coordinates_dir")
+        self.heatmap_vmax = float(batch.get("heatmap_max_distance", 30.0))
+        if self.save_heatmaps and not self.heatmaps_dir:
+            raise ValueError("batch_settings.save_score_heatmaps is on but score_heatmaps_dir is not set.")
 
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.model = YOLO(self.config["model_path"]).to(self.device)
@@ -92,11 +101,12 @@ class Mech7Detector:
                   "score": max((b["score"] for b in boxes), default=0.0),
                   "bounding_boxes": boxes,
                   "visualization_latency_ms": viz_ms}
-        if self.save_score_maps:
+        if self.save_score_maps or self.save_heatmaps:
             # Kept on-device here; moved to CPU and written in detect() after timing.
             bg = self.bank.class_ids.index(self.bg_id) if self.bg_id in self.bank.class_ids else None
             result["_score_tensors"] = {
                 "raw": best.reshape(H, W),
+                "margin": stat - thr,
                 "best_class": idx.reshape(H, W),
                 "bg_only": dist[:, bg].reshape(H, W) if bg is not None else None,
             }
@@ -150,5 +160,11 @@ class Mech7Detector:
             0.0, (time.perf_counter() - t0) * 1000.0 - result["visualization_latency_ms"])
         tensors = result.pop("_score_tensors", None)
         if tensors is not None:
-            self._write_score_maps(tensors, Path(img_path).name)
+            if self.save_score_maps:
+                self._write_score_maps(tensors, Path(img_path).name)
+            if self.save_heatmaps:
+                name = Path(img_path).name
+                render_heatmap(resized, tensors["raw"].cpu().numpy(), tensors["margin"].cpu().numpy(),
+                               self.stride, result["bounding_boxes"], find_gt_boxes(self.gt_dir, name),
+                               self.heatmap_vmax, Path(self.heatmaps_dir) / f"heatmap_{Path(name).stem}.png")
         return result

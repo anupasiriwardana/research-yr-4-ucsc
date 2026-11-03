@@ -27,14 +27,18 @@
     "batch_settings": {
         "input_dir": "D:\\GitHub\\yr-4-research\\mechanisms-by-claude\\gen-adv-patch-hiding\\bdd100k_patched\\yolo11",
         "coordinates_dir": "D:\\GitHub\\yr-4-research\\yolo-mech7\\yolov11-detected-patch-coordinates\\p5-adj-2",
-        "visualizations_dir": "D:\\GitHub\\yr-4-research\\yolo-mech7\\patch-det-visualizations\\yolov11\\p5-adj-2",
+        "visualizations_dir": "D:\\GitHub\\yr-4-research\\yolo-mech7\\patch-det-visualizations\\yolov11\\run6",
         "summary_filename": "run_summary.json",
         "num_images": 1,
-        "start_index": 0,
+        "start_index": 2,
         "save_visualizations": true,
-        "save_coordinates": true,
+        "save_coordinates": false,
         "save_score_maps": true,
-        "score_maps_dir": "D:\\GitHub\\yr-4-research\\yolo-mech7\\score-maps\\yolov11\\p5-adj-2",
+        "score_maps_dir": "D:\\GitHub\\yr-4-research\\yolo-mech7\\score-maps\\yolov11\\run6",
+        "save_score_heatmaps": false,
+        "score_heatmaps_dir": "D:\\GitHub\\yr-4-research\\yolo-mech7\\score-heatmaps\\yolov11\\run6",
+        "gt_coordinates_dir": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\gen-patched-img\\yolov11-patch_coordinates",
+        "heatmap_max_distance": 30.0,
         "image_extensions": [".jpg", ".jpeg", ".png"]
     }
 }

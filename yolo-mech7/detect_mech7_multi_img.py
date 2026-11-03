@@ -50,6 +50,10 @@ def main():
     ap.add_argument("--save-score-maps", action=argparse.BooleanOptionalAction, default=None,
                     help="override batch_settings.save_score_maps")
     ap.add_argument("--score-maps-dir", default=None, help="override batch_settings.score_maps_dir")
+    ap.add_argument("--save-score-heatmaps", action=argparse.BooleanOptionalAction, default=None,
+                    help="override batch_settings.save_score_heatmaps")
+    ap.add_argument("--score-heatmaps-dir", default=None, help="override batch_settings.score_heatmaps_dir")
+    ap.add_argument("--gt-coordinates-dir", default=None, help="override batch_settings.gt_coordinates_dir")
     args = ap.parse_args()
     if args.config:
         cfg = load_config(args.config)
@@ -60,8 +64,16 @@ def main():
         b["save_score_maps"] = args.save_score_maps
     if args.score_maps_dir:
         b["score_maps_dir"] = args.score_maps_dir
+    if args.save_score_heatmaps is not None:
+        b["save_score_heatmaps"] = args.save_score_heatmaps
+    if args.score_heatmaps_dir:
+        b["score_heatmaps_dir"] = args.score_heatmaps_dir
+    if args.gt_coordinates_dir:
+        b["gt_coordinates_dir"] = args.gt_coordinates_dir
     if b.get("save_score_maps") and not b.get("score_maps_dir"):
         b["score_maps_dir"] = str(Path(args.coordinates_dir) / "score_maps")
+    if b.get("save_score_heatmaps") and not b.get("score_heatmaps_dir"):
+        b["score_heatmaps_dir"] = str(Path(args.coordinates_dir) / "score_heatmaps")
     if args.num_images <= 0 or args.start_index < 0:
         raise ValueError("num_images must be > 0 and start_index >= 0.")
 
