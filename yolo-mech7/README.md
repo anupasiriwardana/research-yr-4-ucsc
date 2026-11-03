@@ -56,3 +56,35 @@ Header line (only when a GT file is found):
 - `patch cells` / `far cells`: how many cells are inside the GT boxes, and how many are more than 48 px away from all of them (the ring in between is ignored).
 - `raw median` / `max`: typical and highest distance inside the patch (and typical outside).
 - `flagged`: percent of those cells above threshold. Good detection = high inside the patch, near 0 outside. Without GT it just shows the overall median, max and flagged-cell count.
+
+## Offline multi-scale combination (`combine_scales.py`, the Mech-5 idea)
+
+Tests "what if we use P3 and P4 together, and build boxes more cleverly" on saved score maps, with no model run (about 20 s for ~90 images).
+
+**Prepare the maps** (one batch run per scale, same images each time, `save_score_maps` on, a different `score_maps_dir` per run):
+- the patched images at P3 and at P4 (and P5 if wanted) -> e.g. `score-maps/yolov11/p3-patched`, `.../p4-patched`
+- a set of CLEAN images at the same scales -> `.../p3-clean`, `.../p4-clean` (use a few hundred; without them the false-positive rate is not measured)
+- each scale needs its own config (`tap_scale`, `stride`, profile + threshold filenames), as for `diagnose_separability.py`
+
+**Run:**
+```
+python combine_scales.py --patched P3=<dir> P4=<dir> --clean P3=<dir> P4=<dir>
+```
+
+**How it works, simply.** Each cell's distance is divided by its own class threshold (`ratio`; above 1 = flagged), so P3 and P4 are on the same footing. P4 cells are 16 px, so each is repeated 2x2 to line up with the 8 px P3 grid. Then one *rule* turns the scales into one score:
+
+| rule | meaning |
+|---|---|
+| `P3`, `P4`, `P5` | that scale alone (baselines) |
+| `and` | the smaller ratio: a cell counts only if every scale flags it (fewer false alarms, may miss) |
+| `or` | the larger ratio: any scale can flag it (more recall, more false alarms) |
+| `mean` | average of the ratios |
+| `confirm` | P3 decides, but only where P4 is also flagged within one cell |
+
+Sweeps: `--offsets` (flag when ratio > 1 + offset, like `adjust_threshold` but unitless), `--joins` (grow flagged cells by N cells before grouping, so scattered patch cells merge into one box; the box and size check still use only the original flagged cells), `--min-cells` (smallest region kept, counted on the finest grid).
+
+**Output:** per rule, the config with the best object F1 whose clean-image false-positive rate (% of clean images with any box) is <= `--max-clean-fpr` (default 0.2), plus the detector-as-today reference row. Precision / recall / IoU use the same definition as `compare_patch_detection_metrics.py`. Every config is in `diagnostics/combine_scales.csv` (`--out` to change). `--mode global --global-threshold 17` uses one number instead of the learned per-class thresholds.
+
+Caveat: the best config is picked on the same images it is scored on, so the numbers are optimistic. Treat the ranking of rules as the result, and confirm the winner on different images.
+
+**Holdout (honest numbers):** add `--holdout-splits 20` (optionally `--train-frac 0.5`, `--seed 0`). It repeats N random splits of the patched and clean images: pick the best config per rule on the tuning part, then score that one config on the held-out part. It prints the held-out mean +- std per rule, next to the fixed "today" config on the same held-out parts, and which config was chosen most often (a config chosen in only a few splits is unstable). The "best per rule on ALL images" table above it is still the optimistic one. Widen `--offsets`, `--joins` and `--min-cells` if a chosen value sits at the edge of its range.

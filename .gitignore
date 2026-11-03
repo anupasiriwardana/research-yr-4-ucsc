@@ -19,6 +19,8 @@
 
 **/yolo-mech7/yolov*-detected-patch-coordinates/*
 **/yolo-mech7/patch-det-visualizations/*
+**/yolo-mech5/yolov*-detected-patch-coordinates/*
+**/yolo-mech5/patch-det-visualizations/*
 
 **/score-maps/*
 **/score-heatmaps/*
