@@ -33,7 +33,15 @@ class Mech7Detector:
         self.stride = int(self.settings["stride"])
         self.mode = self.settings.get("threshold_mode", "per_class")
         self.min_region_cells = self.settings.get("min_region_cells", 1)
-        self.visualizations_dir = visualizations_dir or self.config.get("batch_settings", {}).get("visualizations_dir")
+        self.bg_id = self.settings.get("background_class_id", -1)
+        batch = self.config.get("batch_settings", {})
+        self.visualizations_dir = visualizations_dir or batch.get("visualizations_dir")
+        # Optional: dump each image's per-cell score maps to <score_maps_dir>/<image stem>.npz
+        # for offline analysis. Off by default; written after the latency timer stops.
+        self.save_score_maps = bool(batch.get("save_score_maps", False))
+        self.score_maps_dir = batch.get("score_maps_dir")
+        if self.save_score_maps and not self.score_maps_dir:
+            raise ValueError("batch_settings.save_score_maps is on but score_maps_dir is not set.")
 
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.model = YOLO(self.config["model_path"]).to(self.device)
@@ -55,7 +63,8 @@ class Mech7Detector:
                                save_visualization=False):
         B, C, H, W = feat.shape
         flat = feat.permute(0, 2, 3, 1).reshape(H * W, C)
-        best, idx = self.bank.nearest(flat)
+        dist = self.bank.distances(flat)
+        best, idx = dist.min(dim=1)
         stat, thr = self.thresholds.decide(best, idx)
         stat, thr = stat.reshape(H, W), thr.reshape(H, W)
         raw = best.reshape(H, W)
@@ -79,10 +88,34 @@ class Mech7Detector:
             self._save_overlay((stat - thr).cpu().numpy(), resized_img, results, boxes, img_name)
             viz_ms = (time.perf_counter() - t0) * 1000.0
 
-        return {"is_attack": len(boxes) > 0,
-                "score": max((b["score"] for b in boxes), default=0.0),
-                "bounding_boxes": boxes,
-                "visualization_latency_ms": viz_ms}
+        result = {"is_attack": len(boxes) > 0,
+                  "score": max((b["score"] for b in boxes), default=0.0),
+                  "bounding_boxes": boxes,
+                  "visualization_latency_ms": viz_ms}
+        if self.save_score_maps:
+            # Kept on-device here; moved to CPU and written in detect() after timing.
+            bg = self.bank.class_ids.index(self.bg_id) if self.bg_id in self.bank.class_ids else None
+            result["_score_tensors"] = {
+                "raw": best.reshape(H, W),
+                "best_class": idx.reshape(H, W),
+                "bg_only": dist[:, bg].reshape(H, W) if bg is not None else None,
+            }
+        return result
+
+    def _write_score_maps(self, tensors, img_name):
+        out_dir = Path(self.score_maps_dir)
+        out_dir.mkdir(parents=True, exist_ok=True)
+        class_ids = np.array(self.bank.class_ids, dtype=np.int16)
+        arrays = {
+            "raw": tensors["raw"].cpu().numpy().astype(np.float32),
+            "best_class": class_ids[tensors["best_class"].cpu().numpy()],
+            "class_ids": class_ids,
+            "stride": np.int32(self.stride),
+            "tap_scale": np.array(self.scale),
+        }
+        if tensors["bg_only"] is not None:
+            arrays["bg_only"] = tensors["bg_only"].cpu().numpy().astype(np.float32)
+        np.savez_compressed(out_dir / f"{Path(img_name).stem}.npz", **arrays)
 
     def _save_overlay(self, margin, resized_img, results, boxes, img_name):
         # Heatmap shows margin over the cell's own threshold (>0 = flagged).
@@ -115,4 +148,7 @@ class Mech7Detector:
         self._sync()
         result["detection_latency_ms"] = max(
             0.0, (time.perf_counter() - t0) * 1000.0 - result["visualization_latency_ms"])
+        tensors = result.pop("_score_tensors", None)
+        if tensors is not None:
+            self._write_score_maps(tensors, Path(img_path).name)
         return result

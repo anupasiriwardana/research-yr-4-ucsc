@@ -45,9 +45,19 @@ def main():
     ap.add_argument("--num-images", type=int, default=b.get("num_images", 100))
     ap.add_argument("--start-index", type=int, default=b.get("start_index", 0))
     ap.add_argument("--no-visualizations", action="store_true")
+    ap.add_argument("--save-score-maps", action=argparse.BooleanOptionalAction, default=None,
+                    help="override batch_settings.save_score_maps")
+    ap.add_argument("--score-maps-dir", default=None, help="override batch_settings.score_maps_dir")
     args = ap.parse_args()
     if args.config:
         cfg = load_config(args.config)
+        b = cfg["batch_settings"]
+    if args.save_score_maps is not None:
+        b["save_score_maps"] = args.save_score_maps
+    if args.score_maps_dir:
+        b["score_maps_dir"] = args.score_maps_dir
+    if b.get("save_score_maps") and not b.get("score_maps_dir"):
+        b["score_maps_dir"] = str(Path(args.coordinates_dir) / "score_maps")
     if args.num_images <= 0 or args.start_index < 0:
         raise ValueError("num_images must be > 0 and start_index >= 0.")
 

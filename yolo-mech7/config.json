@@ -5,16 +5,16 @@
     "threshold_images_dir": "D:\\GitHub\\experiment_data\\bdd100k_images_10k\\test",
 
     "profiles_dir": "D:\\GitHub\\yr-4-research\\yolo-mech7\\profiles",
-    "calibration_profile_filename": "mech7_profiles_yolo11_p5.pkl",
-    "threshold_filename": "mech7_thresholds_yolo11_p5.pkl",
+    "calibration_profile_filename": "mech7_profiles_yolo11_p3.pkl",
+    "threshold_filename": "mech7_thresholds_yolo11_p3.pkl",
 
     "detector_settings": {
-        "tap_scale": "P5",
-        "stride": 32,
+        "tap_scale": "P3",
+        "stride": 8,
         "threshold_mode": "per_class",
         "global_threshold": 17.0,
         "threshold_percentile": 99.5,
-        "adjust_threshold": -2.0,
+        "adjust_threshold": 0.0,
         "min_class_samples_for_own_threshold": 30,
         "min_calibration_samples": 100,
         "background_class_id": -1,
@@ -29,9 +29,11 @@
         "coordinates_dir": "D:\\GitHub\\yr-4-research\\yolo-mech7\\yolov11-detected-patch-coordinates\\p5-adj-2",
         "visualizations_dir": "D:\\GitHub\\yr-4-research\\yolo-mech7\\patch-det-visualizations\\yolov11\\p5-adj-2",
         "summary_filename": "run_summary.json",
-        "num_images": 4,
+        "num_images": 1,
         "start_index": 0,
         "save_visualizations": true,
+        "save_score_maps": true,
+        "score_maps_dir": "D:\\GitHub\\yr-4-research\\yolo-mech7\\score-maps\\yolov11\\p5-adj-2",
         "image_extensions": [".jpg", ".jpeg", ".png"]
     }
 }
