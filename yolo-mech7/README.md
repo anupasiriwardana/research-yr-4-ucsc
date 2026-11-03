@@ -20,4 +20,5 @@ threshold is used instead of one global number. See `newAlternatives.md`.
 - `min_class_samples_for_own_threshold`: classes with fewer cells in the threshold set use the pooled values.
 - Changing `tap_scale`/`threshold_percentile` needs steps 1-2 re-run (use a different `*_filename` per model/scale).
 
+- `batch_settings.save_coordinates` (or `--save-coordinates/--no-save-coordinates` on the batch script): writes the per-image `<stem>.txt` box files into `coordinates_dir`. On by default. When off, only `run_summary.json` is written there (it still counts boxes, so the false-positive rate is still available).
 - `batch_settings.save_score_maps` (+ `score_maps_dir`, or `--save-score-maps/--no-save-score-maps` on the batch script): also writes `<image stem>.npz` per image with `raw` (min distance per cell), `best_class`, `bg_only`, `class_ids`, `stride`, `tap_scale`. Off by default; written after the latency timer, so latency is unaffected.

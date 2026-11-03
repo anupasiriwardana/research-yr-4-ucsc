@@ -32,6 +32,7 @@
         "num_images": 1,
         "start_index": 0,
         "save_visualizations": true,
+        "save_coordinates": true,
         "save_score_maps": true,
         "score_maps_dir": "D:\\GitHub\\yr-4-research\\yolo-mech7\\score-maps\\yolov11\\p5-adj-2",
         "image_extensions": [".jpg", ".jpeg", ".png"]
