@@ -89,3 +89,4 @@ Caveat: the best config is picked on the same images it is scored on, so the num
 
 **Holdout (honest numbers):** add `--holdout-splits 20` (optionally `--train-frac 0.5`, `--seed 0`). It repeats N random splits of the patched and clean images: pick the best config per rule on the tuning part, then score that one config on the held-out part. It prints the held-out mean +- std per rule, next to the fixed "today" config on the same held-out parts, and which config was chosen most often (a config chosen in only a few splits is unstable). The "best per rule on ALL images" table above it is still the optimistic one. Widen `--offsets`, `--joins` and `--min-cells` if a chosen value sits at the edge of its range.
 - Metric and term definitions (precision, recall, F1, IoU, Mahalanobis distance, ...): see `yolo-mech5/README.md`, section Glossary.
+- Results and conclusions so far: see `findings.md`.

@@ -1,4 +1,4 @@
-# Mech-5: multi-scale (P3 + P4) patch detection
+# Mech-5: multi-scale (P3 + P4 + P5) patch detection
 
 Mech-5 finds adversarial patches by asking **two YOLO feature scales at the same time** whether a part of the image
 looks abnormal, and only trusting the answer when they agree. It outputs patch boxes in 640x640 pixel space, in the
@@ -64,7 +64,7 @@ Rule of thumb: start with `and`; try `confirm` if you want cleaner, more precise
 
 | key | meaning |
 |---|---|
-| `scales` | the tapped scales: `stride`, profile file, threshold file per scale. P3+P4 by default (at least two scales; P5 is possible but needs its own profile and threshold files) |
+| `scales` | the tapped scales: `stride`, profile file, threshold file per scale. P3+P4+P5 by default (at least two scales; remove the `P5` entry to go back to P3+P4, in which case use the P3+P4 numbers below) |
 | `detector_settings.combine_rule` | `and` or `confirm` |
 | `rules.<rule>.offset` | flag when score > 1 + offset. Negative = more sensitive (more patch cells, more false alarms) |
 | `rules.<rule>.join` | how many times flagged cells are dilated before grouping (0 = no joining) |
@@ -74,7 +74,7 @@ Rule of thumb: start with `and`; try `confirm` if you want cleaner, more precise
 | `batch_settings.save_coordinates` | write the per-image `<stem>.txt` box files (off = only `run_summary.json`) |
 | `batch_settings.save_visualizations` | write an overlay PNG per image: heat = combined score minus its flag threshold, red = detected boxes, green = YOLO's own boxes |
 
-The default numbers come from an offline sweep on saved P3/P4 score maps (see Results).
+The default `rules` numbers (P3+P4+P5) come from an offline sweep on saved score maps (see `../yolo-mech7/findings.md`: held-out F1 about 0.77, precision 0.875, recall 0.69, mean IoU 0.655, clean-image false positives about 19% for `confirm`). They have not yet been measured end-to-end with this detector. The P3+P4 results below were measured with the earlier P3+P4 settings (`and`: offset -0.2, join 2, min 20; `confirm`: offset -0.2, join 2, min 30).
 
 ## Workflow
 

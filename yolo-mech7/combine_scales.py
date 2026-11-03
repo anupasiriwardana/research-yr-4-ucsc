@@ -15,6 +15,8 @@ P4 cell is repeated 2x2 on the P3 grid) with one of these RULES:
     and          : min over scales   (every scale must flag the cell)
     or           : max over scales   (any scale flags it)
     mean         : mean over scales
+    vote2        : the 2nd-largest ratio, i.e. at least TWO scales must flag the
+                   cell (only with 3+ scales)
     confirm      : finest scale, kept only where the coarser scale(s) flag a
                    cell within one cell (3x3 neighbourhood) of it
 
@@ -105,6 +107,8 @@ def combine(rule, ratios, scales):
         return stack.max(0)
     if rule == "mean":
         return stack.mean(0)
+    if rule == "vote2":                       # at least two scales flag the cell (needs >= 3 scales)
+        return np.sort(stack, axis=0)[-2]
     if rule == "confirm":
         fine, coarse = ratios[scales[0]], [cv2.dilate(ratios[s], KERNEL) for s in scales[1:]]
         return np.minimum(fine, np.min(coarse, axis=0))
@@ -260,7 +264,8 @@ def main():
     if clean is None:
         print("WARNING: no --clean maps, so false-positive rate is not measured and nothing is capped.")
 
-    rules = args.rules or (scales + (["and", "or", "mean", "confirm"] if len(scales) > 1 else []))
+    rules = args.rules or (scales + (["and", "or", "mean", "confirm"] if len(scales) > 1 else [])
+                           + (["vote2"] if len(scales) > 2 else []))
     p_stems = stems
     c_stems = sorted(next(iter(clean.values()))) if clean else []
     cfgs, Plist, Clist = [], [], []

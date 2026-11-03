@@ -1,0 +1,62 @@
+{
+  "tap_scale": "P5",
+  "stride": 32,
+  "halo_px": 48,
+  "patched_images_used": 95,
+  "patches": 171,
+  "profile": "mech7_profiles_yolo11_p5.pkl",
+  "scores": {
+    "raw": {
+      "auroc": 0.9681625135507745,
+      "median_patch": 20.236440658569336,
+      "median_normal": 6.012149333953857,
+      "tpr@fpr0.5%": 0.5141354372123603,
+      "tpr@fpr1%": 0.6541748849441157,
+      "tpr@fpr5%": 0.8645627876397107,
+      "auroc_vs_clean": 0.9638351002629849,
+      "tpr@clean_fpr0.5%": 0.4556213017751479,
+      "tpr@clean_fpr1%": 0.6068376068376068,
+      "n_patch_cells": 1521,
+      "n_normal_cells": 32494
+    },
+    "ratio": {
+      "auroc": 0.9129150308515966,
+      "median_patch": 0.8034124970436096,
+      "median_normal": 0.36785125732421875,
+      "tpr@fpr0.5%": 0.21499013806706113,
+      "tpr@fpr1%": 0.326758711374096,
+      "tpr@fpr5%": 0.6554898093359632,
+      "auroc_vs_clean": 0.9126505095332018,
+      "tpr@clean_fpr0.5%": 0.17685733070348456,
+      "tpr@clean_fpr1%": 0.32215647600262987,
+      "n_patch_cells": 1521,
+      "n_normal_cells": 32494
+    },
+    "zscore": {
+      "auroc": 0.9398808749884214,
+      "median_patch": 3.2121713161468506,
+      "median_normal": -0.2086246758699417,
+      "tpr@fpr0.5%": 0.29520052596975677,
+      "tpr@fpr1%": 0.42077580539119,
+      "tpr@fpr5%": 0.7304404996712689,
+      "auroc_vs_clean": 0.9395580374753452,
+      "tpr@clean_fpr0.5%": 0.2583826429980276,
+      "tpr@clean_fpr1%": 0.40631163708086787,
+      "n_patch_cells": 1521,
+      "n_normal_cells": 32494
+    },
+    "bg_only": {
+      "auroc": 0.9633235278514171,
+      "median_patch": 27.759994506835938,
+      "median_normal": 6.428389072418213,
+      "tpr@fpr0.5%": 0.36620644312952005,
+      "tpr@fpr1%": 0.5239973701512163,
+      "tpr@fpr5%": 0.8185404339250493,
+      "auroc_vs_clean": 0.9510436719263642,
+      "tpr@clean_fpr0.5%": 0.26232741617357,
+      "tpr@clean_fpr1%": 0.4056541748849441,
+      "n_patch_cells": 1521,
+      "n_normal_cells": 32494
+    }
+  }
+}

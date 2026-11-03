@@ -16,14 +16,19 @@
             "stride": 16,
             "profile_filename": "mech5_profiles_yolo11_p4.pkl",
             "threshold_filename": "mech5_thresholds_yolo11_p4.pkl"
+        },
+        "P5": {
+            "stride": 32,
+            "profile_filename": "mech5_profiles_yolo11_p5.pkl",
+            "threshold_filename": "mech5_thresholds_yolo11_p5.pkl"
         }
     },
 
     "detector_settings": {
-        "combine_rule": "and",
+        "combine_rule": "confirm",
         "rules": {
-            "and":     {"offset": -0.2, "join": 2, "min_region_cells": 20},
-            "confirm": {"offset": -0.2, "join": 2, "min_region_cells": 30}
+            "and":     {"offset": -0.4, "join": 0, "min_region_cells": 30},
+            "confirm": {"offset": -0.3, "join": 1, "min_region_cells": 15}
         },
         "adjust_threshold": 0.0,
         "threshold_percentile": 99.5,
@@ -37,8 +42,8 @@
 
     "batch_settings": {
         "input_dir": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\gen-patched-img\\yolov11-patched-imgs",
-        "coordinates_dir": "D:\\GitHub\\yr-4-research\\yolo-mech5\\yolov11-detected-patch-coordinates\\run1",
-        "visualizations_dir": "D:\\GitHub\\yr-4-research\\yolo-mech5\\patch-det-visualizations\\yolov11\\run1",
+        "coordinates_dir": "D:\\GitHub\\yr-4-research\\yolo-mech5\\yolov11-detected-patch-coordinates\\run5",
+        "visualizations_dir": "D:\\GitHub\\yr-4-research\\yolo-mech5\\patch-det-visualizations\\yolov11\\run5",
         "summary_filename": "run_summary.json",
         "num_images": 100,
         "start_index": 0,
