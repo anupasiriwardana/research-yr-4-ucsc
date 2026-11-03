@@ -14,7 +14,7 @@
         "threshold_mode": "per_class",
         "global_threshold": 17.0,
         "threshold_percentile": 99.5,
-        "adjust_threshold": 0.0,
+        "adjust_threshold": -2.0,
         "min_class_samples_for_own_threshold": 30,
         "min_calibration_samples": 100,
         "background_class_id": -1,
@@ -29,7 +29,7 @@
         "coordinates_dir": "D:\\GitHub\\yr-4-research\\yolo-mech7\\yolov11-detected-patch-coordinates",
         "visualizations_dir": "D:\\GitHub\\yr-4-research\\yolo-mech7\\patch-det-visualizations\\yolov11",
         "summary_filename": "run_summary.json",
-        "num_images": 10,
+        "num_images": 100,
         "start_index": 0,
         "save_visualizations": true,
         "image_extensions": [".jpg", ".jpeg", ".png"]
