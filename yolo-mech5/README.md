@@ -122,3 +122,37 @@ How to read this honestly:
 | `calibrate_profiles.py`, `learn_thresholds.py` | steps 1 and 2 |
 | `detect_mech5_multi_img.py` | batch run + `run_summary.json` |
 | `profiles/` | P3 and P4 profile + threshold files for `yolo11n.pt` |
+
+## Glossary: the terms used in the results
+
+**Detection side**
+- **Mahalanobis distance**: how far a cell's 80-number feature vector `x` is from a profile (mean `m`, covariance `S`):
+  `d = sqrt((x - m)^T S^-1 (x - m))`. Unlike a plain (Euclidean) distance it accounts for how spread out each feature is and how the
+  features move together, so a step along a direction where that class normally varies a lot counts for less than the same step along a
+  direction where it barely varies. Both Mech-5 and Mech-7 (and Mech-1 Option B) use it, through the same `ProfileBank` code.
+- **Profile**: the mean and inverse covariance of one class's feature vectors (plus one for background), learned from clean images.
+- **Nearest profile / best distance**: a cell is compared with every profile and the smallest distance wins. This never uses the detector's own boxes.
+- **Threshold**: the distance above which a cell counts as abnormal. Learned per class and per scale as the 99.5th percentile of
+  distances on a clean image set.
+- **Ratio**: best distance divided by that nearest profile's threshold. Above 1 = abnormal at that scale.
+- **Offset**: the combined score must exceed `1 + offset`. Negative offset = more sensitive.
+- **Cell / stride / scale**: P3 cell = 8x8 px, P4 = 16x16 px, P5 = 32x32 px. "Finest grid" = P3's 80x80 grid.
+- **Join**: dilating flagged cells so scattered cells of one patch merge into one region. **Min region cells**: smallest region kept.
+
+**Metrics** (computed by `calc-metrics/compare_patch_detection_metrics.py`; a detected box matches a real patch box when they overlap with positive area, each box is matched at most once, highest IoU first)
+- **True positive (TP)**: a detected box that matches a real patch.
+- **False positive (FP)**: a detected box that matches no real patch (a false alarm).
+- **False negative (FN)**: a real patch with no matching box (a miss).
+- **Precision** = TP / (TP + FP). "Of the boxes drawn, how many were on a real patch?" Low precision = many false alarms.
+- **Recall** = TP / (TP + FN). "Of the real patches, how many were found?" Low recall = many missed patches. (Example here: 74 of 171 patches found = 0.43.)
+- **F1** = 2 x precision x recall / (precision + recall). One number that is only high when both are high.
+- **IoU (intersection over union)**: for a matched pair, overlap area / combined area of the two boxes. 1 = identical boxes, 0 = no overlap.
+  **Mean IoU** averages it over matched pairs: it measures how well the boxes are placed, not whether the patch was found.
+- **Boxes / patched image**: average number of boxes drawn per patched image (a patched image has about 1.7 real patches).
+- **Clean-image false-positive rate**: of the images with NO patch, the percentage that still got at least one box. Measured by running the
+  batch on a clean folder: `images_with_detection / images` in `run_summary.json`.
+- **AUROC** (used in `yolo-mech7/diagnose_separability.py`): chance that a random patch cell scores higher than a random normal cell. 0.5 = coin flip, 1.0 = perfect.
+- **Held-out / holdout**: scoring on images that were not used to pick the settings, so the number is not flattering.
+
+Precision and recall pull against each other: lowering the threshold finds more patches (recall up) but also draws more wrong boxes
+(precision down). The baseline sits at high recall / low precision; Mech-5 at high precision / lower recall.
