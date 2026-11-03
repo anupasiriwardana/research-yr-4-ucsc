@@ -74,7 +74,7 @@ Rule of thumb: start with `and`; try `confirm` if you want cleaner, more precise
 | `batch_settings.save_coordinates` | write the per-image `<stem>.txt` box files (off = only `run_summary.json`) |
 | `batch_settings.save_visualizations` | write an overlay PNG per image: heat = combined score minus its flag threshold, red = detected boxes, green = YOLO's own boxes |
 
-The default `rules` numbers (P3+P4+P5) come from an offline sweep on saved score maps (see `../yolo-mech7/findings.md`: held-out F1 about 0.77, precision 0.875, recall 0.69, mean IoU 0.655, clean-image false positives about 19% for `confirm`). They have not yet been measured end-to-end with this detector. The P3+P4 results below were measured with the earlier P3+P4 settings (`and`: offset -0.2, join 2, min 20; `confirm`: offset -0.2, join 2, min 30).
+The default `rules` numbers (P3+P4+P5) come from an offline sweep on saved score maps (see `findings.md`: held-out F1 about 0.77, precision 0.875, recall 0.69, mean IoU 0.655, clean-image false positives about 19% for `confirm`). They have not yet been measured end-to-end with this detector. The P3+P4 results below were measured with the earlier P3+P4 settings (`and`: offset -0.2, join 2, min 20; `confirm`: offset -0.2, join 2, min 30).
 
 ## Workflow
 
@@ -156,3 +156,4 @@ How to read this honestly:
 
 Precision and recall pull against each other: lowering the threshold finds more patches (recall up) but also draws more wrong boxes
 (precision down). The baseline sits at high recall / low precision; Mech-5 at high precision / lower recall.
+- Results, the settings (offset / join / min cells) of every configuration tried, and next steps: see `findings.md`.

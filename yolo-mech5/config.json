@@ -41,12 +41,12 @@
     },
 
     "batch_settings": {
-        "input_dir": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\gen-patched-img\\yolov11-patched-imgs",
-        "coordinates_dir": "D:\\GitHub\\yr-4-research\\yolo-mech5\\yolov11-detected-patch-coordinates\\run5",
-        "visualizations_dir": "D:\\GitHub\\yr-4-research\\yolo-mech5\\patch-det-visualizations\\yolov11\\run5",
+        "input_dir": "D:\\GitHub\\experiment_data\\bdd100k_images_10k\\val",
+        "coordinates_dir": "D:\\GitHub\\yr-4-research\\yolo-mech5\\yolov11-detected-patch-coordinates\\run7-clean",
+        "visualizations_dir": "D:\\GitHub\\yr-4-research\\yolo-mech5\\patch-det-visualizations\\yolov11\\run7-clean",
         "summary_filename": "run_summary.json",
         "num_images": 100,
-        "start_index": 0,
+        "start_index": 100,
         "save_visualizations": true,
         "save_coordinates": true,
         "image_extensions": [".jpg", ".jpeg", ".png"]
