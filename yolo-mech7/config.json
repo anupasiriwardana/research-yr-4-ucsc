@@ -1,12 +1,12 @@
 {
-    "model_path": "D:\\GitHub\\yr-4-research\\yolo-mech7\\yolo11n.pt",
+    "model_path": "D:\\GitHub\\yr-4-research\\yolo-mech7\\yolov8n.pt",
 
     "profile_images_dir": "D:\\GitHub\\experiment_data\\bdd100k_images_10k\\train",
     "threshold_images_dir": "D:\\GitHub\\experiment_data\\bdd100k_images_10k\\test",
 
     "profiles_dir": "D:\\GitHub\\yr-4-research\\yolo-mech7\\profiles",
-    "calibration_profile_filename": "mech7_profiles_yolo11_p5.pkl",
-    "threshold_filename": "mech7_thresholds_yolo11_p5.pkl",
+    "calibration_profile_filename": "mech5_profiles_yolov8_p5.pkl",
+    "threshold_filename": "mech5_thresholds_yolov8_p5.pkl",
 
     "detector_settings": {
         "tap_scale": "P5",
@@ -25,16 +25,17 @@
     },
 
     "batch_settings": {
+        "input_dir2": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\gen-patched-img\\yolov8-patched-imgs",
         "input_dir": "D:\\GitHub\\experiment_data\\bdd100k_images_10k\\val",
         "coordinates_dir": "D:\\GitHub\\yr-4-research\\yolo-mech7\\yolov11-detected-patch-coordinates\\p5-adj-2",
-        "visualizations_dir": "D:\\GitHub\\yr-4-research\\yolo-mech7\\patch-det-visualizations\\yolov11\\p5-clean",
+        "visualizations_dir": "D:\\GitHub\\yr-4-research\\yolo-mech7\\patch-det-visualizations\\yolov8\\p3-clean",
         "summary_filename": "run_summary.json",
         "num_images": 100,
-        "start_index": 0,
-        "save_visualizations": true,
+        "start_index": 100,
+        "save_visualizations": false,
         "save_coordinates": false,
         "save_score_maps": true,
-        "score_maps_dir": "D:\\GitHub\\yr-4-research\\yolo-mech7\\score-maps\\yolov11\\p5-clean",
+        "score_maps_dir": "D:\\GitHub\\yr-4-research\\yolo-mech7\\score-maps\\yolov8\\p5-clean",
         "save_score_heatmaps": false,
         "score_heatmaps_dir": "D:\\GitHub\\yr-4-research\\yolo-mech7\\score-heatmaps\\yolov11\\run11",
         "gt_coordinates_dir": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\gen-patched-img\\yolov11-patch_coordinates",
