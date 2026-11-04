@@ -1,0 +1,62 @@
+{
+  "tap_scale": "P3",
+  "stride": 8,
+  "halo_px": 48,
+  "patched_images_used": 94,
+  "patches": 171,
+  "profile": "mech5_profiles_yolov8_p3.pkl",
+  "scores": {
+    "raw": {
+      "auroc": 0.9984500373508409,
+      "median_patch": 28.182680130004883,
+      "median_normal": 7.371488094329834,
+      "tpr@fpr0.5%": 0.9211045364891519,
+      "tpr@fpr1%": 0.9615384615384616,
+      "tpr@fpr5%": 0.9980276134122288,
+      "auroc_vs_clean": 0.9999365532287557,
+      "tpr@clean_fpr0.5%": 0.9985618014464168,
+      "tpr@clean_fpr1%": 0.9995479947403024,
+      "n_patch_cells": 24336,
+      "n_normal_cells": 513352
+    },
+    "ratio": {
+      "auroc": 0.9981526080264644,
+      "median_patch": 1.6785852909088135,
+      "median_normal": 0.5025990009307861,
+      "tpr@fpr0.5%": 0.9107495069033531,
+      "tpr@fpr1%": 0.9535667324128863,
+      "tpr@fpr5%": 0.99646614069691,
+      "auroc_vs_clean": 0.9998115678996651,
+      "tpr@clean_fpr0.5%": 0.9942061143984221,
+      "tpr@clean_fpr1%": 0.9981919789612097,
+      "n_patch_cells": 24336,
+      "n_normal_cells": 513352
+    },
+    "zscore": {
+      "auroc": 0.9981244764848788,
+      "median_patch": 8.857173919677734,
+      "median_normal": 0.0835358202457428,
+      "tpr@fpr0.5%": 0.9097633136094675,
+      "tpr@fpr1%": 0.9530325443786982,
+      "tpr@fpr5%": 0.9961785009861933,
+      "auroc_vs_clean": 0.9997745301135663,
+      "tpr@clean_fpr0.5%": 0.9929733727810651,
+      "tpr@clean_fpr1%": 0.9974934253780408,
+      "n_patch_cells": 24336,
+      "n_normal_cells": 513352
+    },
+    "bg_only": {
+      "auroc": 0.9991943622466214,
+      "median_patch": 47.449493408203125,
+      "median_normal": 9.271232604980469,
+      "tpr@fpr0.5%": 0.9639217619986851,
+      "tpr@fpr1%": 0.9862754766600921,
+      "tpr@fpr5%": 0.9999589086127547,
+      "auroc_vs_clean": 0.9999130815394375,
+      "tpr@clean_fpr0.5%": 0.9992192636423406,
+      "tpr@clean_fpr1%": 0.9999589086127547,
+      "n_patch_cells": 24336,
+      "n_normal_cells": 513352
+    }
+  }
+}

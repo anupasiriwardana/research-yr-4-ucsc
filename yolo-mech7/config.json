@@ -25,7 +25,6 @@
     },
 
     "batch_settings": {
-        "input_dir2": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\gen-patched-img\\yolov8-patched-imgs",
         "input_dir": "D:\\GitHub\\experiment_data\\bdd100k_images_10k\\val",
         "coordinates_dir": "D:\\GitHub\\yr-4-research\\yolo-mech7\\yolov11-detected-patch-coordinates\\p5-adj-2",
         "visualizations_dir": "D:\\GitHub\\yr-4-research\\yolo-mech7\\patch-det-visualizations\\yolov8\\p3-clean",

@@ -36,10 +36,12 @@ def write_detection_file(path, result, latency_ms):
 
 
 def main():
-    cfg = load_config()
+    # --config is read first so every default below (folders, image counts) comes from the chosen config
+    pre = argparse.ArgumentParser(add_help=False)
+    pre.add_argument("--config", default=None)
+    cfg = load_config(pre.parse_known_args()[0].config)
     b = cfg["batch_settings"]
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--config", default=None)
+    ap = argparse.ArgumentParser(parents=[pre])
     ap.add_argument("--input-dir", default=b["input_dir"])
     ap.add_argument("--coordinates-dir", default=b["coordinates_dir"])
     ap.add_argument("--num-images", type=int, default=b.get("num_images", 100))
@@ -55,9 +57,6 @@ def main():
     ap.add_argument("--score-heatmaps-dir", default=None, help="override batch_settings.score_heatmaps_dir")
     ap.add_argument("--gt-coordinates-dir", default=None, help="override batch_settings.gt_coordinates_dir")
     args = ap.parse_args()
-    if args.config:
-        cfg = load_config(args.config)
-        b = cfg["batch_settings"]
     if args.save_coordinates is not None:
         b["save_coordinates"] = args.save_coordinates
     if args.save_score_maps is not None:

@@ -1,0 +1,62 @@
+{
+  "tap_scale": "P5",
+  "stride": 32,
+  "halo_px": 48,
+  "patched_images_used": 94,
+  "patches": 171,
+  "profile": "mech5_profiles_yolov8_p5.pkl",
+  "scores": {
+    "raw": {
+      "auroc": 0.8785270707333609,
+      "median_patch": 16.743629455566406,
+      "median_normal": 8.429915428161621,
+      "tpr@fpr0.5%": 0.00392156862745098,
+      "tpr@fpr1%": 0.025490196078431372,
+      "tpr@fpr5%": 0.24640522875816995,
+      "auroc_vs_clean": 0.9797185947712418,
+      "tpr@clean_fpr0.5%": 0.36209150326797385,
+      "tpr@clean_fpr1%": 0.5437908496732026,
+      "n_patch_cells": 1530,
+      "n_normal_cells": 32093
+    },
+    "ratio": {
+      "auroc": 0.830203408028424,
+      "median_patch": 0.7538285255432129,
+      "median_normal": 0.4718511998653412,
+      "tpr@fpr0.5%": 0.0032679738562091504,
+      "tpr@fpr1%": 0.013071895424836602,
+      "tpr@fpr5%": 0.15816993464052287,
+      "auroc_vs_clean": 0.9325099428104575,
+      "tpr@clean_fpr0.5%": 0.09869281045751634,
+      "tpr@clean_fpr1%": 0.22156862745098038,
+      "n_patch_cells": 1530,
+      "n_normal_cells": 32093
+    },
+    "zscore": {
+      "auroc": 0.8521357150552449,
+      "median_patch": 2.713245391845703,
+      "median_normal": 0.4846460819244385,
+      "tpr@fpr0.5%": 0.00196078431372549,
+      "tpr@fpr1%": 0.013725490196078431,
+      "tpr@fpr5%": 0.18104575163398692,
+      "auroc_vs_clean": 0.9604825163398693,
+      "tpr@clean_fpr0.5%": 0.12745098039215685,
+      "tpr@clean_fpr1%": 0.3006535947712418,
+      "n_patch_cells": 1530,
+      "n_normal_cells": 32093
+    },
+    "bg_only": {
+      "auroc": 0.8688658716324635,
+      "median_patch": 19.8623046875,
+      "median_normal": 9.696033477783203,
+      "tpr@fpr0.5%": 0.0058823529411764705,
+      "tpr@fpr1%": 0.020261437908496733,
+      "tpr@fpr5%": 0.18888888888888888,
+      "auroc_vs_clean": 0.9475554003267974,
+      "tpr@clean_fpr0.5%": 0.09084967320261438,
+      "tpr@clean_fpr1%": 0.15620915032679739,
+      "n_patch_cells": 1530,
+      "n_normal_cells": 32093
+    }
+  }
+}

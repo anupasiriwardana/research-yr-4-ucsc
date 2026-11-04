@@ -11,6 +11,8 @@ Mech-7 per-class thresholds and the per-scale separability diagnostic) is in `..
 - Best rule: **`confirm`** (settings: offset -0.3, join 1, min region 15 cells), then `and` (offset -0.4, join 0, min region 30).
 - Measured end-to-end only for P3+P4 so far; the three-scale settings above are from the offline sweep on saved score maps and are now the defaults in `config.json`.
 - Recall (0.69) is still below the Mech-1 YOLO11 baseline (0.85); precision is much higher (0.875 vs 0.376).
+- **YOLOv8 (section 8):** the YOLO11 settings do not transfer (36-47% of clean images flagged). Re-tuned: **P3+P4, `confirm`, offset +0.55, join 0, min 15 cells** gives
+  held-out F1 0.934 (precision 0.989, recall 0.886, IoU 0.624) and, end to end, precision 0.981 / recall 0.906 / IoU 0.646 with 0 of 100 clean images flagged, against the Mech-1 YOLOv8 baseline's 0.691 / 0.889 / 0.670. Use `config_yolov8.json`.
 
 ## 1. Setup and how to read the settings
 
@@ -160,7 +162,7 @@ operation, 52 ms after, with identical output; a 5-image check of the three-scal
 ## 6. Suggested next steps
 
 1. Run P3+P4+P5 `confirm` (then `and`) with `detect_mech5_multi_img.py` on the 100 patched and the 400 unseen clean images and compare with the offline numbers above.
-2. Check YOLOv8: build P3-P5 profiles and thresholds for it and repeat (the original comparison was YOLOv8 vs YOLO11).
+2. YOLOv8 is done (section 8): P3+P4 `confirm`, offset +0.55, join 0, min 15; the YOLO11 settings do not transfer.
 3. Decide the operating point (section 3.4) with the recovery module in mind: a stricter cap trades recall for precision.
 4. Only then consider Mech-6 (per-class energy on Mech-4's backbone signal). Per-class normalisation hurt in Mech-7, so the per-class part is doubtful; a complementary second signal
    is the only part worth testing, and the same offline checks (separability, then combination with the P3+P4+P5 score) should come first.
@@ -182,3 +184,133 @@ python combine_scales.py --holdout-splits 20 --seed 0 --joins 0 1 2 3 4 --min-ce
   --patched P3=score-maps/yolov11/p3-patched P4=score-maps/yolov11/p4-patched P5=score-maps/yolov11/p5-patched \
   --clean   P3=score-maps/yolov11/p3-clean   P4=score-maps/yolov11/p4-clean   P5=score-maps/yolov11/p5-clean
 ```
+
+## 8. YOLOv8 (separate calibration, separate settings)
+
+The question: does Mech-5 work on YOLOv8, and with which settings? Short answer: yes, very well, but **the YOLO11 settings do not transfer and the best configuration is different** (P3+P4, positive offset, no P5).
+
+### 8.1 Setup
+
+- Model `yolov8n.pt`. Profiles and thresholds for P3, P4 and P5 built with this folder's `calibrate_profiles.py` / `learn_thresholds.py` (files `profiles/mech5_{profiles,thresholds}_yolov8_p{3,4,5}.pkl`), same image sets as for YOLO11 (`train` / `test`).
+- Patched images: the 100 YOLOv8 images in `test-patch-det-multi-img/gen-patched-img/yolov8-patched-imgs` with their own ground truth (`yolov8-patch_coordinates`): 94 contain patches (171 patches), 6 contain none.
+  Clean images: 100 `val` images, indices 100-199 (a different 100 from the YOLO11 clean set).
+- Score maps from `yolo-mech7/detect_mech7_multi_img.py` per scale (`../yolo-mech7/score-maps/yolov8/{p3,p4,p5}-{patched,clean}`), analysed with the same tool and protocol as in section 3 (20 random 50/50 splits, seed 0, 20% clean-FPR cap).
+  The cap turned out not to bind: all the good YOLOv8 configs have 0-3% clean FPR. The sweep was widened to offsets -0.7 to +1.0 and min cells up to 100 because the YOLOv8 optimum sits at the upper edge of the YOLO11 ranges.
+
+### 8.2 The signal is much stronger on YOLOv8 at P3, and weak at P5
+
+Same separability check as for YOLO11 (patch cells vs normal cells; AUROC / share of patch cells caught at 0.5% false alarms):
+
+| score | YOLOv8 P3 | YOLOv8 P4 | YOLOv8 P5 | (YOLO11 P3) | (YOLO11 P4) | (YOLO11 P5) |
+|---|---|---|---|---|---|---|
+| `raw` | **0.998 / 0.921** | 0.995 / 0.754 | 0.879 / 0.004 | 0.958 / 0.196 | 0.977 / 0.479 | 0.968 / 0.514 |
+| `ratio` | 0.998 / 0.911 | 0.994 / 0.731 | 0.830 / 0.003 | 0.888 / 0.085 | 0.905 / 0.150 | 0.913 / 0.215 |
+| `zscore` | 0.998 / 0.910 | 0.994 / 0.727 | 0.852 / 0.002 | 0.902 / 0.102 | 0.934 / 0.224 | 0.940 / 0.295 |
+| `bg_only` | 0.999 / 0.964 | 0.999 / 0.955 | 0.869 / 0.006 | 0.975 / 0.227 | 0.978 / 0.336 | 0.963 / 0.366 |
+
+On YOLOv8 P3 and P4 already separate patch cells almost perfectly, and P5 is poor. On YOLO11 it was the other way round (P3 weak, P4 and P5 better). That is why the best YOLOv8 configuration drops P5 and
+why a single scale is already strong. (This reads the numbers; the cause of the difference between the two models was not investigated.)
+
+### 8.3 The YOLO11 settings do not transfer
+
+The YOLO11 settings applied unchanged to the YOLOv8 maps (no tuning on YOLOv8):
+
+| scales / rule | settings (offset / join / min cells) | precision | recall | F1 | mean IoU | boxes / patched img | clean FPR |
+|---|---|---|---|---|---|---|---|
+| P3+P4+P5 `confirm` | -0.3 / 1 / 15 | 0.615 | 0.690 | 0.650 | 0.129 | 2.04 | 0.36 |
+| P3+P4+P5 `and` | -0.4 / 0 / 30 | 0.557 | 0.690 | 0.616 | 0.128 | 2.26 | 0.47 |
+| P3+P4 `and` | -0.2 / 2 / 20 | 0.741 | 0.684 | 0.711 | 0.126 | 1.68 | 0.40 |
+| P3+P4 `confirm` | -0.2 / 2 / 30 | 0.797 | 0.643 | 0.712 | 0.103 | 1.47 | 0.39 |
+| P3 | -0.1 / 1 / 30 | 0.789 | 0.655 | 0.716 | 0.128 | 1.51 | 0.23 |
+| P3 "today" (Mech-7) | 0 / 0 / 10 | 0.364 | 0.754 | 0.491 | 0.253 | 3.77 | 0.38 |
+| *Mech-1 baseline, YOLOv8* | global 17.0 on P3, min 9 cells | 0.691 | 0.889 | 0.777 | 0.670 | 2.20 | 0 of 6 (tiny set) |
+
+The negative offsets that suit YOLO11 flag 36-47% of YOLOv8 clean images and give poorly placed boxes (IoU about 0.13). Each model needs its own tuning.
+
+### 8.4 Held-out results with settings (20 splits, 94 patched / 100 clean images)
+
+Settings column = most often chosen config (offset / join / min cells; splits out of 20).
+
+| scales | rule | settings (splits) | held-out F1 | precision | recall | mean IoU | clean FPR |
+|---|---|---|---|---|---|---|---|
+| P3 | single | +0.8 / 0 / 10 (18) | **0.971** | 0.976 | 0.967 | 0.524 | 0.000 |
+| P4 | single | +0.3 / 0 / 80 (6) | 0.871 | 0.952 | 0.805 | 0.495 | 0.014 |
+| P5 | single (narrower sweep) | 0.0 / 4 / 40 (7) | 0.462 | 0.520 | 0.420 | 0.122 | 0.199 |
+| P3+P4 | `and` | +0.6 / 0 / 15 (14) | 0.929 | 0.983 | 0.883 | 0.547 | 0.000 |
+| P3+P4 | **`confirm`** | **+0.6 / 0 / 15 (10)** | 0.934 | **0.989** | 0.886 | **0.624** | 0.000 |
+| P3+P4 | `mean` (offline only) | +0.6 / 0 / 30 (16) | 0.939 | 0.990 | 0.893 | 0.576 | 0.000 |
+| P3+P4 | `or` | +0.8 / 1 / 10 (6) | 0.913 | 0.950 | 0.880 | 0.555 | 0.011 |
+| P3+P4+P5 | `and` | -0.3 / 0 / 80 (6) | 0.784 | 0.900 | 0.697 | 0.171 | 0.025 |
+| P3+P4+P5 | `confirm` | -0.3 / 0 / 100 (9) | 0.762 | 0.882 | 0.674 | 0.153 | 0.043 |
+| P3+P4+P5 | `mean` (offline only) | +0.3 / 0 / 30 (9) | 0.913 | 0.964 | 0.869 | 0.567 | 0.000 |
+| P3+P4+P5 | `vote2` (offline only) | +0.6 / 0 / 15 (14) | 0.929 | 0.984 | 0.883 | 0.545 | 0.000 |
+| P3 "today", fixed | | 0 / 0 / 10 (no tuning) | 0.495 | 0.368 | 0.757 | 0.254 | 0.388 |
+| *Mech-1 baseline, YOLOv8* | | global 17.0, min 9 | 0.777 | 0.691 | 0.889 | 0.670 | 0 of 6 |
+
+(P4+P5 and P3+P5 were only swept up to offset +0.3 / min 40 and were already worse than P3+P4 there; their best held-out F1 was 0.883 (P4 alone) and 0.882 (P3+P5 `mean`), so they were not pursued.)
+
+Best settings when tuned and scored on all images (optimistic; the ones you would copy), clean FPR in the last column:
+
+| scales | rule | offset / join / min cells | precision | recall | F1 | mean IoU | boxes / patched img | clean FPR |
+|---|---|---|---|---|---|---|---|---|
+| P3 | single | +0.80 / 0 / 10 | 0.977 | 0.977 | 0.977 | 0.519 | 1.82 | 0.00 |
+| P4 | single | +0.30 / 0 / 80 | 0.993 | 0.813 | 0.894 | 0.510 | 1.49 | 0.00 |
+| P3+P4 | `and` | +0.60 / 0 / 15 | 0.994 | 0.895 | 0.942 | 0.541 | 1.64 | 0.00 |
+| P3+P4 | `confirm` | +0.60 / 0 / 15 | 0.994 | 0.906 | 0.948 | 0.621 | 1.66 | 0.00 |
+| P3+P4 | `mean` | +0.60 / 0 / 30 | 0.994 | 0.901 | 0.945 | 0.617 | 1.65 | 0.00 |
+| P3+P4 | `or` | +0.80 / 1 / 10 | 0.963 | 0.912 | 0.937 | 0.533 | 1.72 | 0.02 |
+| P3+P4+P5 | `and` | -0.30 / 0 / 80 | 0.891 | 0.719 | 0.796 | 0.180 | 1.47 | 0.01 |
+| P3+P4+P5 | `confirm` | -0.30 / 0 / 100 | 0.890 | 0.708 | 0.788 | 0.156 | 1.45 | 0.04 |
+| P3+P4+P5 | `mean` | +0.30 / 0 / 30 | 0.968 | 0.895 | 0.930 | 0.588 | 1.68 | 0.00 |
+| P3+P4+P5 | `vote2` | +0.60 / 0 / 15 | 0.994 | 0.895 | 0.942 | 0.539 | 1.64 | 0.00 |
+
+### 8.5 How sharp is the optimum? (finer offset sweep, join 0; clean FPR is 0.00 at every offset shown)
+
+Each cell: F1 / precision / recall / mean IoU.
+
+| offset | P3 alone (min 10) | `confirm` P3+P4 (min 15) | `and` P3+P4 (min 15) |
+|---|---|---|---|
+| +0.40 | 0.794 / 0.725 / 0.877 / 0.626 | 0.880 / 0.882 / 0.877 / 0.637 | 0.890 / 0.904 / 0.877 / 0.617 |
+| +0.50 | 0.869 / 0.849 / 0.889 / 0.672 | 0.912 / 0.944 / 0.883 / 0.654 | 0.919 / 0.939 / 0.901 / 0.595 |
+| **+0.55** | 0.906 / 0.911 / 0.901 / 0.683 | **0.942 / 0.981 / 0.906 / 0.646** | 0.936 / 0.975 / 0.901 / 0.583 |
+| +0.60 | 0.930 / 0.930 / 0.930 / 0.687 | 0.948 / 0.994 / 0.906 / 0.621 | 0.942 / 0.994 / 0.895 / 0.541 |
+| +0.70 | 0.949 / 0.975 / 0.924 / 0.632 | 0.915 / 0.993 / 0.848 / 0.551 | 0.853 / 0.992 / 0.749 / 0.478 |
+| +0.80 | 0.977 / 0.977 / 0.977 / 0.519 | 0.789 / 0.966 / 0.667 / 0.463 | 0.651 / 0.988 / 0.485 / 0.385 |
+| +0.90 | 0.914 / 0.928 / 0.901 / 0.365 | 0.527 / 0.926 / 0.368 / 0.347 | 0.302 / 0.912 / 0.181 / 0.339 |
+| +1.00 | 0.813 / 0.946 / 0.713 / 0.249 | 0.199 / 0.950 / 0.111 / 0.262 | 0.089 / 1.000 / 0.047 / 0.260 |
+
+- **The good range is wide for P3 alone (+0.55 to +0.9) but narrow for the two-scale rules (+0.45 to +0.65).** Requiring both scales to agree makes recall fall quickly once the offset passes about +0.65.
+  So the recommended offset is **+0.55**, inside the plateau and away from the cliff, and not the single best point (+0.60).
+- A higher offset also moves boxes inward (IoU falls); the best placement (IoU about 0.65-0.69) is at +0.5 to +0.6.
+
+### 8.6 Recommended YOLOv8 configuration, verified end to end
+
+`config_yolov8.json` in this folder: scales P3+P4 (no P5), `confirm` with offset +0.55, join 0, min region 15 cells (`and` has the same numbers). Run it with
+`python detect_mech5_multi_img.py --config config_yolov8.json`. Runtime result on the 100 YOLOv8 patched images and 100 clean `val` images (100-199), identical to the offline numbers for the same settings:
+
+| | precision | recall | F1 | mean IoU | boxes / patched img | clean images with any box |
+|---|---|---|---|---|---|---|
+| Mech-5 `confirm`, P3+P4, +0.55 / 0 / 15 | 0.981 (155 TP, 3 FP) | 0.906 (16 missed) | 0.942 | 0.646 | 1.58 | 0 / 100 |
+| Mech-1 baseline, YOLOv8 | 0.691 | 0.889 | 0.777 | 0.670 | 2.20 | 0 of 6 (tiny set) |
+
+Same recall as the baseline, with far fewer false boxes (precision 0.69 to 0.98), and placement close to the baseline's (IoU 0.646 vs 0.670).
+
+Caveats for YOLOv8:
+- The settings were tuned on these same images; the honest estimate is the held-out table (P3+P4 `confirm` F1 0.934, precision 0.989, recall 0.886). "0 of 100 clean images" still allows a true rate of a few percent (up to about 3% at 95% confidence).
+- On this data a single scale is about as good: P3 alone is 0.971 held-out F1 at +0.8, and 0.93-0.95 F1 at +0.6 to +0.7 with similar precision, recall and IoU as `confirm`. Mech-5 as built needs at least two scales, so P3+P4 `confirm` is the Mech-5 setting;
+  whether the second scale is worth its cost (about double the scoring work) on YOLOv8 is open. P4 adds a little precision and better placement, and loses some recall.
+- YOLOv8 profiles come from this folder's calibration scripts; the clean maps are `val` 100-199 (YOLO11's were 0-99).
+
+### 8.7 What the two models together say
+
+| | YOLO11n | YOLOv8n |
+|---|---|---|
+| best scales | P3+P4+P5 (P5 was the biggest gain) | P3+P4 (P5 hurts under `and` / `confirm`) |
+| best rule | `confirm` | `confirm` (`and` about equal) |
+| offset | -0.3 (flag at 70% of the threshold) | +0.55 (flag at 155% of the threshold) |
+| join / min cells | 1 / 15 | 0 / 15 |
+| held-out F1 / precision / recall / IoU | 0.77 / 0.875 / 0.69 / 0.655 | 0.934 / 0.989 / 0.886 / 0.624 |
+| Mech-1 baseline | 0.52 / 0.376 / 0.854 / 0.322 | 0.777 / 0.691 / 0.889 / 0.670 |
+
+The mechanism (nearest-profile ratio, several scales agreeing, join, minimum region) transfers; the numbers do not, and have to be tuned for every model with a saved-score-map sweep. The simplest way to do that: build profiles and thresholds,
+save score maps at P3-P5 for patched and clean images, run `combine_scales.py` with the right `--gt-dir` and `--thresholds`, and pick a setting inside a plateau, as in 8.5.

@@ -157,3 +157,7 @@ How to read this honestly:
 Precision and recall pull against each other: lowering the threshold finds more patches (recall up) but also draws more wrong boxes
 (precision down). The baseline sits at high recall / low precision; Mech-5 at high precision / lower recall.
 - Results, the settings (offset / join / min cells) of every configuration tried, and next steps: see `findings.md`.
+
+## YOLOv8
+
+Use `config_yolov8.json` (own profiles/thresholds, P3+P4 only, `confirm` offset +0.55 / join 0 / min 15 cells): `python detect_mech5_multi_img.py --config config_yolov8.json`. The YOLO11 numbers do not transfer; how these were chosen and the results are in `findings.md`, section 8. Any `--config` file now also supplies the default input/output folders of the batch script.

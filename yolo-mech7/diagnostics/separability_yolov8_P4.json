@@ -1,0 +1,62 @@
+{
+  "tap_scale": "P4",
+  "stride": 16,
+  "halo_px": 48,
+  "patched_images_used": 94,
+  "patches": 171,
+  "profile": "mech5_profiles_yolov8_p4.pkl",
+  "scores": {
+    "raw": {
+      "auroc": 0.9948624024448997,
+      "median_patch": 32.64553451538086,
+      "median_normal": 7.931950569152832,
+      "tpr@fpr0.5%": 0.7539447731755424,
+      "tpr@fpr1%": 0.8594674556213018,
+      "tpr@fpr5%": 0.9898093359631821,
+      "auroc_vs_clean": 0.9999079933021039,
+      "tpr@clean_fpr0.5%": 0.997698882314267,
+      "tpr@clean_fpr1%": 0.9990138067061144,
+      "n_patch_cells": 6084,
+      "n_normal_cells": 128298
+    },
+    "ratio": {
+      "auroc": 0.9938405356339355,
+      "median_patch": 1.5740505456924438,
+      "median_normal": 0.46650487184524536,
+      "tpr@fpr0.5%": 0.7306048652202498,
+      "tpr@fpr1%": 0.8364562787639711,
+      "tpr@fpr5%": 0.9833990795529257,
+      "auroc_vs_clean": 0.999476348311144,
+      "tpr@clean_fpr0.5%": 0.9843852728468113,
+      "tpr@clean_fpr1%": 0.9932610124917817,
+      "n_patch_cells": 6084,
+      "n_normal_cells": 128298
+    },
+    "zscore": {
+      "auroc": 0.9938678530247048,
+      "median_patch": 8.47646713256836,
+      "median_normal": 0.3037351369857788,
+      "tpr@fpr0.5%": 0.7266600920447074,
+      "tpr@fpr1%": 0.8364562787639711,
+      "tpr@fpr5%": 0.9840565417488495,
+      "auroc_vs_clean": 0.9995490774983563,
+      "tpr@clean_fpr0.5%": 0.9886587771203156,
+      "tpr@clean_fpr1%": 0.9952333990795529,
+      "n_patch_cells": 6084,
+      "n_normal_cells": 128298
+    },
+    "bg_only": {
+      "auroc": 0.9990011556141551,
+      "median_patch": 66.73970794677734,
+      "median_normal": 9.996445655822754,
+      "tpr@fpr0.5%": 0.9549638395792241,
+      "tpr@fpr1%": 0.9783037475345168,
+      "tpr@fpr5%": 0.9978632478632479,
+      "auroc_vs_clean": 0.9999467476166995,
+      "tpr@clean_fpr0.5%": 0.9981919789612097,
+      "tpr@clean_fpr1%": 0.9993425378040762,
+      "n_patch_cells": 6084,
+      "n_normal_cells": 128298
+    }
+  }
+}
