@@ -8,6 +8,11 @@
     "background_samples_per_image": 250,
     "max_calibration_images": 2000,
 
+    "input_dir": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\gen-patched-img\\yolov11-patched-imgs",
+    "out_dir": "D:\\GitHub\\yr-4-research\\yolo-mech6\\energy-maps\\yolo11\\patched",
+    "start_index": 0,
+    "num_images": null,
+
     "save_visualizations": false,
     "visualizations_dir": "D:\\GitHub\\yr-4-research\\yolo-mech6\\energy-viz\\yolo11",
     "viz_layer": 1,

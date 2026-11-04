@@ -21,10 +21,10 @@ from mech6_energy import load_config, list_images, load_image_tensor, BackboneTa
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--config", required=True)
-    ap.add_argument("--input-dir", required=True)
-    ap.add_argument("--out-dir", required=True)
-    ap.add_argument("--start-index", type=int, default=0)
-    ap.add_argument("--num-images", type=int, default=None)
+    ap.add_argument("--input-dir", default=None, help="override config input_dir")
+    ap.add_argument("--out-dir", default=None, help="override config out_dir")
+    ap.add_argument("--start-index", type=int, default=None, help="override config start_index (default 0)")
+    ap.add_argument("--num-images", type=int, default=None, help="override config num_images (default: all)")
     ap.add_argument("--save-visualizations", action=argparse.BooleanOptionalAction, default=None,
                     help="override config save_visualizations (off by default); needs a profile file")
     ap.add_argument("--visualizations-dir", default=None, help="override config visualizations_dir")
@@ -33,7 +33,13 @@ def main():
     args = ap.parse_args()
     cfg = load_config(args.config)
     layers = cfg["tap_layers"]
-    viz = cfg.get("save_visualizations", False) if args.save_visualizations is None else args.save_visualizations
+    input_dir = args.input_dir or cfg.get("input_dir")
+    out_dir = args.out_dir or cfg.get("out_dir")
+    if not input_dir or not out_dir:
+        raise ValueError("Set input_dir and out_dir in the config (or pass --input-dir / --out-dir).")
+    start_index = cfg.get("start_index", 0) if args.start_index is None else args.start_index
+    num_images = cfg.get("num_images") if args.num_images is None else args.num_images
+    viz =cfg.get("save_visualizations", False) if args.save_visualizations is None else args.save_visualizations
     viz_dir = args.visualizations_dir or cfg.get("visualizations_dir")
     viz_layer = args.viz_layer or cfg.get("viz_layer", 1)
     gt_dir = args.gt_dir or cfg.get("gt_coordinates_dir")
@@ -46,9 +52,9 @@ def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = YOLO(cfg["model_path"]).to(device)
     tap = BackboneTap(model.model, layers)
-    out = Path(args.out_dir)
+    out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
-    images = list_images(args.input_dir, args.start_index, args.num_images)
+    images = list_images(input_dir, start_index, num_images)
     for n, path in enumerate(images, 1):
         rgb, tensor = load_image_tensor(path, device)
         acts = tap.get_activations(tensor)
