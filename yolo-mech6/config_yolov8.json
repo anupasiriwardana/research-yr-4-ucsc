@@ -6,5 +6,10 @@
     "tap_layers": [1, 2, 3],
     "min_calibration_samples": 100,
     "background_samples_per_image": 250,
-    "max_calibration_images": 2000
+    "max_calibration_images": 2000,
+
+    "save_visualizations": false,
+    "visualizations_dir": "D:\\GitHub\\yr-4-research\\yolo-mech6\\energy-viz\\yolov8",
+    "viz_layer": 1,
+    "gt_coordinates_dir": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\gen-patched-img\\yolov8-patch_coordinates"
 }
