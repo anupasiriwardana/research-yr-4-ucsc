@@ -26,3 +26,8 @@
 **/score-heatmaps/*
 **/energy-maps/*
 **/energy-viz/*
+
+**/gen-adv-patch-hiding-latest/weights/*
+**/gen-adv-patch-hiding-latest/patched/*
+**/gen-adv-patch-hiding-latest/efficacy/*
+**/gen-adv-patch-hiding-latest/**/__pycache__/*

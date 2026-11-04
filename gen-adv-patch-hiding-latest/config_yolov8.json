@@ -1,0 +1,65 @@
+{
+    "model": {
+        "family": "ultralytics",
+        "weights": "weights/yolov8n.pt"
+    },
+    "patch_name": "yolov8_hiding_patch_v1",
+    "paths": {
+        "clean_dir": "D:/GitHub/experiment_data/bdd100k_images_10k/test",
+        "patch_dir": "patches/yolov8",
+        "patched_dir": "patched/yolov8/images",
+        "coordinates_dir": "patched/yolov8/coordinates",
+        "efficacy_dir": "efficacy/yolov8"
+    },
+    "generate": {
+        "target_class": 2,
+        "patch_size": 150,
+        "num_steps": 2000,
+        "learning_rate": 0.02,
+        "conf_thresh": 0.25,
+        "rotation_max": 22.5,
+        "scale_min": 0.1,
+        "scale_max": 0.2,
+        "placement_jitter": 0.1,
+        "gpu_batch_size": 20,
+        "max_images": 1500,
+        "patch_scale": 0.15,
+        "demo_image": null,
+        "seed": null
+    },
+    "apply": {
+        "patch_name": null,
+        "patch_path": null,
+        "prefix": "multi-patched_",
+        "max_patches": 2,
+        "min_separation": 0.3,
+        "scale": 0.15,
+        "rotation": 0.0,
+        "target_class": 2,
+        "conf_thresh": 0.25,
+        "start_index": 1500,
+        "num_images": 100,
+        "coordinates_use_prefix": false,
+        "image_extensions": [
+            ".jpg",
+            ".jpeg",
+            ".png"
+        ]
+    },
+    "verify": {
+        "patched_prefix": null,
+        "start_index": 0,
+        "num_images": null,
+        "target_class": 2,
+        "conf_thresh": 0.25,
+        "iou_thresh": 0.7,
+        "match_iou": 0.5,
+        "save_visualizations": true,
+        "output_prefix": "efficacy_",
+        "image_extensions": [
+            ".jpg",
+            ".jpeg",
+            ".png"
+        ]
+    }
+}
