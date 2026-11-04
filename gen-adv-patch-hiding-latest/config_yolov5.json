@@ -5,7 +5,7 @@
     },
     "patch_name": "yolov5_hiding_patch",
     "paths": {
-        "clean_dir": "D:/GitHub/experiment_data/bdd100k_images_10k/train",
+        "clean_dir": "D:/GitHub/experiment_data/bdd100k_images_10k/test",
         "patch_dir": "patches/yolov5",
         "patched_dir": "patched/yolov5-images",
         "coordinates_dir": "patched/yolov5-coordinates",
@@ -28,7 +28,7 @@
         "seed": null
     },
     "apply": {
-        "patch_name": null,
+        "patch_name": "yolov5_hiding_patch",
         "patch_path": null,
         "prefix": "multi-patched_",
         "max_patches": 2,
@@ -37,7 +37,7 @@
         "rotation": 0.0,
         "target_class": 2,
         "conf_thresh": 0.25,
-        "start_index": 1500,
+        "start_index": 0,
         "num_images": 100,
         "coordinates_use_prefix": false,
         "image_extensions": [

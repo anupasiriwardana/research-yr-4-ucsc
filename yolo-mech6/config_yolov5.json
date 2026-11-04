@@ -10,13 +10,14 @@
     "background_samples_per_image": 250,
     "max_calibration_images": 7000,
 
+    "input_dir2": "D:\\GitHub\\yr-4-research\\gen-adv-patch-hiding-latest\\patched\\yolov5-images",
     "input_dir": "D:\\GitHub\\experiment_data\\bdd100k_images_10k\\val",
-    "out_dir": "D:\\GitHub\\yr-4-research\\yolo-mech6\\energy-maps\\yolov5\\clean",
+    "out_dir": "D:\\GitHub\\yr-4-research\\yolo-mech6\\energy-maps\\yolov5\\clean-layer1",
     "start_index": 0,
     "num_images": 100,
 
     "save_visualizations": true,
-    "visualizations_dir": "D:\\GitHub\\yr-4-research\\yolo-mech6\\energy-viz\\yolov5\\clean",
+    "visualizations_dir": "D:\\GitHub\\yr-4-research\\yolo-mech6\\energy-viz\\yolov5\\clean-layer1",
     "viz_layer": 1,
-    "gt_coordinates_dir": null
+    "gt_coordinates_dir2": "D:\\GitHub\\yr-4-research\\gen-adv-patch-hiding-latest\\patched\\yolov5-coordinates"
 }
