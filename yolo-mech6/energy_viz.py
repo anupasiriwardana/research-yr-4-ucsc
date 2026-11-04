@@ -54,9 +54,6 @@ def render(resized_rgb, e, layer, profiles, gt, out_path, flag_z=3.5):
     contours, _ = cv2.findContours(_up(z > flag_z).astype(np.uint8), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     cv2.drawContours(p2, contours, -1, (255, 255, 255), 1)
     p3 = _heat(near, base)
-    for p in (p2, p3):
-        for x1, y1, x2, y2 in gt:
-            cv2.rectangle(p, (x1, y1), (x2, y2), GT_COLOR, 2)
     _label(p2, f"layer {layer} energy z-score  (0 blue .. {VMAX:g} red, white: z > {flag_z:g})")
     _label(p3, f"Mech-6 nearest-profile distance, layer {layer}")
 

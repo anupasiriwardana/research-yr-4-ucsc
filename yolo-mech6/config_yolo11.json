@@ -1,20 +1,21 @@
 {
-    "model_path": "D:\\GitHub\\yr-4-research\\yolo-mech5\\yolo11n.pt",
+    "model_path": "D:\\GitHub\\yr-4-research\\yolo-mech6\\yolo11n.pt",
     "profile_images_dir": "D:\\GitHub\\experiment_data\\bdd100k_images_10k\\train",
     "profiles_dir": "D:\\GitHub\\yr-4-research\\yolo-mech6\\profiles",
-    "profile_filename": "mech6_energy_profiles_yolo11.pkl",
+    "profile_filename": "mech6_energy_profiles_yolo11-v2.pkl",
     "tap_layers": [1, 2, 3],
     "min_calibration_samples": 100,
     "background_samples_per_image": 250,
-    "max_calibration_images": 2000,
+    "max_calibration_images": 7000,
 
-    "input_dir": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\gen-patched-img\\yolov11-patched-imgs",
-    "out_dir": "D:\\GitHub\\yr-4-research\\yolo-mech6\\energy-maps\\yolo11\\patched",
+    "input_dir2": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\gen-patched-img\\yolov11-patched-imgs",
+    "input_dir": "D:\\GitHub\\experiment_data\\bdd100k_images_10k\\val",
+    "out_dir": "D:\\GitHub\\yr-4-research\\yolo-mech6\\energy-maps\\yolo11\\clean-layer1",
     "start_index": 0,
-    "num_images": null,
+    "num_images": 100,
 
-    "save_visualizations": false,
-    "visualizations_dir": "D:\\GitHub\\yr-4-research\\yolo-mech6\\energy-viz\\yolo11",
+    "save_visualizations": true,
+    "visualizations_dir": "D:\\GitHub\\yr-4-research\\yolo-mech6\\energy-viz\\yolo11\\clean-layer1",
     "viz_layer": 1,
-    "gt_coordinates_dir": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\gen-patched-img\\yolov11-patch_coordinates"
+    "gt_coordinates_dir2": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\gen-patched-img\\yolov11-patch_coordinates"
 }

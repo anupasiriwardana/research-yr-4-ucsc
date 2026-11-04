@@ -190,7 +190,7 @@ Off by default. When on, `extract_energy_maps.py` writes `mech6_<image stem>.png
 2. the **energy z-score** at `viz_layer`: `(log energy - global mean) / global std`, fixed colour scale 0 (blue) to 8 (red), white outline where z > 3.5. This is the Mech-4 signal;
 3. the **Mech-6 score**: distance to the nearest class / background energy profile, in std units of log-energy, same colour scale.
 
-With GT boxes the header gives the median and max z inside the patch vs far from it and the share of cells above 3.5 in each; without GT (clean images) it gives overall numbers.
+The cyan GT boxes are drawn only on panel 1, so the heatmaps in panels 2 and 3 stay unobstructed. With GT boxes the header gives the median and max z inside the patch vs far from it and the share of cells above 3.5 in each; without GT (clean images) it gives overall numbers.
 In the example I checked, about 85% of patch cells were above 3.5 against 0.2% of far cells. Panel 3 is dimmer than panel 2 because a patch has more energy than every class profile, so its nearest profile is the
 highest-energy class and the distance to it shrinks. That matches the cell-level result in `findings.md`: the per-class score is never better than plain energy.
 
