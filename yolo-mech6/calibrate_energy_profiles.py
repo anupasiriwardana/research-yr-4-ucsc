@@ -16,8 +16,8 @@ from pathlib import Path
 
 import numpy as np
 import torch
-from ultralytics import YOLO
 
+from mech6_models import load_detector, verify_strides
 from mech6_energy import (LAYER_STRIDE, BG_ID, load_config, list_images, load_image_tensor, BackboneTap,
                           energy_map, log_energy)
 
@@ -33,8 +33,9 @@ def main():
     bg_per_image = cfg.get("background_samples_per_image", 250)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = YOLO(cfg["model_path"]).to(device)
-    tap = BackboneTap(model.model, layers)
+    det = load_detector(cfg, device)
+    tap = BackboneTap(det.net, layers)
+    verify_strides(tap, device)
     images = list_images(cfg["profile_images_dir"], 0, args.max_images or cfg.get("max_calibration_images"))
     print(f"Energy profiles from {len(images)} images, layers {layers}")
 
@@ -43,7 +44,7 @@ def main():
     g_s = {l: np.zeros(4) for l in layers}                  # sum E, sum E^2, sum logE, sum logE^2
     for n, path in enumerate(images, 1):
         _, tensor = load_image_tensor(path, device)
-        boxes = model.predict(source=tensor, verbose=False)[0].boxes
+        det_xyxy, det_cls = det.predict_boxes(tensor)
         acts = tap.get_activations(tensor)
         for l in layers:
             e = energy_map(acts[l]).cpu().numpy().astype(np.float64)
@@ -53,7 +54,7 @@ def main():
             g_s[l] += [e.sum(), (e ** 2).sum(), le.sum(), (le ** 2).sum()]
             covered = np.zeros((H, W), bool)
             s = LAYER_STRIDE[l]
-            for box, cls in zip(boxes.xyxy.cpu().numpy(), boxes.cls.cpu().numpy()):
+            for box, cls in zip(det_xyxy, det_cls):
                 x1, y1, x2, y2 = (box / s).astype(int)
                 x1, x2 = min(max(x1, 0), W - 1), min(max(x2, 0), W)
                 y1, y2 = min(max(y1, 0), H - 1), min(max(y2, 0), H)

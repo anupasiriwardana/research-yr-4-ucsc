@@ -33,6 +33,12 @@ Always run the commands below from this folder (`yolo-mech6`) with the `yolo_adv
 Shared code. The energy formula, the forward hooks on backbone layers 1, 2, 3 (strides 4, 4, 8; the same indices work for `yolov8n` and `yolo11n`), image loading, and `EnergyProfiles`, which turns an energy map into
 the three scores: `E` (raw energy, one global threshold, i.e. Mech-4), `nearest_abs` and `nearest_up` (Mech-6).
 
+### `mech6_models.py` (library, never run directly)
+Loads the detector for the other two scripts, chosen by the config key `model_type`:
+- `"ultralytics"` (default): `yolov8n.pt`, `yolo11n.pt`, and `yolov9c.pt` (any ultralytics-format weights), loaded with `ultralytics.YOLO`.
+- `"yolov5_repo"`: the original yolov5 repository (a local clone, set in `yolov5_repo_dir`), loaded with that repo's own `attempt_load` and `non_max_suppression` (conf 0.25, IoU 0.7, the same as the ultralytics defaults).
+It also checks, on every run, that backbone layers 1, 2, 3 really sit at strides 4, 4, 8 for the loaded model, and stops with a clear message if not. Checked: yolov5s (repo), yolov9t and yolov9c (ultralytics yaml).
+
 ### `calibrate_energy_profiles.py` (step 1, once per model)
 - **Does:** builds the energy profiles. For each clean `train` image it runs the model, projects the detected boxes onto each layer's grid, and collects the log-energy of the cells inside each box (per class) and of a random
   sample of uncovered cells (background). It also stores the global mean/std of energy over all cells (what Mech-4 uses).
@@ -71,6 +77,8 @@ false-positive rate, with the 20-split held-out check. See `../yolo-mech5/findin
 
 | key | meaning |
 |---|---|
+| `model_type` | `"ultralytics"` (default) or `"yolov5_repo"` (original yolov5 repo) |
+| `yolov5_repo_dir` | only for `yolov5_repo`: the yolov5 clone (folder with `models/` and `utils/`), e.g. `D:\GitHub\yolov5_adversarial` |
 | `model_path` | the YOLO weights |
 | `profile_images_dir`, `max_calibration_images` | clean images used to build the profiles (first 2000 of `train`) |
 | `profiles_dir`, `profile_filename` | where the profile pickle is written / read |
@@ -176,9 +184,10 @@ Run step 6 of use case A.
    (Put P3 first so it is the finest scale in the `confirm` rule. For YOLOv8 the threshold files are `profiles/mech5_thresholds_yolov8_p3.pkl` etc. in `yolo-mech7`.)
 
 ### Use case F: a new model
-1. Copy a config file, change `model_path`, `profile_filename` and the folders.
-2. Check that backbone layers 1, 2, 3 have strides 4, 4, 8 for the new model (a quick forward pass with hooks, as in `mech6_energy.py`); if the layout is different, adjust `LAYER_STRIDE` there.
-3. Follow use case A.
+1. Copy a config file, change `model_path`, `profile_filename` and the folders. Ready-made ones exist for `config_yolov5.json` (original yolov5 repo, `yolov5s.pt`) and `config_yolov9.json` (ultralytics format; put `yolov9c.pt` in `yolo-mech6/`).
+2. The scripts check the strides of layers 1, 2, 3 themselves (expected 4, 4, 8). If a model fails the check, pick other `tap_layers` and adjust `LAYER_STRIDE` in `mech6_energy.py`.
+3. Follow use case A. For YOLOv5/YOLOv9 the minimum is: `calibrate_energy_profiles.py --config <cfg>`, then `extract_energy_maps.py --config <cfg>` once for the clean set (the config default) and once for your patched set (`--input-dir <patched> --out-dir <maps dir> --gt-dir <coords>`).
+4. The YOLOv5 loader needs `tqdm`, `seaborn` and `scipy` (the yolov5 repo imports them). They are installed in `yolo_adv` now.
 
 ---
 

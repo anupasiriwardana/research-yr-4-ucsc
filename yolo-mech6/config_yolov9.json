@@ -1,0 +1,21 @@
+{
+    "model_type": "ultralytics",
+    "model_path": "D:\\GitHub\\yr-4-research\\yolo-mech6\\yolov9c.pt",
+    "profile_images_dir": "D:\\GitHub\\experiment_data\\bdd100k_images_10k\\train",
+    "profiles_dir": "D:\\GitHub\\yr-4-research\\yolo-mech6\\profiles",
+    "profile_filename": "mech6_energy_profiles_yolov9.pkl",
+    "tap_layers": [1, 2, 3],
+    "min_calibration_samples": 100,
+    "background_samples_per_image": 250,
+    "max_calibration_images": 7000,
+
+    "input_dir": "D:\\GitHub\\experiment_data\\bdd100k_images_10k\\val",
+    "out_dir": "D:\\GitHub\\yr-4-research\\yolo-mech6\\energy-maps\\yolov9\\clean",
+    "start_index": 0,
+    "num_images": 100,
+
+    "save_visualizations": true,
+    "visualizations_dir": "D:\\GitHub\\yr-4-research\\yolo-mech6\\energy-viz\\yolov9\\clean",
+    "viz_layer": 1,
+    "gt_coordinates_dir": null
+}

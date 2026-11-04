@@ -11,8 +11,8 @@ from pathlib import Path
 
 import numpy as np
 import torch
-from ultralytics import YOLO
 
+from mech6_models import load_detector, verify_strides
 from diagnose_energy import gt_boxes
 from energy_viz import render
 from mech6_energy import load_config, list_images, load_image_tensor, BackboneTap, energy_map, EnergyProfiles
@@ -50,8 +50,9 @@ def main():
             profiles = EnergyProfiles(pickle.load(f))
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = YOLO(cfg["model_path"]).to(device)
-    tap = BackboneTap(model.model, layers)
+    det = load_detector(cfg, device)
+    tap = BackboneTap(det.net, layers)
+    verify_strides(tap, device)
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
     images = list_images(input_dir, start_index, num_images)
