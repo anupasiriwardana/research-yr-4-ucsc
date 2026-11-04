@@ -1,0 +1,24 @@
+{
+  "model": {
+    "family": "yolov5",
+    "weights": "weights/yolov5s.pt"
+  },
+  "generate": {
+    "target_class": 2,
+    "patch_size": 150,
+    "num_steps": 2000,
+    "learning_rate": 0.02,
+    "conf_thresh": 0.25,
+    "rotation_max": 22.5,
+    "scale_min": 0.1,
+    "scale_max": 0.2,
+    "placement_jitter": 0.1,
+    "gpu_batch_size": 20,
+    "max_images": 4000,
+    "patch_scale": 0.15,
+    "demo_image": null,
+    "seed": null
+  },
+  "images_used": 4000,
+  "seconds": 7442
+}

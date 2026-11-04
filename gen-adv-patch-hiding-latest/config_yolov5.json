@@ -3,12 +3,12 @@
         "family": "yolov5",
         "weights": "weights/yolov5s.pt"
     },
-    "patch_name": "yolov5_hiding_patch_v1",
+    "patch_name": "yolov5_hiding_patch",
     "paths": {
-        "clean_dir": "D:/GitHub/experiment_data/bdd100k_images_10k/test",
+        "clean_dir": "D:/GitHub/experiment_data/bdd100k_images_10k/train",
         "patch_dir": "patches/yolov5",
-        "patched_dir": "patched/yolov5/images",
-        "coordinates_dir": "patched/yolov5/coordinates",
+        "patched_dir": "patched/yolov5-images",
+        "coordinates_dir": "patched/yolov5-coordinates",
         "efficacy_dir": "efficacy/yolov5"
     },
     "generate": {
