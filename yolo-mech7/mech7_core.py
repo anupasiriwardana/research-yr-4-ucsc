@@ -132,7 +132,12 @@ class ThresholdTable:
         self.thr_k = torch.tensor(thr, device=device)
         self.mean_k = torch.tensor(mean, device=device)
         self.std_k = torch.tensor(std, device=device)
-        self.z_threshold = float(data["zscore_threshold"])
+        # Threshold files built by yolo-mech5/learn_thresholds.py have no z-score threshold
+        # (per_class / global modes don't need it); only zscore mode does.
+        self.z_threshold = float(data["zscore_threshold"]) if "zscore_threshold" in data else None
+        if mode == "zscore" and self.z_threshold is None:
+            raise ValueError("threshold_mode 'zscore' needs a threshold file built by yolo-mech7/learn_thresholds.py "
+                             "(this one has no zscore_threshold).")
 
     @classmethod
     def from_file(cls, path, bank, device, settings):
