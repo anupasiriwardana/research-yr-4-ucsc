@@ -1,0 +1,34 @@
+{
+    "model_type": "ultralytics",
+    "model_path": "../gen-adv-patch-hiding-latest/weights/yolov8n.pt",
+    "tap_layers": [
+        1,
+        2,
+        3
+    ],
+    "profile_images_dir": "D:/GitHub/experiment_data/bdd100k_images_10k/train",
+    "max_calibration_images": 2000,
+    "background_samples_per_image": 250,
+    "min_calibration_samples": 1000,
+    "shrinkage": 0.01,
+    "threshold_images_dir": "D:/GitHub/experiment_data/bdd100k_images_10k/test",
+    "threshold_num_images": 300,
+    "threshold_quantile": 0.995,
+    "profiles_dir": "profiles",
+    "profile_filename": "maha_profiles_yolov8.pkl",
+    "input_dir": "../test-patch-det-multi-img/gen-patched-img/yolov8-patched-imgs",
+    "out_dir": "maps/yolov8/patched",
+    "start_index": 0,
+    "num_images": null,
+    "save_maps": true,
+    "save_visualizations": true,
+    "visualizations_dir": "viz/yolov8/patched",
+    "viz_layer": 1,
+    "viz_scale_max_ratio": 2.0,
+    "viz_outline": true,
+    "gt_coordinates_dir": "../test-patch-det-multi-img/gen-patched-img/yolov8-patch_coordinates",
+    "diagnose": {
+        "patched_maps_dir": "maps/yolov8/patched",
+        "clean_maps_dir": "maps/yolov8/clean"
+    }
+}

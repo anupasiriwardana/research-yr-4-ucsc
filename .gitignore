@@ -31,3 +31,6 @@
 **/gen-adv-patch-hiding-latest/patched/*
 **/gen-adv-patch-hiding-latest/efficacy/*
 **/gen-adv-patch-hiding-latest/**/__pycache__/*
+**/yolo-mech6-mahalanobis/maps/*
+**/yolo-mech6-mahalanobis/viz/*
+**/yolo-mech6-mahalanobis/**/__pycache__/*

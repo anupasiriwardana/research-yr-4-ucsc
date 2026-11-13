@@ -1,0 +1,35 @@
+{
+    "model_type": "yolov5_repo",
+    "yolov5_repo_dir": "../gen-adv-patch-hiding-latest/yolov5_src",
+    "model_path": "../gen-adv-patch-hiding-latest/weights/yolov5s.pt",
+    "tap_layers": [
+        1,
+        2,
+        3
+    ],
+    "profile_images_dir": "D:/GitHub/experiment_data/bdd100k_images_10k/train",
+    "max_calibration_images": 7000,
+    "background_samples_per_image": 250,
+    "min_calibration_samples": 100,
+    "shrinkage": 0.01,
+    "threshold_images_dir": "D:/GitHub/experiment_data/bdd100k_images_10k/test",
+    "threshold_num_images": 2000,
+    "threshold_quantile": 0.995,
+    "profiles_dir": "profiles",
+    "profile_filename": "maha_profiles_yolov5.pkl",
+    "input_dir": "../gen-adv-patch-hiding-latest/patched/yolov5-images",
+    "out_dir": "maps/yolov5/patched-layer1",
+    "start_index": 0,
+    "num_images": null,
+    "save_maps": true,
+    "save_visualizations": true,
+    "visualizations_dir": "viz/yolov5/patched-layer1",
+    "viz_layer": 1,
+    "viz_scale_max_ratio": 2.0,
+    "viz_outline": true,
+    "gt_coordinates_dir": "../gen-adv-patch-hiding-latest/patched/yolov5-coordinates",
+    "diagnose": {
+        "patched_maps_dir": "maps/yolov5/patched",
+        "clean_maps_dir": "maps/yolov5/clean"
+    }
+}
