@@ -3,12 +3,12 @@
         "family": "ultralytics",
         "weights": "weights/yolov9c.pt"
     },
-    "patch_name": "yolov9_hiding_patch_v1",
+    "patch_name": "yolov9_hiding_patch",
     "paths": {
-        "clean_dir": "D:/GitHub/experiment_data/bdd100k_images_10k/test",
+        "clean_dir": "D:/GitHub/experiment_data/bdd100k_images_10k/train",
         "patch_dir": "patches/yolov9",
-        "patched_dir": "patched/yolov9/images",
-        "coordinates_dir": "patched/yolov9/coordinates",
+        "patched_dir": "patched/yolov9-images",
+        "coordinates_dir": "patched/yolov9-coordinates",
         "efficacy_dir": "efficacy/yolov9"
     },
     "generate": {
@@ -22,7 +22,7 @@
         "scale_max": 0.2,
         "placement_jitter": 0.1,
         "gpu_batch_size": 2,
-        "max_images": 1500,
+        "max_images": 4000,
         "patch_scale": 0.15,
         "demo_image": null,
         "seed": null
