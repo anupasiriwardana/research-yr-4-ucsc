@@ -1,0 +1,14 @@
+# Everything except PyTorch/torchvision (install those first, see README "Set up the conda environment").
+# Tested with: Python 3.10, torch 2.5.1 (CUDA 11.8), torchvision 0.20.1, ultralytics 8.4.118.
+ultralytics==8.4.118
+numpy
+opencv-python
+pillow
+PyYAML
+requests
+scipy
+pandas
+matplotlib
+seaborn
+psutil
+tqdm

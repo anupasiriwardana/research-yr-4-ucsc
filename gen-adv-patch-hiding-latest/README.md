@@ -13,11 +13,66 @@ folder except the clean image folder you point to in the config. The original sc
 | `verify_patch_efficacy_batch.py` | compares many patched images with their originals and reports how many target objects were hidden |
 | `patch_common.py` | library: model loading for all four families, patch placement, target selection (never run directly) |
 | `config_yolov5.json`, `config_yolov8.json`, `config_yolov9.json`, `config_yolo11.json` | one config per model; every name, folder and setting lives here |
+| `requirements.txt` | the Python packages (except PyTorch) for the `yolo_adv` environment |
 | `weights/` | the original weights: `yolov5s.pt` (identical to the official release, checked by SHA-256), `yolov8n.pt`, `yolo11n.pt`, `yolov9c.pt` (from the ultralytics assets release v8.4.0) |
 | `yolov5_src/` | the original yolov5 repository code (`models/`, `utils/`, AGPL-3.0 licence) needed to load `yolov5s.pt` |
 
-Run everything with the `yolo_adv` conda env (`D:\Programs\Miniconda\envs\yolo_adv\python.exe`). YOLOv5 needs `tqdm`, `seaborn`, `scipy`
-(already installed there).
+Run everything inside the `yolo_adv` conda environment (set-up steps right below). YOLOv5 needs `tqdm`, `seaborn`, `scipy`; they are in `requirements.txt`.
+
+## Set up the conda environment `yolo_adv` (NVIDIA GPU)
+
+Works on Windows or Linux; the commands are the same. Do the steps in this order: PyTorch first, then the rest, otherwise pip may pull a
+CPU-only PyTorch.
+
+**1. Install conda** (skip if `conda --version` already works): install Miniconda from https://docs.conda.io/en/latest/miniconda.html, then open a
+new terminal (on Windows: "Anaconda Prompt" or any shell where `conda` works).
+
+**2. Check the NVIDIA driver and the CUDA version it supports.**
+```bash
+nvidia-smi
+```
+Look at the top right: `CUDA Version: 12.x`. That is the newest CUDA your driver can run (it is not a separate CUDA install; PyTorch brings its own
+CUDA runtime). If `nvidia-smi` is not found, install or update the NVIDIA driver first.
+
+**3. Create and activate the environment** (Python 3.10).
+```bash
+conda create -n yolo_adv python=3.10 -y
+conda activate yolo_adv
+```
+
+**4. Install PyTorch with the CUDA build that matches step 2.** Pick one line (all use PyTorch 2.5.1, the tested version):
+
+| `nvidia-smi` shows | Command |
+|---|---|
+| CUDA 12.4 or newer (most current drivers) | `pip install torch==2.5.1 torchvision==0.20.1 --index-url https://download.pytorch.org/whl/cu124` |
+| CUDA 12.1 to 12.3 | `pip install torch==2.5.1 torchvision==0.20.1 --index-url https://download.pytorch.org/whl/cu121` |
+| CUDA 11.8 to 12.0 (older drivers; this is what the author uses) | `pip install torch==2.5.1 torchvision==0.20.1 --index-url https://download.pytorch.org/whl/cu118` |
+| RTX 50-series (Blackwell) cards | PyTorch 2.5.1 does not support these. Use a newer build instead: `pip install torch torchvision --index-url https://download.pytorch.org/whl/cu128` (not tested with these scripts, but the code does not depend on a PyTorch version) |
+
+If a driver is older than CUDA 11.8, update the driver.
+
+**5. Install the other packages** (run inside this folder, where `requirements.txt` is).
+```bash
+pip install -r requirements.txt
+```
+
+**6. Check that PyTorch sees the GPU.**
+```bash
+python -c "import torch; print(torch.__version__, torch.version.cuda, torch.cuda.is_available(), torch.cuda.get_device_name(0))"
+```
+The third value must be `True` and the last one must be the GPU name. If it prints `False` or a version ending in `+cpu`, a CPU build was installed:
+run `pip uninstall -y torch torchvision`, then repeat step 4.
+
+**7. Check the toolkit** (the weights are already in `weights/`). First set `paths.clean_dir` in the config you use to a folder of street images on this
+computer (the configs ship with the author's `D:/...` path; relative paths are relative to the config file). Then:
+```bash
+python generate_hiding_patch.py --config config_yolov8.json --steps 5 --max-images 20
+```
+It should print the model name, `device cuda`, a few `step ... mean targeted confidence` lines and the saved patch paths in `patches/yolov8/`. Delete
+that test patch afterwards.
+
+Notes: training one patch needs a few GB of GPU memory. If it stops with `CUDA out of memory`, lower `generate.gpu_batch_size` in the config.
+Send the whole folder to the friend (about 80 MB with the weights; the `patched/` and `efficacy/` folders are not needed).
 
 ## The three-step workflow
 
