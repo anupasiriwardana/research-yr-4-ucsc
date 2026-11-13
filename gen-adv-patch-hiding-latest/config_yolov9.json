@@ -3,10 +3,10 @@
         "family": "ultralytics",
         "weights": "weights/yolov9c.pt"
     },
-    "patch_name": "yolov9_hiding_patch",
+    "patch_name": "yolov9_hiding_patch_v2",
     "paths": {
         "clean_dir": "D:/GitHub/experiment_data/bdd100k_images_10k/test",
-        "patch_dir": "patches/yolov9",
+        "patch_dir": "patches/yolov9-v2",
         "patched_dir": "patched/yolov9-images",
         "coordinates_dir": "patched/yolov9-coordinates",
         "efficacy_dir": "efficacy/yolov9"
