@@ -10,6 +10,9 @@ Pass 1 - profiles (`profile_images_dir`, first `max_calibration_images` images):
 Pass 2 - clean threshold (`threshold_images_dir`, first `threshold_num_images` images, different from pass 1):
     nearest-profile distance of EVERY cell; stores quantiles q50 .. q99.9 and max per layer. `threshold_quantile`
     (default 0.995) is the threshold the visualization outlines and its colour scale is built around.
+    It also stores a threshold PER PROFILE (class / background): the same quantile over only the clean cells whose
+    nearest profile is that class (needs `min_threshold_cells` cells, else that class uses the layer threshold).
+    Which one is used is chosen later by `threshold_mode` ("per_layer" or "per_class"), so one calibration serves both.
 
 Usage:
     python calibrate_mahalanobis.py --config config_yolov8.json
@@ -112,21 +115,39 @@ def pass2_threshold(cfg, data, tap, device, num_images, path):
     images = list_images(resolve(cfg, cfg["threshold_images_dir"]), 0, num_images or cfg.get("threshold_num_images", 300))
     print(f"Pass 2: clean distances on {len(images)} images from {cfg['threshold_images_dir']}")
     vals = {l: [] for l in prof.layers}
+    cids = {l: [] for l in prof.layers}
     for n, p in enumerate(images, 1):
         _, x = load_image_tensor(p, device)
         acts = tap.get_activations(x)
         for l in prof.layers:
-            vals[l].append(prof.distances(l, acts[l])[0].ravel())
+            d, c = prof.distances(l, acts[l])
+            vals[l].append(d.ravel())
+            cids[l].append(c.ravel())
         if n % 100 == 0:
             print(f"  {n}/{len(images)}")
+    min_cells = cfg.get("min_threshold_cells", 1000)
     for l in prof.layers:
         v = np.concatenate(vals[l])
+        c = np.concatenate(cids[l])
+        # per_class mode: threshold of each profile = quantile of the clean cells that are NEAREST to that profile
+        per_class = {}
+        for cid in data["layers"][l]["class_ids"]:
+            sel = v[c == cid]
+            if sel.size >= min_cells:
+                per_class[int(cid)] = {"threshold": float(np.quantile(sel, tq)), "n": int(sel.size)}
+        data["layers"][l]["class_thresholds"] = per_class
         data["layers"][l]["clean_quantiles"] = {k: float(np.quantile(v, qq)) for k, qq in q.items()}
         data["layers"][l]["clean_quantiles"]["max"] = float(v.max())
         cq = data["layers"][l]["clean_quantiles"]
         print(f"layer {l}: clean distance median {cq['q50']:.2f}, q99 {cq['q99']:.2f}, "
               f"threshold {data['threshold_quantile_key']} = {cq[data['threshold_quantile_key']]:.2f}, max {cq['max']:.2f}")
+        missing = [cid for cid in data["layers"][l]["class_ids"] if int(cid) not in per_class]
+        print(f"         per-class thresholds: " + ", ".join(
+            f"{'bg' if k == BG_ID else k}:{t['threshold']:.2f} (n={t['n']})" for k, t in sorted(per_class.items()))
+              + (f"; fall back to the layer threshold (< {min_cells} clean cells): "
+                 + ", ".join('bg' if k == BG_ID else str(k) for k in missing) if missing else ""))
     data["threshold_images"] = len(images)
+    data["threshold_quantile"] = tq
     return data
 
 

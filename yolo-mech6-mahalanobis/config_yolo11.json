@@ -14,6 +14,8 @@
     "threshold_images_dir": "D:/GitHub/experiment_data/bdd100k_images_10k/test",
     "threshold_num_images": 300,
     "threshold_quantile": 0.995,
+    "threshold_mode": "per_layer",
+    "min_threshold_cells": 1000,
     "profiles_dir": "profiles",
     "profile_filename": "maha_profiles_yolo11.pkl",
     "input_dir": "../test-patch-det-multi-img/gen-patched-img/yolov11-patched-imgs",

@@ -7,7 +7,7 @@ negatives = every cell of the clean maps   (column "vs clean")
             and cells > 48 px from any patch in the patched maps   (column "vs far")
 
 Per layer: AUROC, TPR at 0.5% FPR (threshold taken from the negatives themselves), and at the CALIBRATED threshold
-(from calibrate_mahalanobis.py): share of patch cells above it, share of clean cells above it, and share of clean
+(from calibrate_mahalanobis.py, per_layer or per_class as set by threshold_mode): share of patch cells above it, share of clean cells above it, and share of clean
 images with at least one cell above it.
 
 Usage:
@@ -39,6 +39,7 @@ def main():
     ap.add_argument("--clean-maps", default=None, help="folder of .npz maps of clean images (default: config diagnose.clean_maps_dir)")
     ap.add_argument("--gt-dir", default=None, help="patch coordinate files (default: config gt_coordinates_dir)")
     ap.add_argument("--out", default=None, help="write the results as JSON here")
+    ap.add_argument("--threshold-mode", choices=["per_layer", "per_class"], default=None, help="override threshold_mode")
     args = ap.parse_args()
     cfg = load_config(args.config)
     dcfg = cfg.get("diagnose", {})
@@ -48,37 +49,43 @@ def main():
     if not (pdir and cdir and gdir):
         raise ValueError("Need patched maps, clean maps and a GT folder (flags or config).")
 
+    mode = args.threshold_mode or cfg.get("threshold_mode", "per_layer")
     prof = MahaProfiles(profile_path(cfg), "cpu")
     rng = np.random.default_rng(0)
     patched = sorted(pdir.glob("*.npz"))
     clean = sorted(cdir.glob("*.npz"))
-    print(f"{len(patched)} patched maps, {len(clean)} clean maps; threshold = clean {prof.data['threshold_quantile_key']}")
+    print(f"{len(patched)} patched maps, {len(clean)} clean maps; threshold = clean {prof.data['threshold_quantile_key']}, threshold_mode {mode}")
     print(f"{'layer':>5} {'patch cells':>11} {'AUROC clean':>11} {'TPR@0.5% clean':>14} {'AUROC far':>9} "
           f"{'TPR@0.5% far':>12} | {'patch>thr':>9} {'clean cells>thr':>15} {'clean imgs>thr':>14}")
     results = {}
     for l in prof.layers:
         stride, thr = prof.data["layers"][l]["stride"], prof.threshold(l)
-        pos, far, used = [], [], 0
+        pos, far, pos_t, used = [], [], [], 0
         for p in patched:
             boxes = gt_boxes(gdir, p.stem)
             if not boxes:
                 continue
-            d = np.load(p)[f"d{l}"]
+            z = np.load(p)
+            d, t = z[f"d{l}"], prof.threshold_map(l, z[f"c{l}"], mode)
             inside, farm = cell_masks(*d.shape, stride, boxes, 48)
-            pos.append(d[inside]); far.append(d[farm]); used += 1
-        cl = [np.load(p)[f"d{l}"] for p in clean]
+            pos.append(d[inside]); far.append(d[farm]); pos_t.append(t[inside]); used += 1
+        cl, cl_t = [], []
+        for p in clean:
+            z = np.load(p)
+            cl.append(z[f"d{l}"]); cl_t.append(prof.threshold_map(l, z[f"c{l}"], mode))
         if not pos or not cl:
             raise RuntimeError("No patched maps with GT boxes, or no clean maps.")
-        pos, far = np.concatenate(pos), np.concatenate(far)
+        pos, far, pos_t = np.concatenate(pos), np.concatenate(far), np.concatenate(pos_t)
         neg = np.concatenate([c.ravel() for c in cl])
-        imgs_flagged = float(np.mean([c.max() > thr for c in cl]))
+        neg_t = np.concatenate([t.ravel() for t in cl_t])
+        imgs_flagged = float(np.mean([(c > t).any() for c, t in zip(cl, cl_t)]))
         row = {"patched_images_with_gt": used, "patch_cells": int(pos.size)}
         for name, n in (("clean", neg), ("far", far)):
             n = n if n.size <= MAX_NEG else rng.choice(n, MAX_NEG, replace=False)
             row[f"auroc_{name}"] = auroc(pos, n)
             row[f"tpr_at_0.5fpr_{name}"] = float((pos > np.quantile(n, 0.995)).mean())
-        row.update({"threshold": thr, "patch_cells_above_thr": float((pos > thr).mean()),
-                    "clean_cells_above_thr": float((neg > thr).mean()), "clean_images_with_cell_above_thr": imgs_flagged})
+        row.update({"threshold_mode": mode, "layer_threshold": thr, "patch_cells_above_thr": float((pos > pos_t).mean()),
+                    "clean_cells_above_thr": float((neg > neg_t).mean()), "clean_images_with_cell_above_thr": imgs_flagged})
         results[l] = row
         print(f"{l:>5} {row['patch_cells']:>11} {row['auroc_clean']:>11.3f} {row['tpr_at_0.5fpr_clean']:>14.3f} "
               f"{row['auroc_far']:>9.3f} {row['tpr_at_0.5fpr_far']:>12.3f} | {row['patch_cells_above_thr']:>9.3f} "

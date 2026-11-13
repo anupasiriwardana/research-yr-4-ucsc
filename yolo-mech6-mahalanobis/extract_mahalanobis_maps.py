@@ -37,6 +37,7 @@ def main():
     ap.add_argument("--visualizations-dir", default=None, help="override visualizations_dir")
     ap.add_argument("--viz-layer", type=int, default=None, help="override viz_layer")
     ap.add_argument("--gt-dir", default=None, help="override gt_coordinates_dir (patch coordinate files)")
+    ap.add_argument("--threshold-mode", choices=["per_layer", "per_class"], default=None, help="override threshold_mode")
     args = ap.parse_args()
     cfg = load_config(args.config)
 
@@ -49,6 +50,7 @@ def main():
     viz_dir = Path(args.visualizations_dir) if args.visualizations_dir else resolve(cfg, cfg.get("visualizations_dir"))
     viz_layer = args.viz_layer or cfg.get("viz_layer", 1)
     gt_dir = Path(args.gt_dir) if args.gt_dir else resolve(cfg, cfg.get("gt_coordinates_dir"))
+    mode = args.threshold_mode or cfg.get("threshold_mode", "per_layer")
     if in_dir is None:
         raise ValueError("Set input_dir in the config (or pass --input-dir).")
     if save_maps and out_dir is None:
@@ -69,8 +71,10 @@ def main():
         out_dir.mkdir(parents=True, exist_ok=True)
 
     images = list_images(in_dir, start, count)
+    if viz:
+        prof.threshold_map(viz_layer, np.zeros((1, 1), np.int16), mode)     # fail early if the calibration lacks per-class data
     print(f"Model {det.name}; {len(images)} image(s) from {in_dir}; maps={'on' if save_maps else 'off'}, "
-          f"pictures={'layer ' + str(viz_layer) if viz else 'off'}")
+          f"pictures={'layer ' + str(viz_layer) + ', threshold_mode ' + mode if viz else 'off'}")
     for n, path in enumerate(images, 1):
         rgb, x = load_image_tensor(path, device)
         acts = tap.get_activations(x)
@@ -80,9 +84,11 @@ def main():
             arrays.update({f"c{l}": c for l, (_, c) in res.items()})
             np.savez_compressed(out_dir / f"{path.stem}.npz", **arrays)
         if viz:
-            render(rgb, res[viz_layer][0], viz_layer, layer_stride(acts[viz_layer]), prof.quantile(viz_layer, "q50"),
+            d, c = res[viz_layer]
+            render(rgb, d, viz_layer, layer_stride(acts[viz_layer]), prof.quantile(viz_layer, "q50"),
                    prof.threshold(viz_layer), gt_boxes(gt_dir, path.stem), viz_dir / f"maha_{path.stem}.png",
-                   cfg.get("viz_scale_max_ratio", 2.0), cfg.get("viz_outline", True))
+                   cfg.get("viz_scale_max_ratio", 2.0), cfg.get("viz_outline", True),
+                   thr_map=prof.threshold_map(viz_layer, c, mode), mode=mode)
         if n % 50 == 0:
             print(f"  {n}/{len(images)}")
     print(f"Done: {len(images)} image(s)." + (f" Maps in {out_dir}." if save_maps else "") + (f" Pictures in {viz_dir}." if viz else ""))

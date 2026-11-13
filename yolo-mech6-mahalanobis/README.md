@@ -51,7 +51,19 @@ another model: even the channel counts differ. The calibration does two passes:
    different images from pass 1).
    - It takes the nearest-profile distance of every cell and stores the quantiles q50, q90, q99, q99.5, q99.9 and max per layer.
    - The threshold is the `threshold_quantile` (default 0.995): only 0.5% of clean cells go above it.
-   - The pictures and `diagnose_mahalanobis.py` use it.
+   - Pass 2 stores two kinds of threshold. The config key `threshold_mode` picks which one the pictures and
+     `diagnose_mahalanobis.py` use, so you can switch modes without calibrating again:
+     - **`per_layer`** (default; the original behaviour): one threshold per layer, over all clean cells pooled together.
+     - **`per_class`**: one threshold per profile (each class and background) per layer. It is the same quantile, taken only
+       over the clean cells whose **nearest profile** is that class. Each cell is then checked against the threshold of the profile
+       it is nearest to.
+       - Why: some profiles are tight. For example, cells near the "bus" profile are normally very close to it, so a moderately
+         large distance is already suspicious there. Other profiles, like background, are naturally spread out, and one pooled
+         threshold is too loose for the first kind and too strict for the second.
+       - A profile with fewer than `min_threshold_cells` clean cells nearest to it gets the layer threshold instead. The calibration
+         prints which ones.
+   - Calibration files made before `per_class` existed have only the layer threshold. To use `per_class` with them, redo pass 2
+     only (the profiles are kept): `python calibrate_mahalanobis.py --config <cfg> --threshold-only`.
 
 ```bash
 python calibrate_mahalanobis.py --config config_yolov8.json
@@ -97,6 +109,10 @@ To look at layer 2 or 3 instead, set `viz_layer` (or pass `--viz-layer 3`). The 
   - The colour scale is per model and layer, taken from the calibration. **Blue** is the clean median (q50), **red** is
     `viz_scale_max_ratio` x threshold (default 2x).
   - The **white outline** marks cells above the threshold, i.e. rarer than 99.5% of clean cells. Turn it off with `viz_outline: false`.
+    - In `per_layer` mode the title shows the threshold value.
+    - In `per_class` mode it says "per-class thr": each cell is compared with its nearest profile's threshold.
+    - The colours always use the layer threshold, so the same colour means the same distance in both modes. Only the outline and
+      the header numbers change.
   - The patch boxes are not drawn here, so the heatmap stays clear.
 - **Header (patched image with GT):**
   - median and max of distance/threshold inside the patch;
@@ -113,7 +129,9 @@ A good result is a solid red/white block on the patch, with the rest blue and on
   from the patch in the patched images.
 - **TPR@0.5%:** the share of patch cells caught when the threshold lets through only 0.5% of normal cells. This is the same measure as in
   Mech-6's `findings.md`, so you can compare directly.
-- **patch>thr, clean cells>thr:** the same idea at the calibrated threshold.
+- **patch>thr, clean cells>thr:** the same idea at the calibrated threshold, in the `threshold_mode` of the config (override with
+  `--threshold-mode per_class`). The AUROC and TPR@0.5% columns don't depend on the mode, because they rank the raw distances.
+  Only the "> thr" columns change between modes.
 - **clean imgs>thr:** the share of clean images with at least one cell above the threshold. It is close to 1.0 at the cell level because
   a 160x160 grid has 25,600 cells and 0.5% of them is still about 128 cells. A real detector needs a region rule on top: grouping cells
   and a minimum size, as in Mech-5/7.
@@ -131,6 +149,8 @@ A good result is a solid red/white block on the patch, with the rest blue and on
 | `min_calibration_samples` | a class needs at least this many cells (and 2 x channels) to get a profile |
 | `shrinkage` | covariance shrinkage towards identity, 0..1 (default 0.01) |
 | `threshold_images_dir`, `threshold_num_images`, `threshold_quantile` | pass-2 clean images, how many, which quantile is the threshold |
+| `threshold_mode` | `"per_layer"` (default: one threshold per layer) or `"per_class"` (each cell uses its nearest profile's threshold). `--threshold-mode` overrides it for one run of extract or diagnose |
+| `min_threshold_cells` | `per_class` only: a profile needs this many nearest clean cells in pass 2 to get its own threshold; otherwise it uses the layer threshold (default 1000) |
 | `profiles_dir`, `profile_filename` | where the calibration is saved |
 | `input_dir`, `out_dir`, `start_index`, `num_images` | images to score, where the maps go, which slice (`null` = all) |
 | `save_maps` | true/false: write the `.npz` maps |

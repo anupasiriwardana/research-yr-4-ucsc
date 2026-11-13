@@ -189,6 +189,24 @@ class MahaProfiles:
         t = self.data["layers"][layer].get("clean_quantiles")
         return None if t is None else t[self.data.get("threshold_quantile_key", "q99.5")]
 
+    def threshold_map(self, layer, cls_map, mode="per_layer"):
+        """Threshold for every cell, same shape as cls_map (the nearest-profile id map).
+        per_layer: the layer threshold everywhere.
+        per_class: the threshold of each cell's nearest profile; profiles without one use the layer threshold."""
+        thr = self.threshold(layer)
+        if mode == "per_layer":
+            return np.full(cls_map.shape, thr, dtype=np.float32)
+        if mode != "per_class":
+            raise ValueError(f"threshold_mode must be 'per_layer' or 'per_class', got '{mode}'.")
+        table = self.data["layers"][layer].get("class_thresholds")
+        if table is None:
+            raise ValueError("This calibration has no per-class thresholds. Re-run calibrate_mahalanobis.py "
+                             "(add --threshold-only to keep the profiles and redo pass 2 only).")
+        out = np.full(cls_map.shape, thr, dtype=np.float32)
+        for cid, t in table.items():
+            out[cls_map == int(cid)] = t["threshold"]
+        return out
+
     def quantile(self, layer, key):
         return self.data["layers"][layer]["clean_quantiles"][key]
 
