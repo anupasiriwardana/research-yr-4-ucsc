@@ -10,11 +10,11 @@
     "profile_file": "profiles/mech6_profiles_yolo11.pkl",
     "calibration": {
         "profile_images_dir": "D:/GitHub/experiment_data/bdd100k_images_10k/train",
-        "max_calibration_images": 2000,
+        "max_calibration_images": 7000,
         "background_samples_per_image": 250,
-        "min_calibration_samples": 100,
+        "min_calibration_samples": 20000,
         "threshold_images_dir": "D:/GitHub/experiment_data/bdd100k_images_10k/test",
-        "threshold_num_images": 500,
+        "threshold_num_images": 2000,
         "threshold_quantile": 0.995,
         "min_threshold_cells": 1000,
         "target_clean_image_fpr": 0.02,
@@ -30,32 +30,240 @@
             "join_cells": 1,
             "mass_thresholds": "auto"
         },
-        "calibrated": {}
+        "calibrated": {
+            "1": {
+                "threshold": 3.3896,
+                "region": {
+                    "mass_thresholds": {
+                        "0": 26.795,
+                        "1": 11.699,
+                        "2": 6.876,
+                        "3": 3.868
+                    },
+                    "clean_images_flagged": 0.0195,
+                    "clean_images_flagged_per_scale": {
+                        "0": 0.0095,
+                        "1": 0.0095,
+                        "2": 0.0095,
+                        "3": 0.0095
+                    }
+                }
+            },
+            "2": {
+                "threshold": 3.3278,
+                "region": {
+                    "mass_thresholds": {
+                        "0": 64.019,
+                        "1": 6.838,
+                        "2": 2.806,
+                        "3": 0.0
+                    },
+                    "clean_images_flagged": 0.02,
+                    "clean_images_flagged_per_scale": {
+                        "0": 0.009,
+                        "1": 0.009,
+                        "2": 0.009,
+                        "3": 0.0005
+                    }
+                }
+            },
+            "3": {
+                "threshold": 2.7203,
+                "region": {
+                    "mass_thresholds": {
+                        "0": 9.921,
+                        "1": 4.067,
+                        "2": 0.952,
+                        "3": 0.0
+                    },
+                    "clean_images_flagged": 0.02,
+                    "clean_images_flagged_per_scale": {
+                        "0": 0.01,
+                        "1": 0.01,
+                        "2": 0.01,
+                        "3": 0.001
+                    }
+                }
+            }
+        }
     },
     "panel3": {
-        "score": "nearest_abs",
+        "score": "nearest_up",
         "threshold_mode": "per_class",
         "region": {
             "join_cells": 1,
             "mass_thresholds": "auto"
         },
-        "calibrated": {}
+        "calibrated": {
+            "1": {
+                "score": "nearest_up",
+                "layer_threshold": 1.5706,
+                "class_thresholds": {
+                    "bg": 0.0715,
+                    "0_person": 0.1524,
+                    "1_bicycle": 0.1521,
+                    "2_car": 0.0071,
+                    "3_motorcycle": 0.1054,
+                    "4_airplane": 0.0752,
+                    "5_bus": 0.0139,
+                    "6_train": 0.0128,
+                    "7_truck": 0.0062,
+                    "8_boat": 0.0126,
+                    "9_traffic-light": 1.9917,
+                    "12_parking-meter": 0.0235
+                },
+                "region": {
+                    "per_layer": {
+                        "mass_thresholds": {
+                            "0": 41.266,
+                            "1": 18.018,
+                            "2": 10.59,
+                            "3": 5.956
+                        },
+                        "clean_images_flagged": 0.0195,
+                        "clean_images_flagged_per_scale": {
+                            "0": 0.0095,
+                            "1": 0.0095,
+                            "2": 0.0095,
+                            "3": 0.0095
+                        }
+                    },
+                    "per_class": {
+                        "mass_thresholds": {
+                            "0": 4.14,
+                            "1": 1.635,
+                            "2": 0.0,
+                            "3": 0.0
+                        },
+                        "clean_images_flagged": 0.02,
+                        "clean_images_flagged_per_scale": {
+                            "0": 0.01,
+                            "1": 0.01,
+                            "2": 0.01,
+                            "3": 0.0025
+                        }
+                    }
+                }
+            },
+            "2": {
+                "score": "nearest_up",
+                "layer_threshold": 1.7758,
+                "class_thresholds": {
+                    "bg": 0.0,
+                    "0_person": 0.3045,
+                    "1_bicycle": 0.0092,
+                    "2_car": 0.0202,
+                    "3_motorcycle": 0.0031,
+                    "4_airplane": 0.0231,
+                    "5_bus": 0.0386,
+                    "6_train": 0.0912,
+                    "7_truck": 0.0031,
+                    "8_boat": 0.0146,
+                    "9_traffic-light": 2.3076,
+                    "12_parking-meter": 0.0026
+                },
+                "region": {
+                    "per_layer": {
+                        "mass_thresholds": {
+                            "0": 94.205,
+                            "1": 10.062,
+                            "2": 4.128,
+                            "3": 0.0
+                        },
+                        "clean_images_flagged": 0.02,
+                        "clean_images_flagged_per_scale": {
+                            "0": 0.009,
+                            "1": 0.009,
+                            "2": 0.009,
+                            "3": 0.0005
+                        }
+                    },
+                    "per_class": {
+                        "mass_thresholds": {
+                            "0": Infinity,
+                            "1": 0.22,
+                            "2": 0.0,
+                            "3": 0.0
+                        },
+                        "clean_images_flagged": 0.02,
+                        "clean_images_flagged_per_scale": {
+                            "0": 0.0,
+                            "1": 0.02,
+                            "2": 0.0005,
+                            "3": 0.0
+                        }
+                    }
+                }
+            },
+            "3": {
+                "score": "nearest_up",
+                "layer_threshold": 1.3407,
+                "class_thresholds": {
+                    "bg": 0.0929,
+                    "0_person": 0.2223,
+                    "2_car": 0.0126,
+                    "4_airplane": 0.1099,
+                    "5_bus": 0.1785,
+                    "6_train": 0.1257,
+                    "7_truck": 0.0061,
+                    "9_traffic-light": 1.8557
+                },
+                "region": {
+                    "per_layer": {
+                        "mass_thresholds": {
+                            "0": 17.892,
+                            "1": 7.335,
+                            "2": 1.717,
+                            "3": 0.0
+                        },
+                        "clean_images_flagged": 0.02,
+                        "clean_images_flagged_per_scale": {
+                            "0": 0.01,
+                            "1": 0.01,
+                            "2": 0.01,
+                            "3": 0.001
+                        }
+                    },
+                    "per_class": {
+                        "mass_thresholds": {
+                            "0": 3.573,
+                            "1": 1.25,
+                            "2": 0.0,
+                            "3": 0.0
+                        },
+                        "clean_images_flagged": 0.0195,
+                        "clean_images_flagged_per_scale": {
+                            "0": 0.0115,
+                            "1": 0.0115,
+                            "2": 0.0,
+                            "3": 0.0
+                        }
+                    }
+                }
+            }
+        }
     },
     "viz_outline": true,
     "viz_scale_max_ratio": 2.0,
     "detect": {
-        "input_dir": "../test-patch-det-multi-img/gen-patched-img/yolov11-patched-imgs",
-        "detections_dir": "detections/yolo11/patched",
+        "input_dir2": "../test-patch-det-multi-img/gen-patched-img/yolov11-patched-imgs",
+        "input_dir": "D:/GitHub/experiment_data/bdd100k_images_10k/val",
+        "detections_dir": "detections/yolo11/clean-layer1",
         "start_index": 0,
-        "num_images": null,
+        "num_images": 100,
         "save_visualizations": true,
-        "visualizations_dir": "viz/yolo11/patched",
-        "gt_coordinates_dir": "../test-patch-det-multi-img/gen-patched-img/yolov11-patch_coordinates"
+        "visualizations_dir": "viz/yolo11/clean-layer1",
+        "gt_coordinates_dir2": "../test-patch-det-multi-img/gen-patched-img/yolov11-patch_coordinates"
     },
     "evaluate": {
         "patched_detections_dir": "detections/yolo11/patched",
         "clean_detections_dir": "detections/yolo11/clean",
         "gt_coordinates_dir": "../test-patch-det-multi-img/gen-patched-img/yolov11-patch_coordinates",
         "match_iou": 0.3
+    },
+    "calibration_info": {
+        "profiles": "2026-11-15: profiles/mech6_profiles_yolo11.pkl",
+        "thresholds": "2026-11-15: quantile 0.995 of 2000 clean images",
+        "regions": "2026-11-15: target clean image FPR 0.02, join_cells at that time, thickness scales [0, 1, 2, 3]"
     }
 }

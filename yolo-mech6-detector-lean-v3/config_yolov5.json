@@ -33,13 +33,58 @@
         },
         "calibrated": {
             "1": {
-                "threshold": 3.141
+                "threshold": 3.141,
+                "region": {
+                    "mass_thresholds": {
+                        "0": 29.862,
+                        "1": 12.99,
+                        "2": 6.778,
+                        "3": 4.771
+                    },
+                    "clean_images_flagged": 0.02,
+                    "clean_images_flagged_per_scale": {
+                        "0": 0.01,
+                        "1": 0.01,
+                        "2": 0.01,
+                        "3": 0.01
+                    }
+                }
             },
             "2": {
-                "threshold": 2.8432
+                "threshold": 2.8432,
+                "region": {
+                    "mass_thresholds": {
+                        "0": 14.615,
+                        "1": 5.828,
+                        "2": 2.22,
+                        "3": 0.0
+                    },
+                    "clean_images_flagged": 0.02,
+                    "clean_images_flagged_per_scale": {
+                        "0": 0.0115,
+                        "1": 0.0115,
+                        "2": 0.0115,
+                        "3": 0.0015
+                    }
+                }
             },
             "3": {
-                "threshold": 2.4674
+                "threshold": 2.4674,
+                "region": {
+                    "mass_thresholds": {
+                        "0": 4.278,
+                        "1": 1.66,
+                        "2": 0.0,
+                        "3": 0.0
+                    },
+                    "clean_images_flagged": 0.02,
+                    "clean_images_flagged_per_scale": {
+                        "0": 0.015,
+                        "1": 0.015,
+                        "2": 0.004,
+                        "3": 0.001
+                    }
+                }
             }
         }
     },
@@ -55,55 +100,151 @@
                 "score": "nearest_up",
                 "layer_threshold": 1.4117,
                 "class_thresholds": {
-                    "bg": 0.0298,
+                    "bg": 0.0242,
                     "0_person": 0.1728,
                     "1_bicycle": 0.1744,
-                    "2_car": 0.0461,
+                    "2_car": 0.0086,
                     "3_motorcycle": 0.0232,
-                    "4_airplane": 1.0977,
-                    "5_bus": 0.0823,
-                    "6_train": 0.0965,
+                    "4_airplane": 0.0881,
+                    "5_bus": 0.0326,
+                    "6_train": 0.0294,
                     "7_truck": 0.046,
                     "9_traffic-light": 1.8293,
-                    "11_stop-sign": 0.0231,
+                    "11_stop-sign": 0.0151,
                     "12_parking-meter": 0.0823,
-                    "28_suitcase": 0.2181,
+                    "28_suitcase": 0.0004,
                     "58_potted-plant": 0.0165
+                },
+                "region": {
+                    "per_layer": {
+                        "mass_thresholds": {
+                            "0": 51.666,
+                            "1": 22.475,
+                            "2": 11.727,
+                            "3": 8.254
+                        },
+                        "clean_images_flagged": 0.02,
+                        "clean_images_flagged_per_scale": {
+                            "0": 0.01,
+                            "1": 0.01,
+                            "2": 0.01,
+                            "3": 0.01
+                        }
+                    },
+                    "per_class": {
+                        "mass_thresholds": {
+                            "0": 20.145,
+                            "1": 3.695,
+                            "2": 0.36,
+                            "3": 0.0
+                        },
+                        "clean_images_flagged": 0.02,
+                        "clean_images_flagged_per_scale": {
+                            "0": 0.0095,
+                            "1": 0.0095,
+                            "2": 0.0095,
+                            "3": 0.0015
+                        }
+                    }
                 }
             },
             "2": {
                 "score": "nearest_up",
-                "layer_threshold": 2.126,
+                "layer_threshold": 1.7074,
                 "class_thresholds": {
-                    "bg": 0.0751,
+                    "bg": 0.0221,
                     "0_person": 0.0838,
-                    "1_bicycle": 0.0369,
-                    "2_car": 0.0485,
+                    "1_bicycle": 0.0159,
+                    "2_car": 0.0322,
                     "3_motorcycle": 0.0368,
-                    "4_airplane": 2.1929,
-                    "5_bus": 0.0299,
-                    "6_train": 0.0224,
+                    "4_airplane": 0.0698,
+                    "5_bus": 0.0015,
+                    "6_train": 0.0143,
                     "7_truck": 0.0487,
                     "9_traffic-light": 2.3577,
                     "11_stop-sign": 0.185,
-                    "12_parking-meter": 0.0749,
+                    "12_parking-meter": 0.0434,
                     "28_suitcase": 0.075,
-                    "58_potted-plant": 0.0436
+                    "58_potted-plant": 0.0297
+                },
+                "region": {
+                    "per_layer": {
+                        "mass_thresholds": {
+                            "0": 24.607,
+                            "1": 9.862,
+                            "2": 3.757,
+                            "3": 0.0
+                        },
+                        "clean_images_flagged": 0.02,
+                        "clean_images_flagged_per_scale": {
+                            "0": 0.0115,
+                            "1": 0.0115,
+                            "2": 0.0115,
+                            "3": 0.0015
+                        }
+                    },
+                    "per_class": {
+                        "mass_thresholds": {
+                            "0": 53.899,
+                            "1": 0.092,
+                            "2": 0.0,
+                            "3": 0.0
+                        },
+                        "clean_images_flagged": 0.0195,
+                        "clean_images_flagged_per_scale": {
+                            "0": 0.0105,
+                            "1": 0.0105,
+                            "2": 0.0005,
+                            "3": 0.0
+                        }
+                    }
                 }
             },
             "3": {
                 "score": "nearest_up",
-                "layer_threshold": 1.6557,
+                "layer_threshold": 1.5046,
                 "class_thresholds": {
                     "bg": 0.1096,
                     "0_person": 0.2882,
                     "2_car": 0.0524,
-                    "4_airplane": 1.6294,
-                    "5_bus": 0.0721,
-                    "6_train": 0.1094,
+                    "4_airplane": 0.0296,
+                    "5_bus": 0.0261,
+                    "6_train": 0.0762,
                     "7_truck": 0.0267,
                     "9_traffic-light": 1.9589,
-                    "12_parking-meter": 0.0764
+                    "12_parking-meter": 0.0718
+                },
+                "region": {
+                    "per_layer": {
+                        "mass_thresholds": {
+                            "0": 8.028,
+                            "1": 3.115,
+                            "2": 0.0,
+                            "3": 0.0
+                        },
+                        "clean_images_flagged": 0.02,
+                        "clean_images_flagged_per_scale": {
+                            "0": 0.015,
+                            "1": 0.015,
+                            "2": 0.004,
+                            "3": 0.001
+                        }
+                    },
+                    "per_class": {
+                        "mass_thresholds": {
+                            "0": 1.506,
+                            "1": 0.0,
+                            "2": 0.0,
+                            "3": 0.0
+                        },
+                        "clean_images_flagged": 0.02,
+                        "clean_images_flagged_per_scale": {
+                            "0": 0.0155,
+                            "1": 0.009,
+                            "2": 0.0005,
+                            "3": 0.0
+                        }
+                    }
                 }
             }
         }
@@ -111,14 +252,14 @@
     "viz_outline": true,
     "viz_scale_max_ratio": 2.0,
     "detect": {
-        "input_dir": "../gen-adv-patch-hiding-latest/patched/yolov5-images",
-        "input_dir2": "D:/GitHub/experiment_data/bdd100k_images_10k/val",
-        "detections_dir": "detections/yolov5/patched-layer1",
+        "input_dir2": "../gen-adv-patch-hiding-latest/patched/yolov5-images",
+        "input_dir": "D:/GitHub/experiment_data/bdd100k_images_10k/val",
+        "detections_dir": "detections/yolov5/clean-layer1",
         "start_index": 0,
         "num_images": 100,
         "save_visualizations": true,
-        "visualizations_dir": "viz/yolov5/patched-layer1",
-        "gt_coordinates_dir": "../gen-adv-patch-hiding-latest/patched/yolov5-coordinates"
+        "visualizations_dir": "viz/yolov5/clean-layer1",
+        "gt_coordinates_dir2": "../gen-adv-patch-hiding-latest/patched/yolov5-coordinates"
     },
     "evaluate": {
         "patched_detections_dir": "detections/yolov5/patched-layer1",
@@ -127,7 +268,8 @@
         "match_iou": 0.3
     },
     "calibration_info": {
-        "profiles": "2026-11-14: profiles/mech6_profiles_yolov5.pkl",
-        "thresholds": "2026-11-14: quantile 0.995 of 2000 clean images"
+        "profiles": "2026-11-15: profiles/mech6_profiles_yolov5.pkl",
+        "thresholds": "2026-11-15: quantile 0.995 of 2000 clean images",
+        "regions": "2026-11-15: target clean image FPR 0.02, join_cells at that time, thickness scales [0, 1, 2, 3]"
     }
 }

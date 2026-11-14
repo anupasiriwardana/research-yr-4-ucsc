@@ -7,7 +7,7 @@
         3
     ],
     "detect_layer": 1,
-    "profile_file": "profiles/mech6_profiles_yolov8.pkl",
+    "profile_file": "profiles/mech6_profiles_yolov8-v2.pkl",
     "calibration": {
         "profile_images_dir": "D:/GitHub/experiment_data/bdd100k_images_10k/train",
         "max_calibration_images": 7000,
@@ -32,18 +32,63 @@
         },
         "calibrated": {
             "1": {
-                "threshold": 2.9486
+                "threshold": 2.9486,
+                "region": {
+                    "mass_thresholds": {
+                        "0": 17.985,
+                        "1": 7.069,
+                        "2": 4.453,
+                        "3": 2.066
+                    },
+                    "clean_images_flagged": 0.0195,
+                    "clean_images_flagged_per_scale": {
+                        "0": 0.0095,
+                        "1": 0.0095,
+                        "2": 0.0095,
+                        "3": 0.0095
+                    }
+                }
             },
             "2": {
-                "threshold": 3.218
+                "threshold": 3.218,
+                "region": {
+                    "mass_thresholds": {
+                        "0": 48.266,
+                        "1": 17.723,
+                        "2": 9.802,
+                        "3": 0.0
+                    },
+                    "clean_images_flagged": 0.02,
+                    "clean_images_flagged_per_scale": {
+                        "0": 0.0115,
+                        "1": 0.0115,
+                        "2": 0.0115,
+                        "3": 0.006
+                    }
+                }
             },
             "3": {
-                "threshold": 2.5013
+                "threshold": 2.5013,
+                "region": {
+                    "mass_thresholds": {
+                        "0": 7.251,
+                        "1": 3.44,
+                        "2": 0.0,
+                        "3": 0.0
+                    },
+                    "clean_images_flagged": 0.02,
+                    "clean_images_flagged_per_scale": {
+                        "0": 0.0125,
+                        "1": 0.0125,
+                        "2": 0.008,
+                        "3": 0.0015
+                    }
+                }
             }
         }
     },
     "panel3": {
-        "score": "nearest_abs",
+        "score": "nearest_up",
         "threshold_mode": "per_class",
         "region": {
             "join_cells": 1,
@@ -51,58 +96,154 @@
         },
         "calibrated": {
             "1": {
-                "score": "nearest_abs",
-                "layer_threshold": 1.4871,
+                "score": "nearest_up",
+                "layer_threshold": 1.479,
                 "class_thresholds": {
-                    "bg": 1.4489,
+                    "bg": 0.0219,
                     "0_person": 0.1594,
-                    "1_bicycle": 0.1594,
-                    "2_car": 0.025,
+                    "1_bicycle": 0.1346,
+                    "2_car": 0.0095,
                     "3_motorcycle": 0.0918,
-                    "4_airplane": 0.8407,
-                    "5_bus": 0.0271,
+                    "4_airplane": 0.0133,
+                    "5_bus": 0.0248,
                     "6_train": 0.0248,
-                    "7_truck": 0.025,
-                    "8_boat": 0.0663,
+                    "7_truck": 0.0249,
+                    "8_boat": 0.0268,
                     "9_traffic-light": 1.8045,
-                    "12_parking-meter": 0.0248,
-                    "13_bench": 0.0221,
+                    "12_parking-meter": 0.0048,
+                    "13_bench": 0.0169,
                     "28_suitcase": 0.0663
+                },
+                "region": {
+                    "per_layer": {
+                        "mass_thresholds": {
+                            "0": 29.39,
+                            "1": 11.552,
+                            "2": 7.276,
+                            "3": 3.376
+                        },
+                        "clean_images_flagged": 0.0195,
+                        "clean_images_flagged_per_scale": {
+                            "0": 0.0095,
+                            "1": 0.0095,
+                            "2": 0.0095,
+                            "3": 0.0095
+                        }
+                    },
+                    "per_class": {
+                        "mass_thresholds": {
+                            "0": 3.158,
+                            "1": 1.19,
+                            "2": 0.0,
+                            "3": 0.0
+                        },
+                        "clean_images_flagged": 0.02,
+                        "clean_images_flagged_per_scale": {
+                            "0": 0.0145,
+                            "1": 0.0145,
+                            "2": 0.003,
+                            "3": 0.0005
+                        }
+                    }
                 }
             },
             "2": {
-                "score": "nearest_abs",
-                "layer_threshold": 2.3589,
+                "score": "nearest_up",
+                "layer_threshold": 1.7325,
                 "class_thresholds": {
                     "bg": 0.0243,
-                    "0_person": 1.9449,
-                    "1_bicycle": 2.1049,
-                    "2_car": 0.0243,
-                    "3_motorcycle": 0.0108,
+                    "0_person": 0.0035,
+                    "1_bicycle": 0.2012,
+                    "2_car": 0.0066,
+                    "3_motorcycle": 0.0061,
                     "4_airplane": 0.0191,
                     "5_bus": 0.038,
-                    "6_train": 1.5168,
+                    "6_train": 0.0108,
                     "7_truck": 0.0107,
-                    "8_boat": 0.0191,
-                    "9_traffic-light": 2.6795,
+                    "8_boat": 0.0048,
+                    "9_traffic-light": 2.1452,
                     "12_parking-meter": 0.0108,
                     "13_bench": 0.0153,
-                    "28_suitcase": 0.0107
+                    "28_suitcase": 0.0046
+                },
+                "region": {
+                    "per_layer": {
+                        "mass_thresholds": {
+                            "0": 63.045,
+                            "1": 23.15,
+                            "2": 12.803,
+                            "3": 0.0
+                        },
+                        "clean_images_flagged": 0.02,
+                        "clean_images_flagged_per_scale": {
+                            "0": 0.0115,
+                            "1": 0.0115,
+                            "2": 0.0115,
+                            "3": 0.006
+                        }
+                    },
+                    "per_class": {
+                        "mass_thresholds": {
+                            "0": 26.568,
+                            "1": 8.439,
+                            "2": 1.952,
+                            "3": 0.0
+                        },
+                        "clean_images_flagged": 0.02,
+                        "clean_images_flagged_per_scale": {
+                            "0": 0.011,
+                            "1": 0.011,
+                            "2": 0.011,
+                            "3": 0.002
+                        }
+                    }
                 }
             },
             "3": {
-                "score": "nearest_abs",
-                "layer_threshold": 1.8032,
+                "score": "nearest_up",
+                "layer_threshold": 1.4897,
                 "class_thresholds": {
-                    "bg": 1.8289,
+                    "bg": 0.0002,
                     "0_person": 0.1897,
                     "2_car": 0.1686,
                     "4_airplane": 0.0497,
-                    "5_bus": 0.0954,
+                    "5_bus": 0.0051,
                     "6_train": 0.0794,
                     "7_truck": 0.0107,
                     "9_traffic-light": 1.9204,
                     "12_parking-meter": 0.095
+                },
+                "region": {
+                    "per_layer": {
+                        "mass_thresholds": {
+                            "0": 12.543,
+                            "1": 5.95,
+                            "2": 0.0,
+                            "3": 0.0
+                        },
+                        "clean_images_flagged": 0.02,
+                        "clean_images_flagged_per_scale": {
+                            "0": 0.0125,
+                            "1": 0.0125,
+                            "2": 0.008,
+                            "3": 0.0015
+                        }
+                    },
+                    "per_class": {
+                        "mass_thresholds": {
+                            "0": 81.577,
+                            "1": 0.485,
+                            "2": 0.0,
+                            "3": 0.0
+                        },
+                        "clean_images_flagged": 0.02,
+                        "clean_images_flagged_per_scale": {
+                            "0": 0.01,
+                            "1": 0.01,
+                            "2": 0.001,
+                            "3": 0.001
+                        }
+                    }
                 }
             }
         }
@@ -112,11 +253,11 @@
     "detect": {
         "input_dir2": "../test-patch-det-multi-img/gen-patched-img/yolov8-patched-imgs",
         "input_dir": "D:/GitHub/experiment_data/bdd100k_images_10k/val",
-        "detections_dir": "detections/yolov8/clean-layer1-v2",
+        "detections_dir": "detections/yolov8/clean-layer1",
         "start_index": 0,
         "num_images": 100,
         "save_visualizations": true,
-        "visualizations_dir": "viz/yolov8/clean-layer1-v2",
+        "visualizations_dir": "viz/yolov8/clean-layer1",
         "gt_coordinates_dir2": "../test-patch-det-multi-img/gen-patched-img/yolov8-patch_coordinates"
     },
     "evaluate": {
@@ -126,7 +267,8 @@
         "match_iou": 0.3
     },
     "calibration_info": {
-        "profiles": "2026-11-14: profiles/mech6_profiles_yolov8.pkl",
-        "thresholds": "2026-11-14: quantile 0.995 of 2000 clean images"
+        "profiles": "2026-11-15: profiles/mech6_profiles_yolov8-v2.pkl",
+        "thresholds": "2026-11-15: quantile 0.995 of 2000 clean images",
+        "regions": "2026-11-15: target clean image FPR 0.02, join_cells at that time, thickness scales [0, 1, 2, 3]"
     }
 }
