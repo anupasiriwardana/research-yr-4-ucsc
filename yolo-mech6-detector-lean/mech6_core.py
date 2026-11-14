@@ -228,6 +228,16 @@ def panel3_threshold_map(cal, ids, mode):
 
 # ----------------------------------------------------------------------------- localizer
 
+def morph_zero_border(mask, op, r):
+    """Closing / opening with a (2r+1)^2 window, treating everything outside the image as NOT hot.
+    (OpenCV's default border counts outside cells as hot during erosion, so a thin line along the image edge would
+    survive the thickness test and closing would stretch regions along the edge.) The mask is padded with r zero
+    cells, processed, and cropped back."""
+    k = np.ones((2 * r + 1, 2 * r + 1), np.uint8)
+    padded = cv2.copyMakeBorder(mask, r, r, r, r, cv2.BORDER_CONSTANT, value=0)
+    return cv2.morphologyEx(padded, op, k)[r:-r, r:-r]
+
+
 def localize(score, thr_map, stride, p, min_cells):
     """Turn a score map into patch boxes (lean version: no shape or count assumptions).
 
@@ -249,10 +259,10 @@ def localize(score, thr_map, stride, p, min_cells):
     mask = hot.astype(np.uint8)
     j = int(p.get("join_cells", 1))
     if j > 0:
-        mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, np.ones((2 * j + 1, 2 * j + 1), np.uint8))
+        mask = morph_zero_border(mask, cv2.MORPH_CLOSE, j)
     t = int(p.get("min_thickness_cells", 1))
     if t > 0:
-        mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, np.ones((2 * t + 1, 2 * t + 1), np.uint8))
+        mask = morph_zero_border(mask, cv2.MORPH_OPEN, t)
     n, lab, stats, _ = cv2.connectedComponentsWithStats(mask, connectivity=8)
     regions = []
     for i in range(1, n):

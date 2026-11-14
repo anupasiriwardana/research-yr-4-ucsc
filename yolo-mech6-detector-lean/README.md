@@ -83,6 +83,8 @@ The same steps run for each panel separately, with that panel's score, threshold
    every side, then grown back. Any part thinner than 2×`min_thickness_cells`+1 cells disappears and does not come back.
    This erases lane markings, poles, wires and object edges **whatever their angle**, while a thick region of **any
    shape** (square, rotated, round, irregular) survives.
+   In both the join and the thickness step, everything outside the image counts as *not* hot, so a thin strip along the
+   image edge is erased like any other thin line, and a patch touching the edge keeps its full size.
 4. **Regions.** The cells that are left are grouped into 8-connected regions.
 5. **Region rules.** A region is a patch only if both hold:
    - **size:** it has at least `min_region_cells` cells (calibrated so clean images rarely reach it);

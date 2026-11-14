@@ -93,6 +93,8 @@ The same steps run for each panel separately, with that panel's score, threshold
 3. **Thickness** (`min_thickness_cells`, calibrated). A morphological opening: the blob is shrunk by t cells on every side,
    then grown back. Any part thinner than 2t+1 cells disappears. This erases lane markings, poles, wires and object edges
    **whatever their angle**, while a thick region of **any shape** survives. t = 0 means no thickness test.
+   In both the join and the thickness step, everything outside the image counts as *not* hot, so a thin strip along the
+   image edge is erased like any other thin line, and a patch touching the edge keeps its full size.
 4. **Regions.** The cells that are left are grouped into 8-connected regions.
 5. **Mass.** For each region: mass = the sum over its hot cells of (score/threshold − 1), i.e. how many cells are hot
    and how far above the threshold they are.
