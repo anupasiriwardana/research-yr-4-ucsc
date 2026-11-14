@@ -34,3 +34,8 @@
 **/yolo-mech6-mahalanobis/maps/*
 **/yolo-mech6-mahalanobis/viz/*
 **/yolo-mech6-mahalanobis/**/__pycache__/*
+
+# yolo-mech6-detector outputs
+**/yolo-mech6-detector/detections/*
+**/yolo-mech6-detector/viz/*
+**/yolo-mech6-detector/*.json.bak

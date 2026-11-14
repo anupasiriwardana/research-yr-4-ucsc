@@ -1,0 +1,67 @@
+{
+    "model_type": "yolov5_repo",
+    "yolov5_repo_dir": "../gen-adv-patch-hiding-latest/yolov5_src",
+    "model_path": "../gen-adv-patch-hiding-latest/weights/yolov5s.pt",
+    "tap_layers": [
+        1,
+        2,
+        3
+    ],
+    "detect_layer": 1,
+    "profile_file": "profiles/mech6_profiles_yolov5.pkl",
+    "calibration": {
+        "profile_images_dir": "D:/GitHub/experiment_data/bdd100k_images_10k/train",
+        "max_calibration_images": 2000,
+        "background_samples_per_image": 250,
+        "min_calibration_samples": 100,
+        "threshold_images_dir": "D:/GitHub/experiment_data/bdd100k_images_10k/test",
+        "threshold_num_images": 500,
+        "threshold_quantile": 0.995,
+        "min_threshold_cells": 1000,
+        "target_clean_image_fpr": 0.02,
+        "min_region_cells_floor": 4
+    },
+    "panel2": {
+        "region": {
+            "min_region_cells": "auto",
+            "seed_ratio": 1.5,
+            "join_cells": 1,
+            "min_fill": 0.3,
+            "max_aspect": 4.0,
+            "min_mean_ratio": 1.0,
+            "max_detections": 5
+        },
+        "calibrated": {}
+    },
+    "panel3": {
+        "score": "nearest_abs",
+        "threshold_mode": "per_class",
+        "region": {
+            "min_region_cells": "auto",
+            "seed_ratio": 1.5,
+            "join_cells": 1,
+            "min_fill": 0.3,
+            "max_aspect": 4.0,
+            "min_mean_ratio": 1.0,
+            "max_detections": 5
+        },
+        "calibrated": {}
+    },
+    "viz_outline": true,
+    "viz_scale_max_ratio": 2.0,
+    "detect": {
+        "input_dir": "../gen-adv-patch-hiding-latest/patched/yolov5-images",
+        "detections_dir": "detections/yolov5/patched",
+        "start_index": 0,
+        "num_images": null,
+        "save_visualizations": true,
+        "visualizations_dir": "viz/yolov5/patched",
+        "gt_coordinates_dir": "../gen-adv-patch-hiding-latest/patched/yolov5-coordinates"
+    },
+    "evaluate": {
+        "patched_detections_dir": "detections/yolov5/patched",
+        "clean_detections_dir": "detections/yolov5/clean",
+        "gt_coordinates_dir": "../gen-adv-patch-hiding-latest/patched/yolov5-coordinates",
+        "match_iou": 0.3
+    }
+}
