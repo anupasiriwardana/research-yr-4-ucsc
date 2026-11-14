@@ -44,3 +44,8 @@
 **/yolo-mech6-detector-lean/detections/*
 **/yolo-mech6-detector-lean/viz/*
 **/yolo-mech6-detector-lean/*.json.bak
+
+# yolo-mech6-detector-lean-v2 outputs
+**/yolo-mech6-detector-lean-v2/detections/*
+**/yolo-mech6-detector-lean-v2/viz/*
+**/yolo-mech6-detector-lean-v2/*.json.bak

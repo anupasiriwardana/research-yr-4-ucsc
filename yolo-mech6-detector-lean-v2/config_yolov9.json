@@ -1,0 +1,63 @@
+{
+    "model_type": "ultralytics",
+    "model_path": "../gen-adv-patch-hiding-latest/weights/yolov9c.pt",
+    "tap_layers": [
+        1,
+        2,
+        3
+    ],
+    "detect_layer": 1,
+    "profile_file": "profiles/mech6_profiles_yolov9.pkl",
+    "calibration": {
+        "profile_images_dir": "D:/GitHub/experiment_data/bdd100k_images_10k/train",
+        "max_calibration_images": 2000,
+        "background_samples_per_image": 250,
+        "min_calibration_samples": 100,
+        "threshold_images_dir": "D:/GitHub/experiment_data/bdd100k_images_10k/test",
+        "threshold_num_images": 500,
+        "threshold_quantile": 0.995,
+        "min_threshold_cells": 1000,
+        "target_clean_image_fpr": 0.02,
+        "thickness_candidates": [
+            0,
+            1,
+            2,
+            3
+        ]
+    },
+    "panel2": {
+        "region": {
+            "join_cells": 1,
+            "min_thickness_cells": "auto",
+            "mass_threshold": "auto"
+        },
+        "calibrated": {}
+    },
+    "panel3": {
+        "score": "nearest_abs",
+        "threshold_mode": "per_class",
+        "region": {
+            "join_cells": 1,
+            "min_thickness_cells": "auto",
+            "mass_threshold": "auto"
+        },
+        "calibrated": {}
+    },
+    "viz_outline": true,
+    "viz_scale_max_ratio": 2.0,
+    "detect": {
+        "input_dir": "../gen-adv-patch-hiding-latest/patched/yolov9-images",
+        "detections_dir": "detections/yolov9/patched",
+        "start_index": 0,
+        "num_images": null,
+        "save_visualizations": true,
+        "visualizations_dir": "viz/yolov9/patched",
+        "gt_coordinates_dir": "../gen-adv-patch-hiding-latest/patched/yolov9-coordinates"
+    },
+    "evaluate": {
+        "patched_detections_dir": "detections/yolov9/patched",
+        "clean_detections_dir": "detections/yolov9/clean",
+        "gt_coordinates_dir": "../gen-adv-patch-hiding-latest/patched/yolov9-coordinates",
+        "match_iou": 0.3
+    }
+}
