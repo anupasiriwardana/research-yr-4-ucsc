@@ -10,11 +10,11 @@
     "profile_file": "profiles/mech6_profiles_yolov8.pkl",
     "calibration": {
         "profile_images_dir": "D:/GitHub/experiment_data/bdd100k_images_10k/train",
-        "max_calibration_images": 2000,
+        "max_calibration_images": 7000,
         "background_samples_per_image": 250,
-        "min_calibration_samples": 100,
+        "min_calibration_samples": 20000,
         "threshold_images_dir": "D:/GitHub/experiment_data/bdd100k_images_10k/test",
-        "threshold_num_images": 500,
+        "threshold_num_images": 2000,
         "threshold_quantile": 0.995,
         "min_threshold_cells": 1000,
         "target_clean_image_fpr": 0.02,
@@ -23,38 +23,125 @@
     "panel2": {
         "region": {
             "min_region_cells": "auto",
-            "seed_ratio": 1.5,
+            "seed_ratio": 1,
             "join_cells": 1,
             "min_thickness_cells": 1
         },
-        "calibrated": {}
+        "calibrated": {
+            "1": {
+                "threshold": 2.9486,
+                "min_region_cells": 4
+            },
+            "2": {
+                "threshold": 3.218,
+                "min_region_cells": 71
+            },
+            "3": {
+                "threshold": 2.5013,
+                "min_region_cells": 4
+            }
+        }
     },
     "panel3": {
         "score": "nearest_abs",
         "threshold_mode": "per_class",
         "region": {
             "min_region_cells": "auto",
-            "seed_ratio": 1.5,
+            "seed_ratio": 1,
             "join_cells": 1,
             "min_thickness_cells": 1
         },
-        "calibrated": {}
+        "calibrated": {
+            "1": {
+                "score": "nearest_abs",
+                "layer_threshold": 1.4871,
+                "class_thresholds": {
+                    "bg": 1.4489,
+                    "0_person": 0.1594,
+                    "1_bicycle": 0.1594,
+                    "2_car": 0.025,
+                    "3_motorcycle": 0.0918,
+                    "4_airplane": 0.8407,
+                    "5_bus": 0.0271,
+                    "6_train": 0.0248,
+                    "7_truck": 0.025,
+                    "8_boat": 0.0663,
+                    "9_traffic-light": 1.8045,
+                    "12_parking-meter": 0.0248,
+                    "13_bench": 0.0221,
+                    "28_suitcase": 0.0663
+                },
+                "min_region_cells": {
+                    "per_layer": 60,
+                    "per_class": 4
+                }
+            },
+            "2": {
+                "score": "nearest_abs",
+                "layer_threshold": 2.3589,
+                "class_thresholds": {
+                    "bg": 0.0243,
+                    "0_person": 1.9449,
+                    "1_bicycle": 2.1049,
+                    "2_car": 0.0243,
+                    "3_motorcycle": 0.0108,
+                    "4_airplane": 0.0191,
+                    "5_bus": 0.038,
+                    "6_train": 1.5168,
+                    "7_truck": 0.0107,
+                    "8_boat": 0.0191,
+                    "9_traffic-light": 2.6795,
+                    "12_parking-meter": 0.0108,
+                    "13_bench": 0.0153,
+                    "28_suitcase": 0.0107
+                },
+                "min_region_cells": {
+                    "per_layer": 15,
+                    "per_class": 4
+                }
+            },
+            "3": {
+                "score": "nearest_abs",
+                "layer_threshold": 1.8032,
+                "class_thresholds": {
+                    "bg": 1.8289,
+                    "0_person": 0.1897,
+                    "2_car": 0.1686,
+                    "4_airplane": 0.0497,
+                    "5_bus": 0.0954,
+                    "6_train": 0.0794,
+                    "7_truck": 0.0107,
+                    "9_traffic-light": 1.9204,
+                    "12_parking-meter": 0.095
+                },
+                "min_region_cells": {
+                    "per_layer": 4,
+                    "per_class": 4
+                }
+            }
+        }
     },
     "viz_outline": true,
     "viz_scale_max_ratio": 2.0,
     "detect": {
-        "input_dir": "../test-patch-det-multi-img/gen-patched-img/yolov8-patched-imgs",
-        "detections_dir": "detections/yolov8/patched",
+        "input_dir2": "../test-patch-det-multi-img/gen-patched-img/yolov8-patched-imgs",
+        "input_dir": "D:/GitHub/experiment_data/bdd100k_images_10k/val",
+        "detections_dir": "detections/yolov8/clean-layer1-v2",
         "start_index": 0,
-        "num_images": null,
+        "num_images": 100,
         "save_visualizations": true,
-        "visualizations_dir": "viz/yolov8/patched",
-        "gt_coordinates_dir": "../test-patch-det-multi-img/gen-patched-img/yolov8-patch_coordinates"
+        "visualizations_dir": "viz/yolov8/clean-layer1-v2",
+        "gt_coordinates_dir2": "../test-patch-det-multi-img/gen-patched-img/yolov8-patch_coordinates"
     },
     "evaluate": {
-        "patched_detections_dir": "detections/yolov8/patched",
+        "patched_detections_dir": "detections/yolov8/patched-layer1",
         "clean_detections_dir": "detections/yolov8/clean",
         "gt_coordinates_dir": "../test-patch-det-multi-img/gen-patched-img/yolov8-patch_coordinates",
         "match_iou": 0.3
+    },
+    "calibration_info": {
+        "profiles": "2026-11-14: profiles/mech6_profiles_yolov8.pkl",
+        "thresholds": "2026-11-14: quantile 0.995 of 2000 clean images",
+        "min_region_cells": "2026-11-14: target clean image FPR 0.02, with the region settings at that time"
     }
 }
