@@ -31,7 +31,20 @@
             "min_mean_ratio": 1.0,
             "max_detections": 5
         },
-        "calibrated": {}
+        "calibrated": {
+            "1": {
+                "threshold": 3.141,
+                "min_region_cells": 4
+            },
+            "2": {
+                "threshold": 2.8432,
+                "min_region_cells": 13
+            },
+            "3": {
+                "threshold": 2.4674,
+                "min_region_cells": 5
+            }
+        }
     },
     "panel3": {
         "score": "nearest_abs",
@@ -45,23 +58,97 @@
             "min_mean_ratio": 1.0,
             "max_detections": 5
         },
-        "calibrated": {}
+        "calibrated": {
+            "1": {
+                "score": "nearest_abs",
+                "layer_threshold": 1.4117,
+                "class_thresholds": {
+                    "bg": 0.0298,
+                    "0_person": 0.1728,
+                    "1_bicycle": 0.1744,
+                    "2_car": 0.0461,
+                    "3_motorcycle": 0.0232,
+                    "4_airplane": 1.0977,
+                    "5_bus": 0.0823,
+                    "6_train": 0.0965,
+                    "7_truck": 0.046,
+                    "9_traffic-light": 1.8293,
+                    "11_stop-sign": 0.0231,
+                    "12_parking-meter": 0.0823,
+                    "28_suitcase": 0.2181,
+                    "58_potted-plant": 0.0165
+                },
+                "min_region_cells": {
+                    "per_layer": 48,
+                    "per_class": 4
+                }
+            },
+            "2": {
+                "score": "nearest_abs",
+                "layer_threshold": 2.126,
+                "class_thresholds": {
+                    "bg": 0.0751,
+                    "0_person": 0.0838,
+                    "1_bicycle": 0.0369,
+                    "2_car": 0.0485,
+                    "3_motorcycle": 0.0368,
+                    "4_airplane": 2.1929,
+                    "5_bus": 0.0299,
+                    "6_train": 0.0224,
+                    "7_truck": 0.0487,
+                    "9_traffic-light": 2.3577,
+                    "11_stop-sign": 0.185,
+                    "12_parking-meter": 0.0749,
+                    "28_suitcase": 0.075,
+                    "58_potted-plant": 0.0436
+                },
+                "min_region_cells": {
+                    "per_layer": 9,
+                    "per_class": 7
+                }
+            },
+            "3": {
+                "score": "nearest_abs",
+                "layer_threshold": 1.6557,
+                "class_thresholds": {
+                    "bg": 0.1096,
+                    "0_person": 0.2882,
+                    "2_car": 0.0524,
+                    "4_airplane": 1.6294,
+                    "5_bus": 0.0721,
+                    "6_train": 0.1094,
+                    "7_truck": 0.0267,
+                    "9_traffic-light": 1.9589,
+                    "12_parking-meter": 0.0764
+                },
+                "min_region_cells": {
+                    "per_layer": 10,
+                    "per_class": 4
+                }
+            }
+        }
     },
     "viz_outline": true,
     "viz_scale_max_ratio": 2.0,
     "detect": {
-        "input_dir": "../gen-adv-patch-hiding-latest/patched/yolov5-images",
-        "detections_dir": "detections/yolov5/patched",
+        "input_dir2": "../gen-adv-patch-hiding-latest/patched/yolov5-images",
+        "input_dir": "D:/GitHub/experiment_data/bdd100k_images_10k/val",
+        "detections_dir": "detections/yolov5/clean-layer1",
         "start_index": 0,
-        "num_images": null,
+        "num_images": 100,
         "save_visualizations": true,
-        "visualizations_dir": "viz/yolov5/patched",
-        "gt_coordinates_dir": "../gen-adv-patch-hiding-latest/patched/yolov5-coordinates"
+        "visualizations_dir": "viz/yolov5/clean-layer1",
+        "gt_coordinates_dir2": "../gen-adv-patch-hiding-latest/patched/yolov5-coordinates"
     },
     "evaluate": {
-        "patched_detections_dir": "detections/yolov5/patched",
+        "patched_detections_dir": "detections/yolov5/patched-layer1",
         "clean_detections_dir": "detections/yolov5/clean",
         "gt_coordinates_dir": "../gen-adv-patch-hiding-latest/patched/yolov5-coordinates",
         "match_iou": 0.3
+    },
+    "calibration_info": {
+        "profiles": "2026-11-14: profiles/mech6_profiles_yolov5.pkl",
+        "thresholds": "2026-11-14: quantile 0.995 of 2000 clean images",
+        "min_region_cells": "2026-11-14: target clean image FPR 0.02, with the region settings at that time"
     }
 }
