@@ -29,7 +29,7 @@ STD_FLOOR = 1e-3
 BG_ID = -1
 DET_CONF, DET_IOU = 0.25, 0.7                                   # same defaults as ultralytics predict
 NAME_PREFIX_RE = re.compile(r"^(\d+-)?(multi-)?patched[_-]")    # patched image name -> original name
-BOX_RE = re.compile(r"box=\((-?\d+),\s*(-?\d+),\s*(-?\d+),\s*(-?\d+)\)")
+BOX_RE = re.compile(r"(?<![\w])box=\((-?\d+),\s*(-?\d+),\s*(-?\d+),\s*(-?\d+)\)")
 
 
 # ----------------------------------------------------------------------------- config / files
