@@ -120,10 +120,17 @@ def pass2_thresholds(cfg, prof, maps, names, ccfg):
     score_name = cfg["panel3"].get("score", "nearest_abs")
     print(f"Pass 2: thresholds = clean quantile {q}; panel 3 score '{score_name}'")
     for l, lst in maps.items():
-        le = np.stack(lst).astype(np.float64)
-        z = prof.energy_z(l, le)
+        # one image at a time (float32 / int16), so memory stays small however many images or profiles there are
+        z, s, ids = [], [], []
+        for le in lst:
+            le = le.astype(np.float64)
+            z.append(prof.energy_z(l, le).astype(np.float32).ravel())
+            si, ii = prof.nearest(l, le, score_name)
+            s.append(si.astype(np.float32).ravel())
+            ids.append(ii.astype(np.int16).ravel())
+        z, s, ids = np.concatenate(z), np.concatenate(s), np.concatenate(ids)
         t2 = float(np.quantile(z, q))
-        s, ids = prof.nearest(l, le, score_name)
+        del z
         t3 = float(np.quantile(s, q))
         table, fallback = {}, []
         for cid in prof.class_ids[l]:

@@ -188,9 +188,14 @@ class EnergyProfiles:
 
     def nearest(self, layer, le, score="nearest_abs"):
         """Panel 3 score and the nearest profile's class id per cell."""
-        z = (le[..., None] - self.mu[layer]) / self.sd[layer]                 # [H, W, K]
-        idx = np.abs(z).argmin(axis=-1)
-        zn = np.take_along_axis(z, idx[..., None], axis=-1)[..., 0]
+        # loop over profiles (no [..., K] array): keeps memory at a few copies of `le` even with many profiles
+        best = np.full(le.shape, np.inf)
+        zn = np.zeros(le.shape)
+        idx = np.zeros(le.shape, dtype=np.int32)
+        for k, (m, s) in enumerate(zip(self.mu[layer], self.sd[layer])):
+            z = (le - m) / s
+            better = np.abs(z) < best
+            best[better], zn[better], idx[better] = np.abs(z[better]), z[better], k
         ids = np.array(self.class_ids[layer])[idx]
         if score == "nearest_abs":
             return np.abs(zn), ids
