@@ -278,6 +278,93 @@ energy and land in the highest profile, so the panel-3 per-class decision for pa
 profile's threshold. Many rare-class profiles make this stronger; raising `min_calibration_samples` keeps only
 well-supported classes.
 
+## Where each idea comes from (supporting papers)
+
+Each part of lean-v3 is listed with the paper(s) it comes from or is backed by, and what we changed. Numbers in
+brackets point to the reference list below. Papers marked *(local)* are in
+`4th Year Research/Research Papers`. Parts that are our own design choices are marked as such, so they can be
+defended as choices rather than attributed to a paper.
+
+### Signal
+
+| What we use | Supporting paper(s) | How it supports it / what we changed |
+|---|---|---|
+| **Feature energy** = (channel-wise L1 norm)² per cell of a backbone layer | Kim et al., APE [1] *(local)* | APE defines feature energy as "the square of the channel-wise L1 norm" and shows it is abnormally large at the patch location, in all internal layers of the detector. We use exactly this definition. |
+| Why a patch gives large feature norms | Yu et al., FNS [2] *(local)* | Shows mathematically that a universal patch produces large-norm feature vectors concentrated at the patch location (the effective receptive field is small and centred), for classifiers and object detectors. |
+| Early layer (layer 1, stride 4) | Kim et al., APE [1] | APE reports that shallow-layer energy masks are sparse and fine-grained while deep-layer masks are dilated, and refines features at the first layer "for the best spatial accuracy". We use one early layer for localization. |
+
+### Thresholds (calibrated on clean images)
+
+| What we use | Supporting paper(s) | How it supports it / what we changed |
+|---|---|---|
+| **Panel 2:** cell is hot if its energy is far above the clean-image energy statistics of that layer | Kim et al., APE [1] | APE sets layer-wise "Energy-Thresholds" from the clean feature energy distribution (mean + 3.5σ, the "3.5 sigma rule"). This is where the original Mech-6 value 3.5 came from. |
+| Threshold = 99.5% quantile of clean scores, instead of mean + 3.5σ | Bates et al. [3]; Liu et al. [4] *(local)*; Jing et al., PAD [5] *(local)* | An empirical quantile of a clean reference set gives a false-alarm rate that holds without assuming a Gaussian (conformal outlier testing [3]). Choosing the OOD threshold on in-distribution data is standard [4]. PAD also thresholds its patch heat map at a sorted-value (percentile) point [5]. *Our change:* log-energy and a quantile, because raw energy is positive and skewed, so "3.5σ" does not mean the same false-alarm rate in every layer. |
+| Evaluate against a target false-alarm rate | Hendrycks & Gimpel [6] *(local)*; Liu et al. [4] | Both evaluate detectors by the false-positive rate on in-distribution (clean) data at a fixed operating point (FPR at 95% TPR in [4]). We fix the clean false-alarm rate instead (`target_clean_image_fpr`). |
+
+### Per-class profiles (panel 3)
+
+| What we use | Supporting paper(s) | How it supports it / what we changed |
+|---|---|---|
+| Class-conditional statistics of hidden-layer features, score = distance to the **closest** class profile | Lee et al. [7] *(local)* | Fits class-conditional Gaussians to low- and high-level features of a pre-trained network and scores a sample by its Mahalanobis distance to the closest class; detects both OOD and adversarial samples. *Our change:* 1-D log-energy instead of the full feature vector (see the energy vs Mahalanobis slide). |
+| Per-class "normal" ranges learned from clean data, checked at run time | Henzinger et al. [8] *(local)*; Graf et al. [9] *(local)* | [8] monitors hidden layers with per-class abstractions (boxes over the values seen in training) and flags inputs outside them. [9] uses class-aware Mahalanobis distances for known and novel anomalies. |
+| Anomaly maps from features of a pre-trained CNN, normal statistics from normal images only | Defard et al., PaDiM [10] *(local)* | Models normal patch embeddings with Gaussians and localizes anomalies with no anomalous training data. Same one-class, localization setting as ours. |
+| One threshold per class (`per_class`) | *Our design* | The per-class 99.5% quantile follows from the per-class profiles above; no paper sets exactly this. |
+
+### From hot cells to regions
+
+| What we use | Supporting paper(s) | How it supports it / what we changed |
+|---|---|---|
+| **Join = morphological closing**; **thickness = morphological opening**; both with a square (2t+1)² window (the structuring element) | Serra [11]; Haralick et al. [12] | The standard definitions: closing (dilate, then erode) fills gaps and holes smaller than the window; opening (erode, then dilate) removes every part that the window does not fit into, whatever its orientation, and keeps the rest at its size. |
+| Threshold a patch heat map, then clean it with opening and closing | Jing et al., PAD [5]; Bunzel et al. [13] *(local)*; Yankelev et al., AntiStyler [14] *(local)*; Wang et al., APEX [15] *(local)* | PAD applies OPEN-CLOSE-OPEN after thresholding: opening "removes isolated small dots and bridges", closing "fills in a few concave regions in the patch area". [13] assumes patches are compact, while benign noise forms "filigree, partially elongated and smaller areas", and removes them with erosion followed by dilation. That is exactly our thickness idea. AntiStyler dilates to merge nearby masked pixels and erodes to remove small regions. APEX thresholds and applies morphology to its heat map. |
+| Outside the image counts as "not hot" (zero padding) | Soille [16] | Border handling is a choice in morphology. We pad with background so a thin strip along the edge is erased like any other thin line. |
+| **Every thickness scale** is tried; the image decides which one fits | Matheron [17]; Maragos [18]; Pesaresi & Benediktsson [19]; Siegmund & Worsley [20] | Openings with windows of increasing size measure the size distribution of shapes (granulometry [17], pattern spectrum [18]). The morphological profile [19] applies a series of openings at increasing sizes and picks each region's characteristic scale from the profile. Statistically, [20] tests for a signal of **unknown location and scale** by searching over both, with the threshold corrected for the search. |
+| Regions = **8-connected components** | Rosenfeld & Pfaltz [21] | The original connected-component labelling of a binary picture. |
+| Thickest scale wins when regions from different scales overlap | *Our design* | A solid patch keeps its full box after an opening, while thin attachments are trimmed, so the thickest scale that found a region gives its cleanest box. |
+
+### Mass rule and its calibration
+
+| What we use | Supporting paper(s) | How it supports it / what we changed |
+|---|---|---|
+| **Region mass** = sum over its hot cells of how far each is above the threshold | Bullmore et al. [22]; Nichols & Holmes [23] | The **cluster mass** statistic from brain imaging: for each supra-threshold cluster, add up the voxel values above the cluster-forming threshold. It detects effects whose intensity and extent are each moderate. *Our change:* excess measured as (score ÷ threshold − 1), so cells with different per-class thresholds are comparable. |
+| Mass limit = what only 2% of clean images exceed, using the **heaviest region per clean image** | Nichols & Holmes [23]; Bullmore et al. [22] | Using the distribution of the **maximum** statistic over the whole image controls the chance of any false alarm in the image (family-wise error). Our "clean images flagged" is that image-level rate, measured on clean images instead of by permutation. |
+| **Joint** mass limits across scales so the whole detector stays at 2% | Siegmund & Worsley [20]; Nichols & Holmes [23] | Searching over several scales gives more chances of a false alarm; [20] corrects the threshold for the search over scale, and the maximum-statistic idea [23] extends to the maximum over scales. We set equal strictness per scale and tighten jointly on clean images. |
+| (Possible future step) no hard cell threshold | Smith & Nichols, TFCE [24] | Threshold-free cluster enhancement integrates cluster support over all thresholds. It would remove the 99.5% cell threshold, at more computation. |
+
+### Evaluation (`compare_mech6_models.py`)
+
+| What we use | Supporting paper(s) | How it supports it / what we changed |
+|---|---|---|
+| Box correct if ≥ 50% of its area lies inside the patches; patch found if its boxes cover ≥ 25% of it; several boxes per patch and one box over several patches allowed | Wolf & Jolion [25]; Kim et al., APE [1] | [25] shows IoU-style one-to-one matching misjudges detectors that split or merge objects. It evaluates with **area precision** (share of a detection inside the ground truth) and **area recall** (share of the ground truth covered), with one-to-one, one-to-many and many-to-one matches. Our two thresholds are these two quantities. APE evaluates its patch masks with IoU **and IoA** (intersection over area: how much of the patch is covered) [1]. |
+| TPR on patched images, FPR on clean images | Hendrycks & Gimpel [6]; Liu et al. [4] | Standard detection metrics: true-positive rate on the positives, false-positive rate on the in-distribution negatives. |
+
+### Reference list
+
+1. T. Kim, Y. Yu, Y. M. Ro. *Defending Physical Adversarial Attack on Object Detection via Adversarial Patch-Feature Energy.* ACM Multimedia (MM '22), 2022. doi:10.1145/3503161.3548362 *(local)*
+2. C. Yu, J. Chen, Y. Wang, Y. Xue, H. Ma. *Improving Adversarial Robustness Against Universal Patch Attacks Through Feature Norm Suppressing.* IEEE Transactions on Neural Networks and Learning Systems 36(1), 2025. *(local)*
+3. S. Bates, E. Candès, L. Lei, Y. Romano, M. Sesia. *Testing for Outliers with Conformal p-values.* Annals of Statistics 51(1):149–178, 2023. doi:10.1214/22-AOS2244
+4. W. Liu, X. Wang, J. Owens, Y. Li. *Energy-based Out-of-distribution Detection.* NeurIPS 2020. *(local)*
+5. L. Jing, R. Wang, W. Ren, X. Dong, C. Zou. *PAD: Patch-Agnostic Defense against Adversarial Patch Attacks.* CVPR 2024. *(local)*
+6. D. Hendrycks, K. Gimpel. *A Baseline for Detecting Misclassified and Out-of-Distribution Examples in Neural Networks.* ICLR 2017. *(local)*
+7. K. Lee, K. Lee, H. Lee, J. Shin. *A Simple Unified Framework for Detecting Out-of-Distribution Samples and Adversarial Attacks.* NeurIPS 2018. *(local)*
+8. T. A. Henzinger, A. Lukina, C. Schilling. *Outside the Box: Abstraction-Based Monitoring of Neural Networks.* arXiv:1911.09032, 2020 (ECAI 2020). *(local)*
+9. O. Graf et al. *Toxicity Assessment in Preclinical Histopathology via Class-Aware Mahalanobis Distance for Known and Novel Anomalies.* arXiv:2602.02124, 2026. *(local)*
+10. T. Defard, A. Setkov, A. Loesch, R. Audigier. *PaDiM: a Patch Distribution Modeling Framework for Anomaly Detection and Localization.* ICPR Workshops 2021 (arXiv:2011.08785). *(local)*
+11. J. Serra. *Image Analysis and Mathematical Morphology.* Academic Press, 1982.
+12. R. M. Haralick, S. R. Sternberg, X. Zhuang. *Image Analysis Using Mathematical Morphology.* IEEE TPAMI 9(4):532–550, 1987. doi:10.1109/TPAMI.1987.4767941
+13. N. Bunzel, R. A. Frick, G. Klause, A. Schwarte, J. Honermann. *Signals Are All You Need: Detecting and Mitigating Digital and Real-World Adversarial Patches Using Signal-Based Features.* 2nd ACM Workshop on Secure and Trustworthy Deep Learning Systems (SecTL), 2024. *(local)*
+14. I. Yankelev et al. *AntiStyler: Defending Object Detection Models Against Adversarial Patch Attacks Using Style Removal.* CVPR 2026. *(local)*
+15. J. Wang, T. Ni, G. Xu, Q. Zhao, C. Wang. *Adversarial Patch EXterminator: Zero-Shot and Patch-Agnostic Defense Framework Against Adversarial Patch Attacks.* USENIX Security 2026. *(local)*
+16. P. Soille. *Morphological Image Analysis: Principles and Applications.* 2nd ed., Springer, 2003.
+17. G. Matheron. *Random Sets and Integral Geometry.* Wiley, 1975.
+18. P. Maragos. *Pattern Spectrum and Multiscale Shape Representation.* IEEE TPAMI 11(7):701–716, 1989. doi:10.1109/34.192465
+19. M. Pesaresi, J. A. Benediktsson. *A New Approach for the Morphological Segmentation of High-Resolution Satellite Imagery.* IEEE TGRS 39(2):309–320, 2001. doi:10.1109/36.905239
+20. D. O. Siegmund, K. J. Worsley. *Testing for a Signal with Unknown Location and Scale in a Stationary Gaussian Random Field.* Annals of Statistics 23(2):608–639, 1995. doi:10.1214/aos/1176324539
+21. A. Rosenfeld, J. L. Pfaltz. *Sequential Operations in Digital Picture Processing.* Journal of the ACM 13(4):471–494, 1966. doi:10.1145/321356.321357
+22. E. T. Bullmore, J. Suckling, S. Overmeyer, S. Rabe-Hesketh, E. Taylor, M. J. Brammer. *Global, Voxel, and Cluster Tests, by Theory and Permutation, for a Difference Between Two Groups of Structural MR Images of the Brain.* IEEE TMI 18(1):32–42, 1999.
+23. T. E. Nichols, A. P. Holmes. *Nonparametric Permutation Tests for Functional Neuroimaging: A Primer with Examples.* Human Brain Mapping 15(1):1–25, 2002. doi:10.1002/hbm.1058
+24. S. M. Smith, T. E. Nichols. *Threshold-Free Cluster Enhancement.* NeuroImage 44(1):83–98, 2009. doi:10.1016/j.neuroimage.2008.03.061
+25. C. Wolf, J.-M. Jolion. *Object Count/Area Graphs for the Evaluation of Object Detection and Segmentation Algorithms.* IJDAR 8(4):280–296, 2006. doi:10.1007/s10032-006-0014-0
+
 ## Status
 
 Smoke-tested on YOLOv5 (layer 1) with a small region calibration (150 clean images) on 20 patched images: both panels

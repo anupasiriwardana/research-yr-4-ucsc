@@ -1,0 +1,58 @@
+{
+    "model_type": "ultralytics",
+    "model_path": "../gen-adv-patch-hiding-latest/weights/yolo11n.pt",
+    "tap_layers": [
+        1,
+        2,
+        3
+    ],
+    "detect_layer": 1,
+    "profile_file": "profiles/maha_profiles_yolo11.pkl",
+    "calibration": {
+        "profile_images_dir": "D:/GitHub/experiment_data/bdd100k_images_10k/train",
+        "max_calibration_images": 7000,
+        "background_samples_per_image": 250,
+        "min_calibration_samples": 20000,
+        "shrinkage": 0.01,
+        "threshold_images_dir": "D:/GitHub/experiment_data/bdd100k_images_10k/test",
+        "threshold_num_images": 2000,
+        "threshold_quantile": 0.995,
+        "min_threshold_cells": 1000,
+        "target_clean_image_fpr": 0.02,
+        "thickness_scales": [
+            0,
+            1,
+            2,
+            3
+        ]
+    },
+    "panel2": {
+        "region": {
+            "join_cells": 1,
+            "mass_thresholds": "auto"
+        }
+    },
+    "panel3": {
+        "region": {
+            "join_cells": 1,
+            "mass_thresholds": "auto"
+        }
+    },
+    "viz_outline": true,
+    "viz_scale_max_ratio": 2.0,
+    "detect": {
+        "input_dir": "../test-patch-det-multi-img/gen-patched-img/yolov11-patched-imgs",
+        "detections_dir": "detections/yolo11/patched-layer1",
+        "start_index": 0,
+        "num_images": null,
+        "save_visualizations": true,
+        "visualizations_dir": "viz/yolo11/patched-layer1",
+        "gt_coordinates_dir": "../test-patch-det-multi-img/gen-patched-img/yolov11-patch_coordinates"
+    },
+    "evaluate": {
+        "patched_detections_dir": "detections/yolo11/patched-layer1",
+        "clean_detections_dir": "detections/yolo11/clean-layer1",
+        "gt_coordinates_dir": "../test-patch-det-multi-img/gen-patched-img/yolov11-patch_coordinates",
+        "match_iou": 0.3
+    }
+}

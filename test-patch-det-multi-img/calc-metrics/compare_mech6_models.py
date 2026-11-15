@@ -8,6 +8,7 @@ Inputs (per model, from the JSON config):
     patched_detections_dir detections on the patched images: <dir>/<panel>/<prefix><key>.txt
     clean_detections_dir   detections on clean images (no patch): <dir>/<panel>/*.txt
     latency_json           output of yolo-mech6-detector-lean-v3/measure_latency.py
+Optional config key `panel_titles` ({"panel2": "..."}) renames the panels in the charts and the printout.
 
 Matching: two separate questions (several boxes may sit on one patch).
     1. Is a box correct?  Its intersection over DETECTION (IoD = share of the box's own area that lies inside the GT
@@ -244,15 +245,16 @@ def main():
     coverage_min = float(cfg.get("patch_coverage_min", 0.25))
     sweep = [float(c) for c in cfg.get("coverage_sweep", [0.1, 0.25, 0.5])]
     panels = cfg.get("panels", ["panel2", "panel3"])
+    titles = {**PANEL_TITLES, **cfg.get("panel_titles", {})}      # optional per-detector panel names
 
     all_rows = []
     for panel in panels:
         rows = [evaluate_panel(m, panel, prefix, box_inside_min, coverage_min, sweep) for m in cfg["models"]]
         all_rows += rows
         fig_path = out_dir / f"{cfg.get('figure_prefix', 'mech6_lean_v3')}_{panel}.png"
-        plot_panel(rows, panel, fig_path, f"{cfg.get('title', 'Mech-6 lean-v3')}: {PANEL_TITLES.get(panel, panel)}"
+        plot_panel(rows, panel, fig_path, f"{cfg.get('title', 'Mech-6 lean-v3')}: {titles.get(panel, panel)}"
                    if cfg.get("show_titles", True) else None)
-        print(f"\n{PANEL_TITLES.get(panel, panel)} (box >= {box_inside_min:.0%} inside the patches; "
+        print(f"\n{titles.get(panel, panel)} (box >= {box_inside_min:.0%} inside the patches; "
               f"patch found if covered >= {coverage_min:.0%})")
         sw = "  ".join(f"cov{c:.0%}" for c in sweep)
         print(f"  {'model':<8} {'TPR %':>6} {'FPR %':>6} {'FPPI':>6} {'prec':>6} {'F1':>6} {'cov':>5} {'IoU':>5}"
