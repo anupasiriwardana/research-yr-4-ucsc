@@ -1,0 +1,49 @@
+{
+  "model": "yolov5_repo:yolov5s.pt",
+  "config": "config_yolov5.json",
+  "layer": 1,
+  "panel3": {
+    "score": "nearest_up",
+    "threshold_mode": "per_class"
+  },
+  "device": "NVIDIA GeForce RTX 2050",
+  "input_dir": "../gen-adv-patch-hiding-latest/patched/yolov5-images",
+  "images_timed": 95,
+  "warmup_images": 5,
+  "definition": "forward pass + log-energy + score + threshold map + multi-scale localization; excludes image loading/preprocessing, visualization and file writing",
+  "shared_forward_and_energy": {
+    "mean_ms": 13.288231578939016,
+    "median_ms": 13.215599999966798,
+    "std_ms": 0.22928104117074669,
+    "min_ms": 12.868199999957142,
+    "max_ms": 14.027100000021164
+  },
+  "panel2_only_step": {
+    "mean_ms": 1.243700000000708,
+    "median_ms": 1.2512999999216845,
+    "std_ms": 0.28836547972302695,
+    "min_ms": 0.6627000000207772,
+    "max_ms": 2.0451000000321073
+  },
+  "panel3_only_step": {
+    "mean_ms": 4.267333684227101,
+    "median_ms": 4.270099999985177,
+    "std_ms": 0.532352000038179,
+    "min_ms": 2.780699999902936,
+    "max_ms": 5.568800000219198
+  },
+  "panel2_latency": {
+    "mean_ms": 14.531931578939725,
+    "median_ms": 14.50099999988197,
+    "std_ms": 0.39483926357054844,
+    "min_ms": 13.660099999924569,
+    "max_ms": 15.636299999869152
+  },
+  "panel3_latency": {
+    "mean_ms": 17.555565263166116,
+    "median_ms": 17.536700000164274,
+    "std_ms": 0.5757829728034096,
+    "min_ms": 16.337399999883928,
+    "max_ms": 19.039100000100007
+  }
+}

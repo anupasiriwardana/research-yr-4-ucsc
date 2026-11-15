@@ -1,0 +1,420 @@
+{
+  "config": {
+    "title": "Mech-6 lean-v3 (nearest_up)",
+    "show_titles": true,
+    "output_dir": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\calc-metrics\\patch-detection-metrics\\mech-6-lean-v3",
+    "figure_prefix": "mech6_lean_v3",
+    "detection_filename_prefix": "multi-patched_",
+    "box_inside_min": 0.5,
+    "patch_coverage_min": 0.25,
+    "coverage_sweep": [
+      0.1,
+      0.25,
+      0.5
+    ],
+    "panels": [
+      "panel2",
+      "panel3"
+    ],
+    "models": [
+      {
+        "name": "YOLOv5",
+        "gt_dir": "D:\\GitHub\\yr-4-research\\gen-adv-patch-hiding-latest\\patched\\yolov5-coordinates",
+        "patched_detections_dir": "D:\\GitHub\\yr-4-research\\yolo-mech6-detector-lean-v3\\detections\\yolov5\\patched-layer1",
+        "clean_detections_dir": "D:\\GitHub\\yr-4-research\\yolo-mech6-detector-lean-v3\\detections\\yolov5\\clean-layer1",
+        "latency_json": "D:\\GitHub\\yr-4-research\\yolo-mech6-detector-lean-v3\\latency\\yolov5.json"
+      },
+      {
+        "name": "YOLOv8",
+        "gt_dir": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\gen-patched-img\\yolov8-patch_coordinates",
+        "patched_detections_dir": "D:\\GitHub\\yr-4-research\\yolo-mech6-detector-lean-v3\\detections\\yolov8\\patched-layer1-nearest-up",
+        "clean_detections_dir": "D:\\GitHub\\yr-4-research\\yolo-mech6-detector-lean-v3\\detections\\yolov8\\clean-layer1",
+        "latency_json": "D:\\GitHub\\yr-4-research\\yolo-mech6-detector-lean-v3\\latency\\yolov8.json"
+      },
+      {
+        "name": "YOLOv9",
+        "gt_dir": "D:\\GitHub\\yr-4-research\\gen-adv-patch-hiding-latest\\patched\\yolov9-coordinates",
+        "patched_detections_dir": "D:\\GitHub\\yr-4-research\\yolo-mech6-detector-lean-v3\\detections\\yolov9\\patched-layer1",
+        "clean_detections_dir": "D:\\GitHub\\yr-4-research\\yolo-mech6-detector-lean-v3\\detections\\yolov9\\clean-layer1",
+        "latency_json": "D:\\GitHub\\yr-4-research\\yolo-mech6-detector-lean-v3\\latency\\yolov9.json"
+      },
+      {
+        "name": "YOLO11",
+        "gt_dir": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\gen-patched-img\\yolov11-patch_coordinates",
+        "patched_detections_dir": "D:\\GitHub\\yr-4-research\\yolo-mech6-detector-lean-v3\\detections\\yolo11\\patched-layer1",
+        "clean_detections_dir": "D:\\GitHub\\yr-4-research\\yolo-mech6-detector-lean-v3\\detections\\yolo11\\clean-layer1",
+        "latency_json": "D:\\GitHub\\yr-4-research\\yolo-mech6-detector-lean-v3\\latency\\yolo11.json"
+      }
+    ]
+  },
+  "results": [
+    {
+      "model": "YOLOv5",
+      "panel": "panel2",
+      "box_inside_min": 0.5,
+      "patch_coverage_min": 0.25,
+      "patched_images": 100,
+      "clean_images": 100,
+      "tpr": 1.0,
+      "precision": 0.9826589595375722,
+      "f1": 0.9912536443148687,
+      "image_recall": 0.96,
+      "mean_coverage_found": 0.9926204454511086,
+      "mean_best_iou_found": 0.9142101747585678,
+      "fpr_clean_images": 0.04,
+      "fppi": 0.045,
+      "fppi_patched": 0.03,
+      "fppi_clean": 0.06,
+      "tpr_by_coverage": {
+        "0.1": 1.0,
+        "0.25": 1.0,
+        "0.5": 1.0
+      },
+      "counts": {
+        "gt_patches": 175,
+        "patches_found": 175,
+        "patches_missed": 0,
+        "predicted_boxes": 173,
+        "correct_boxes": 170,
+        "fp_patched": 3,
+        "tpr": 1.0,
+        "precision": 0.9826589595375722,
+        "f1": 0.9912536443148687,
+        "image_recall": 0.96,
+        "mean_coverage_found": 0.9926204454511086,
+        "mean_best_iou_found": 0.9142101747585678
+      },
+      "old_rule": {
+        "rule": "any positive overlap, one box per patch (compare_patch_detection_metrics.py)",
+        "tpr": 0.9714285714285714,
+        "precision": 0.9826589595375722,
+        "fp_patched": 3
+      },
+      "latency_ms": 14.531931578939725,
+      "latency_median_ms": 14.50099999988197,
+      "latency_device": "NVIDIA GeForce RTX 2050"
+    },
+    {
+      "model": "YOLOv8",
+      "panel": "panel2",
+      "box_inside_min": 0.5,
+      "patch_coverage_min": 0.25,
+      "patched_images": 100,
+      "clean_images": 100,
+      "tpr": 1.0,
+      "precision": 1.0,
+      "f1": 1.0,
+      "image_recall": 0.94,
+      "mean_coverage_found": 0.9778868210694277,
+      "mean_best_iou_found": 0.9145219788165313,
+      "fpr_clean_images": 0.03,
+      "fppi": 0.02,
+      "fppi_patched": 0.0,
+      "fppi_clean": 0.04,
+      "tpr_by_coverage": {
+        "0.1": 1.0,
+        "0.25": 1.0,
+        "0.5": 1.0
+      },
+      "counts": {
+        "gt_patches": 171,
+        "patches_found": 171,
+        "patches_missed": 0,
+        "predicted_boxes": 168,
+        "correct_boxes": 168,
+        "fp_patched": 0,
+        "tpr": 1.0,
+        "precision": 1.0,
+        "f1": 1.0,
+        "image_recall": 0.94,
+        "mean_coverage_found": 0.9778868210694277,
+        "mean_best_iou_found": 0.9145219788165313
+      },
+      "old_rule": {
+        "rule": "any positive overlap, one box per patch (compare_patch_detection_metrics.py)",
+        "tpr": 0.9824561403508771,
+        "precision": 1.0,
+        "fp_patched": 0
+      },
+      "latency_ms": 11.450068421062928,
+      "latency_median_ms": 10.733999999956723,
+      "latency_device": "NVIDIA GeForce RTX 2050"
+    },
+    {
+      "model": "YOLOv9",
+      "panel": "panel2",
+      "box_inside_min": 0.5,
+      "patch_coverage_min": 0.25,
+      "patched_images": 100,
+      "clean_images": 100,
+      "tpr": 1.0,
+      "precision": 1.0,
+      "f1": 1.0,
+      "image_recall": 0.95,
+      "mean_coverage_found": 0.9838408489962535,
+      "mean_best_iou_found": 0.9048152942179166,
+      "fpr_clean_images": 0.03,
+      "fppi": 0.015,
+      "fppi_patched": 0.0,
+      "fppi_clean": 0.03,
+      "tpr_by_coverage": {
+        "0.1": 1.0,
+        "0.25": 1.0,
+        "0.5": 1.0
+      },
+      "counts": {
+        "gt_patches": 174,
+        "patches_found": 174,
+        "patches_missed": 0,
+        "predicted_boxes": 169,
+        "correct_boxes": 169,
+        "fp_patched": 0,
+        "tpr": 1.0,
+        "precision": 1.0,
+        "f1": 1.0,
+        "image_recall": 0.95,
+        "mean_coverage_found": 0.9838408489962535,
+        "mean_best_iou_found": 0.9048152942179166
+      },
+      "old_rule": {
+        "rule": "any positive overlap, one box per patch (compare_patch_detection_metrics.py)",
+        "tpr": 0.9712643678160919,
+        "precision": 1.0,
+        "fp_patched": 0
+      },
+      "latency_ms": 50.61666947367245,
+      "latency_median_ms": 50.55240000001504,
+      "latency_device": "NVIDIA GeForce RTX 2050"
+    },
+    {
+      "model": "YOLO11",
+      "panel": "panel2",
+      "box_inside_min": 0.5,
+      "patch_coverage_min": 0.25,
+      "patched_images": 100,
+      "clean_images": 100,
+      "tpr": 1.0,
+      "precision": 0.9881656804733728,
+      "f1": 0.9940476190476192,
+      "image_recall": 0.95,
+      "mean_coverage_found": 0.9834821357628677,
+      "mean_best_iou_found": 0.9086950835324487,
+      "fpr_clean_images": 0.06,
+      "fppi": 0.045,
+      "fppi_patched": 0.02,
+      "fppi_clean": 0.07,
+      "tpr_by_coverage": {
+        "0.1": 1.0,
+        "0.25": 1.0,
+        "0.5": 1.0
+      },
+      "counts": {
+        "gt_patches": 171,
+        "patches_found": 171,
+        "patches_missed": 0,
+        "predicted_boxes": 169,
+        "correct_boxes": 167,
+        "fp_patched": 2,
+        "tpr": 1.0,
+        "precision": 0.9881656804733728,
+        "f1": 0.9940476190476192,
+        "image_recall": 0.95,
+        "mean_coverage_found": 0.9834821357628677,
+        "mean_best_iou_found": 0.9086950835324487
+      },
+      "old_rule": {
+        "rule": "any positive overlap, one box per patch (compare_patch_detection_metrics.py)",
+        "tpr": 0.9766081871345029,
+        "precision": 0.9881656804733728,
+        "fp_patched": 2
+      },
+      "latency_ms": 14.400277894714906,
+      "latency_median_ms": 13.920099999950253,
+      "latency_device": "NVIDIA GeForce RTX 2050"
+    },
+    {
+      "model": "YOLOv5",
+      "panel": "panel3",
+      "box_inside_min": 0.5,
+      "patch_coverage_min": 0.25,
+      "patched_images": 100,
+      "clean_images": 100,
+      "tpr": 1.0,
+      "precision": 0.9884393063583815,
+      "f1": 0.994186046511628,
+      "image_recall": 0.97,
+      "mean_coverage_found": 0.9788394767901581,
+      "mean_best_iou_found": 0.9171000840210023,
+      "fpr_clean_images": 0.03,
+      "fppi": 0.025,
+      "fppi_patched": 0.02,
+      "fppi_clean": 0.03,
+      "tpr_by_coverage": {
+        "0.1": 1.0,
+        "0.25": 1.0,
+        "0.5": 1.0
+      },
+      "counts": {
+        "gt_patches": 175,
+        "patches_found": 175,
+        "patches_missed": 0,
+        "predicted_boxes": 173,
+        "correct_boxes": 171,
+        "fp_patched": 2,
+        "tpr": 1.0,
+        "precision": 0.9884393063583815,
+        "f1": 0.994186046511628,
+        "image_recall": 0.97,
+        "mean_coverage_found": 0.9788394767901581,
+        "mean_best_iou_found": 0.9171000840210023
+      },
+      "old_rule": {
+        "rule": "any positive overlap, one box per patch (compare_patch_detection_metrics.py)",
+        "tpr": 0.9714285714285714,
+        "precision": 0.9826589595375722,
+        "fp_patched": 3
+      },
+      "latency_ms": 17.555565263166116,
+      "latency_median_ms": 17.536700000164274,
+      "latency_device": "NVIDIA GeForce RTX 2050"
+    },
+    {
+      "model": "YOLOv8",
+      "panel": "panel3",
+      "box_inside_min": 0.5,
+      "patch_coverage_min": 0.25,
+      "patched_images": 100,
+      "clean_images": 100,
+      "tpr": 1.0,
+      "precision": 0.9886363636363636,
+      "f1": 0.9942857142857142,
+      "image_recall": 0.94,
+      "mean_coverage_found": 0.785010519583144,
+      "mean_best_iou_found": 0.7624944920194774,
+      "fpr_clean_images": 0.03,
+      "fppi": 0.025,
+      "fppi_patched": 0.02,
+      "fppi_clean": 0.03,
+      "tpr_by_coverage": {
+        "0.1": 1.0,
+        "0.25": 1.0,
+        "0.5": 1.0
+      },
+      "counts": {
+        "gt_patches": 171,
+        "patches_found": 171,
+        "patches_missed": 0,
+        "predicted_boxes": 176,
+        "correct_boxes": 174,
+        "fp_patched": 2,
+        "tpr": 1.0,
+        "precision": 0.9886363636363636,
+        "f1": 0.9942857142857142,
+        "image_recall": 0.94,
+        "mean_coverage_found": 0.785010519583144,
+        "mean_best_iou_found": 0.7624944920194774
+      },
+      "old_rule": {
+        "rule": "any positive overlap, one box per patch (compare_patch_detection_metrics.py)",
+        "tpr": 0.9941520467836257,
+        "precision": 0.9659090909090909,
+        "fp_patched": 6
+      },
+      "latency_ms": 14.49934526316084,
+      "latency_median_ms": 13.816599999927348,
+      "latency_device": "NVIDIA GeForce RTX 2050"
+    },
+    {
+      "model": "YOLOv9",
+      "panel": "panel3",
+      "box_inside_min": 0.5,
+      "patch_coverage_min": 0.25,
+      "patched_images": 100,
+      "clean_images": 100,
+      "tpr": 0.9655172413793104,
+      "precision": 1.0,
+      "f1": 0.9824561403508771,
+      "image_recall": 0.95,
+      "mean_coverage_found": 0.5896970066865391,
+      "mean_best_iou_found": 0.5462104592081682,
+      "fpr_clean_images": 0.01,
+      "fppi": 0.01,
+      "fppi_patched": 0.0,
+      "fppi_clean": 0.02,
+      "tpr_by_coverage": {
+        "0.1": 0.9942528735632183,
+        "0.25": 0.9655172413793104,
+        "0.5": 0.5977011494252874
+      },
+      "counts": {
+        "gt_patches": 174,
+        "patches_found": 168,
+        "patches_missed": 6,
+        "predicted_boxes": 246,
+        "correct_boxes": 246,
+        "fp_patched": 0,
+        "tpr": 0.9655172413793104,
+        "precision": 1.0,
+        "f1": 0.9824561403508771,
+        "image_recall": 0.95,
+        "mean_coverage_found": 0.5896970066865391,
+        "mean_best_iou_found": 0.5462104592081682
+      },
+      "old_rule": {
+        "rule": "any positive overlap, one box per patch (compare_patch_detection_metrics.py)",
+        "tpr": 0.9942528735632183,
+        "precision": 0.7032520325203252,
+        "fp_patched": 73
+      },
+      "latency_ms": 53.793393684222075,
+      "latency_median_ms": 53.73110000004999,
+      "latency_device": "NVIDIA GeForce RTX 2050"
+    },
+    {
+      "model": "YOLO11",
+      "panel": "panel3",
+      "box_inside_min": 0.5,
+      "patch_coverage_min": 0.25,
+      "patched_images": 100,
+      "clean_images": 100,
+      "tpr": 1.0,
+      "precision": 0.9940476190476191,
+      "f1": 0.9970149253731343,
+      "image_recall": 0.95,
+      "mean_coverage_found": 0.9718849664671381,
+      "mean_best_iou_found": 0.9163162280332475,
+      "fpr_clean_images": 0.04,
+      "fppi": 0.025,
+      "fppi_patched": 0.01,
+      "fppi_clean": 0.04,
+      "tpr_by_coverage": {
+        "0.1": 1.0,
+        "0.25": 1.0,
+        "0.5": 1.0
+      },
+      "counts": {
+        "gt_patches": 171,
+        "patches_found": 171,
+        "patches_missed": 0,
+        "predicted_boxes": 168,
+        "correct_boxes": 167,
+        "fp_patched": 1,
+        "tpr": 1.0,
+        "precision": 0.9940476190476191,
+        "f1": 0.9970149253731343,
+        "image_recall": 0.95,
+        "mean_coverage_found": 0.9718849664671381,
+        "mean_best_iou_found": 0.9163162280332475
+      },
+      "old_rule": {
+        "rule": "any positive overlap, one box per patch (compare_patch_detection_metrics.py)",
+        "tpr": 0.9766081871345029,
+        "precision": 0.9940476190476191,
+        "fp_patched": 1
+      },
+      "latency_ms": 17.60610000001658,
+      "latency_median_ms": 17.201699999986886,
+      "latency_device": "NVIDIA GeForce RTX 2050"
+    }
+  ]
+}

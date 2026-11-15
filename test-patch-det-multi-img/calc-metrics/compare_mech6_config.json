@@ -1,0 +1,41 @@
+{
+    "title": "Mech-6 lean-v3 (nearest_up)",
+    "show_titles": true,
+    "output_dir": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\calc-metrics\\patch-detection-metrics\\mech-6-lean-v3",
+    "figure_prefix": "mech6_lean_v3",
+    "detection_filename_prefix": "multi-patched_",
+    "box_inside_min": 0.5,
+    "patch_coverage_min": 0.25,
+    "coverage_sweep": [0.1, 0.25, 0.5],
+    "panels": ["panel2", "panel3"],
+    "models": [
+        {
+            "name": "YOLOv5",
+            "gt_dir": "D:\\GitHub\\yr-4-research\\gen-adv-patch-hiding-latest\\patched\\yolov5-coordinates",
+            "patched_detections_dir": "D:\\GitHub\\yr-4-research\\yolo-mech6-detector-lean-v3\\detections\\yolov5\\patched-layer1",
+            "clean_detections_dir": "D:\\GitHub\\yr-4-research\\yolo-mech6-detector-lean-v3\\detections\\yolov5\\clean-layer1",
+            "latency_json": "D:\\GitHub\\yr-4-research\\yolo-mech6-detector-lean-v3\\latency\\yolov5.json"
+        },
+        {
+            "name": "YOLOv8",
+            "gt_dir": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\gen-patched-img\\yolov8-patch_coordinates",
+            "patched_detections_dir": "D:\\GitHub\\yr-4-research\\yolo-mech6-detector-lean-v3\\detections\\yolov8\\patched-layer1-nearest-up",
+            "clean_detections_dir": "D:\\GitHub\\yr-4-research\\yolo-mech6-detector-lean-v3\\detections\\yolov8\\clean-layer1",
+            "latency_json": "D:\\GitHub\\yr-4-research\\yolo-mech6-detector-lean-v3\\latency\\yolov8.json"
+        },
+        {
+            "name": "YOLOv9",
+            "gt_dir": "D:\\GitHub\\yr-4-research\\gen-adv-patch-hiding-latest\\patched\\yolov9-coordinates",
+            "patched_detections_dir": "D:\\GitHub\\yr-4-research\\yolo-mech6-detector-lean-v3\\detections\\yolov9\\patched-layer1",
+            "clean_detections_dir": "D:\\GitHub\\yr-4-research\\yolo-mech6-detector-lean-v3\\detections\\yolov9\\clean-layer1",
+            "latency_json": "D:\\GitHub\\yr-4-research\\yolo-mech6-detector-lean-v3\\latency\\yolov9.json"
+        },
+        {
+            "name": "YOLO11",
+            "gt_dir": "D:\\GitHub\\yr-4-research\\test-patch-det-multi-img\\gen-patched-img\\yolov11-patch_coordinates",
+            "patched_detections_dir": "D:\\GitHub\\yr-4-research\\yolo-mech6-detector-lean-v3\\detections\\yolo11\\patched-layer1",
+            "clean_detections_dir": "D:\\GitHub\\yr-4-research\\yolo-mech6-detector-lean-v3\\detections\\yolo11\\clean-layer1",
+            "latency_json": "D:\\GitHub\\yr-4-research\\yolo-mech6-detector-lean-v3\\latency\\yolo11.json"
+        }
+    ]
+}
