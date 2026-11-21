@@ -54,3 +54,7 @@
 **/yolo-mech6-detector-lean-v3/detections/*
 **/yolo-mech6-detector-lean-v3/viz/*
 **/yolo-mech6-detector-lean-v3/*.json.bak
+
+**/yolo-mech6-mahalanobis-detector/detections/*
+**/yolo-mech6-mahalanobis-detector/viz/*
+**/yolo-mech6-mahalanobis-detector/*.json.bak

@@ -30,29 +30,193 @@
         "region": {
             "join_cells": 1,
             "mass_thresholds": "auto"
+        },
+        "calibrated": {
+            "1": {
+                "threshold": 12.142,
+                "clean_median": 2.6205,
+                "region": {
+                    "mass_thresholds": {
+                        "0": 55.273,
+                        "1": 12.634,
+                        "2": 5.417,
+                        "3": 0.0
+                    },
+                    "clean_images_flagged": 0.02,
+                    "clean_images_flagged_per_scale": {
+                        "0": 0.0095,
+                        "1": 0.0095,
+                        "2": 0.0095,
+                        "3": 0.004
+                    }
+                }
+            },
+            "2": {
+                "threshold": 9.5534,
+                "clean_median": 3.8488,
+                "region": {
+                    "mass_thresholds": {
+                        "0": 29.371,
+                        "1": 10.806,
+                        "2": 1.554,
+                        "3": 0.0
+                    },
+                    "clean_images_flagged": 0.0195,
+                    "clean_images_flagged_per_scale": {
+                        "0": 0.011,
+                        "1": 0.011,
+                        "2": 0.011,
+                        "3": 0.0025
+                    }
+                }
+            },
+            "3": {
+                "threshold": 12.8142,
+                "clean_median": 5.5801,
+                "region": {
+                    "mass_thresholds": {
+                        "0": 14.232,
+                        "1": 7.011,
+                        "2": 2.375,
+                        "3": 0.0
+                    },
+                    "clean_images_flagged": 0.0195,
+                    "clean_images_flagged_per_scale": {
+                        "0": 0.0125,
+                        "1": 0.0125,
+                        "2": 0.0125,
+                        "3": 0.0045
+                    }
+                }
+            }
         }
     },
     "panel3": {
         "region": {
             "join_cells": 1,
             "mass_thresholds": "auto"
+        },
+        "calibrated": {
+            "1": {
+                "layer_threshold": 12.142,
+                "class_thresholds": {
+                    "bg": 4.8552,
+                    "0_person": 3.323,
+                    "1_bicycle": 15.2837,
+                    "2_car": 3.3008,
+                    "3_motorcycle": 2.0122,
+                    "4_airplane": 2.547,
+                    "5_bus": 3.024,
+                    "6_train": 1.632,
+                    "7_truck": 2.8182,
+                    "8_boat": 3.1033,
+                    "9_traffic-light": 13.1292,
+                    "12_parking-meter": 3.3615,
+                    "13_bench": 3.1666,
+                    "28_suitcase": 2.8145
+                },
+                "region": {
+                    "mass_thresholds": {
+                        "0": 33.43,
+                        "1": 12.061,
+                        "2": 7.913,
+                        "3": 3.446
+                    },
+                    "clean_images_flagged": 0.0195,
+                    "clean_images_flagged_per_scale": {
+                        "0": 0.014,
+                        "1": 0.014,
+                        "2": 0.014,
+                        "3": 0.014
+                    }
+                }
+            },
+            "2": {
+                "layer_threshold": 9.5534,
+                "class_thresholds": {
+                    "bg": 4.7172,
+                    "0_person": 6.8203,
+                    "1_bicycle": 10.7136,
+                    "2_car": 9.5899,
+                    "3_motorcycle": 9.1601,
+                    "4_airplane": 3.9821,
+                    "5_bus": 4.8191,
+                    "6_train": 4.4558,
+                    "7_truck": 11.3413,
+                    "8_boat": 6.1591,
+                    "9_traffic-light": 9.1812,
+                    "12_parking-meter": 3.6657,
+                    "13_bench": 5.2883,
+                    "28_suitcase": 6.4028
+                },
+                "region": {
+                    "mass_thresholds": {
+                        "0": 134.775,
+                        "1": 9.809,
+                        "2": 2.152,
+                        "3": 0.0
+                    },
+                    "clean_images_flagged": 0.02,
+                    "clean_images_flagged_per_scale": {
+                        "0": 0.0085,
+                        "1": 0.0085,
+                        "2": 0.0085,
+                        "3": 0.0025
+                    }
+                }
+            },
+            "3": {
+                "layer_threshold": 12.8142,
+                "class_thresholds": {
+                    "bg": 9.6736,
+                    "0_person": 10.9566,
+                    "2_car": 13.4372,
+                    "4_airplane": 7.2411,
+                    "5_bus": 12.0728,
+                    "6_train": 8.5132,
+                    "7_truck": 11.8296,
+                    "9_traffic-light": 13.2745,
+                    "12_parking-meter": 5.8753
+                },
+                "region": {
+                    "mass_thresholds": {
+                        "0": 12.214,
+                        "1": 5.672,
+                        "2": 1.822,
+                        "3": 0.0
+                    },
+                    "clean_images_flagged": 0.02,
+                    "clean_images_flagged_per_scale": {
+                        "0": 0.0125,
+                        "1": 0.0125,
+                        "2": 0.0125,
+                        "3": 0.0035
+                    }
+                }
+            }
         }
     },
     "viz_outline": true,
     "viz_scale_max_ratio": 2.0,
     "detect": {
-        "input_dir": "../test-patch-det-multi-img/gen-patched-img/yolov8-patched-imgs",
-        "detections_dir": "detections/yolov8/patched-layer1",
+        "input_dir2": "../test-patch-det-multi-img/gen-patched-img/yolov8-patched-imgs",
+        "input_dir": "D:/GitHub/experiment_data/bdd100k_images_10k/val",
+        "detections_dir": "detections/yolov8/clean-layer1",
         "start_index": 0,
-        "num_images": null,
+        "num_images": 100,
         "save_visualizations": true,
-        "visualizations_dir": "viz/yolov8/patched-layer1",
-        "gt_coordinates_dir": "../test-patch-det-multi-img/gen-patched-img/yolov8-patch_coordinates"
+        "visualizations_dir": "viz/yolov8/clean-layer1",
+        "gt_coordinates_dir2": "../test-patch-det-multi-img/gen-patched-img/yolov8-patch_coordinates"
     },
     "evaluate": {
         "patched_detections_dir": "detections/yolov8/patched-layer1",
         "clean_detections_dir": "detections/yolov8/clean-layer1",
         "gt_coordinates_dir": "../test-patch-det-multi-img/gen-patched-img/yolov8-patch_coordinates",
         "match_iou": 0.3
+    },
+    "calibration_info": {
+        "profiles": "2026-11-21: profiles/maha_profiles_yolov8.pkl from 7000 images",
+        "thresholds": "2026-11-21: quantile 0.995 of 2000 clean images",
+        "regions": "2026-11-21: target clean image FPR 0.02, join_cells at that time, thickness scales [0, 1, 2, 3]"
     }
 }
